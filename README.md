@@ -5,14 +5,11 @@ An R packages with tools for simulating PROSAIL model
 ## Getting started
 
 Install the package prospect with the following command line in R session:
+>
+> devtools::install_gitlab('caminoccg/toolsrtm')
+>
 
-> devtools:devtools::install_gitlab('caminoccg/toolsrtm')
-
-
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
+## Examples
 
 - [ ] [Create](https://gitlab.com/-/experiment/new_project_readme_content:0968b1352363cda9e3f74fb4229977b8?https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://gitlab.com/-/experiment/new_project_readme_content:0968b1352363cda9e3f74fb4229977b8?https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
 - [ ] [Add files using the command line](https://gitlab.com/-/experiment/new_project_readme_content:0968b1352363cda9e3f74fb4229977b8?https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
