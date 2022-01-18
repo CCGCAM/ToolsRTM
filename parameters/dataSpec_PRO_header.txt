@@ -1,0 +1,21 @@
+% ***********************************************************************   
+% dataSpec_PRO.m -  (January, 7th 2020)                                  
+% ***********************************************************************   
+% [1] = wavelength (nm)                                                     
+% [2] = refractive index of leaf material                                   
+% [3] = specific absorption coefficient of chlorophyll (a+b) (cm2.microg-1) 
+% [4] = specific absorption coefficient of carotenoids (cm2.microg-1)       
+% [5] = specific absorption coefficient of Anthocyanins (cm2.nmol-1)        
+% [6] = specific absorption coefficient of brown pigments (arbitrary units) 
+% [7] = specific absorption coefficient of water (cm-1)                     
+% [8] = specific absorption coefficient of dry matter (cm2.g-1)             
+% [9] = specific absorption coefficient of proteins (cm2.g-1)            
+% [10] = specific absorption coefficient of non proteic dry matter (cm2.g-1)            
+% Féret et al. (2008), PROSPECT-4 and 5: Advances in the Leaf Optical       
+% Properties Model Separating Photosynthetic Pigments, Remote Sensing of    
+% Environment                                                               
+% The specific absorption coefficient corresponding to brown pigment is     
+% provided by Frederic Baret (EMMAH, INRA Avignon, baret@avignon.inra.fr)   
+% and used with his autorization.                                           
+% ***********************************************************************   
+ 
