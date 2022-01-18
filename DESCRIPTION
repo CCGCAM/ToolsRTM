@@ -1,0 +1,21 @@
+Package: ToolsRTM
+Title: Optimization functions for RT models
+Version: 0.1
+Authors@R: 
+    person(given = "Carlos",
+           family = "Camino",
+           role = c("aut", "cre"),
+           email = "carlos.camino-gonzalez@ec.europa.eu",
+           comment = c(ORCID = "0000-0001-5188-4406"))
+Description: A series of tools for simulating spectra with PROSAIL model.
+Depends: R (>= 4.0.2)
+Import: hsdar, caret, signal
+License: `use_gpl3_license()`
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+VignetteBuilder: knitr
+Suggests: 
+    knitr,
+    rmarkdown

@@ -1,0 +1,19 @@
+---
+title: "Information of InversionOpt"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Information of InversionOpt}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(ToolsRTM)
+```
