@@ -1,4 +1,4 @@
-PRO4SAIL <- function(N,Cab,Car,Ant,Cbrown,Cw,Cm,Prot,NonProt,LIDFa,LIDFb,TypeLidf,lai,q,tts,tto,psi,rsoil){
+PRO4SAIL <- function(N,Cab,Car,Ant,Cbrown,Cw,Cm,Prot,NonProt,LIDFa,LIDFb,TypeLidf,lai,q,tts,tto,psi,rsoil, PROSPECTversion='PRO'){
 
 	# This version has been implemented by Jean-Baptiste F?ret
 	# Jean-Baptiste F?ret takes the entire responsibility for this version
@@ -28,23 +28,21 @@ PRO4SAIL <- function(N,Cab,Car,Ant,Cbrown,Cw,Cm,Prot,NonProt,LIDFa,LIDFb,TypeLid
 #	1.0 Load modules
 #########################################
 
-#rm(list=ls())
-#source('codes/PROSPECT-PRO/prospect_PRO.R')  # PROSPECT-RO
-### other modules  
-#source('codes/PROSAIL-PRO/campbell.m.R')   #	Generate leaf angle distribution from average leaf angle (ellipsoidal) or (a,b) parameters
-#source('codes/PROSAIL-PRO/volscatt.m.R')  #	Generate leaf angle distribution from average leaf angle (ellipsoidal) or (a,b) parameters
-#source('codes/PROSAIL-PRO/Jfunc1.m.R')  #LAI geometry
-#source('codes/PROSAIL-PRO/Jfunc2.m.R')  #LAI geometry  
-#source('codes/PROSAIL-PRO/Jfunc3.m.R')  #LAI geometry
-#source('codes/PROSAIL-PRO/dladgen.m.R')  #LIDF
-#source('codes/PROSAIL-PRO/dcum.R')  #LIDF
-
 ########################################
 #	1.1 Leaf optical properties
 #########################################
+if (PROSPECTversion == 'PRO') {
+  #PROSPECTversion = 'PRO'
+  LRT <- prospect_PRO(N,Cab,Car,Ant,Cbrown,Cw,Cm,Prot,NonProt)
+  print(message('SAIL with PROSPECT-PRO is processing'))
+}  
+else{
+  #PROSPECTversion ='D'
+  LRT <- prospect_DB(N,Cab,Car,Ant,Cbrown,Cw,Cm)
+  print(message('SAIL with PROSPECT-D is processing'))
+}
   
-#LRT<- prospect_DB(1.5,40,8,0,0,0.01,0.009)
-LRT <- prospect_PRO(N,Cab,Car,Ant,Cbrown,Cw,Cm,Prot,NonProt)
+
 rho	 <- 	LRT[[2]]
 tau	 <- 	LRT[[3]]
 

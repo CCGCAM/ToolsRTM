@@ -70,6 +70,7 @@
 # Fluspect-B: A model for leaf fluorescence, reflectance and transmittance
 # spectra. Remote Sens. Environ. 186, 596?615. doi:10.1016/j.rse.2016.09.017
 
+#if (!require("expint")) { install.packages("expint"); require("expint") }  
 prospect_DB<-function(N,Cab,Car,Ant,Brown,Cw,Cm){
 # ***********************************************************************
 # Jacquemoud S., Baret F. (1990), PROSPECT: a model of leaf optical
@@ -83,10 +84,6 @@ prospect_DB<-function(N,Cab,Car,Ant,Brown,Cw,Cm){
 # provided by Frederic Baret (EMMAH, INRA Avignon, baret@avignon.inra.fr)
 # and used with his autorization.
 # ***********************************************************************
-getwd()
-
-if (!require("expint")) { install.packages("expint"); require("expint") }  ## for Exponential Integra
-#source('codes/PROSAIL-PRO/calctav.m.R')
 data <- ToolsRTM::dataSpec_PDB # dataread.table('parameters/dataSpec_PDB.csv',header = T, sep=',')
 lambda  <- data[,1]
 nr      <- data[,2]
@@ -99,7 +96,7 @@ Km      <- data[,8]
 Kall    <- (Cab*Kab+Car*Kcar+Ant*Kant+Brown*KBrown+Cw*Kw+Cm*Km)/N
 j       <- which(Kall>0)# Non-conservative scattering (normal case)
 t1      <- (1-Kall)*exp(-Kall)
-t2      <- Kall^2*expint(Kall)
+t2      <- Kall^2*expint::expint(Kall)
 tau     <- rep(1, length(t1))
 tau[j]  <- t1[j]+t2[j]
 

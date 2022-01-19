@@ -44,11 +44,10 @@
 # Authors: Wout Verhoef, Christiaan van der Tol (tol@itc.nl), Joris Timmermans, 
 # Date: 2007
 # Update from PROSPECT to FLUSPECT: January 2011 (CvdT)
-
+#if (!require("expint")) { install.packages("expint"); require("expint") }  
 prospect_PRO<-function(N,Cab,Car,Anth,Cbrown,Cw,Cm,Prot,NonProt){  
 
-if (!require("expint")) { install.packages("expint"); require("expint") }  ## for Exponential Integra
-#source('PROSPECT-PRO/calctav.m.R')
+
 getwd()
 data <- ToolsRTM::dataSpec_PRO # read.table('parameters/dataSpec_PRO.csv',header = T, sep=',')
 lambda  <- data[,1] ##wavelenght
@@ -66,7 +65,7 @@ Kall    <- (Cab*Kab+Car*Kcar+Anth*Kant+Cbrown*KBrown+Cw*Kw+Cm*Km+Prot*Kprot+NonP
 
 j       <- which(Kall>0)# Non-conservative scattering (normal case)
 t1      <- (1-Kall)*exp(-Kall)
-t2      <- Kall^2*expint(Kall)
+t2      <- Kall^2*expint::expint(Kall)
 tau     <- rep(1, length(t1))
 tau[j]  <- t1[j]+t2[j]
 
