@@ -172,58 +172,62 @@ head(LUT)
 ######################## 2.   CALL  ModelPRO4SAIL  ----     
 ##############################################################################################################################
 
-# rdot: hemispherical-directional reflectance factor in viewing direction
-# rsot: bi-directional reflectance factor
-# rsdt: directional-hemispherical reflectance factor for solar incident flux
-# rddt: bi-hemispherical reflectance factor
-
-library(doParallel)
-## choose number of processors/cores
-no_cores <- detectCores() - 2 
+require(doParallel)
+no_cores <- parallel::detectCores() - 2 
 cl <- makeCluster(no_cores)
 registerDoParallel(cl)
 
-
 start_time <- Sys.time()
+sims<-ToolsRTM::prospectsail(LUT = LUT,rsoil = rsoil0, PROSPECTversion = 'PRO')
 
-#### Inversion without LMA data info
-sim.rfl<-list()
-sims<-foreach(i=1:n_cases) %dopar% {
-    #data.prosail<-PRO4SAIL(N,Cab,Car,Ant,Cbrown,Cw,Cm,LIDFa,LIDFb,TypeLidf,LAI,hspot,tts,tto,psi,rsoil0)
-    data.prosail<-ToolsRTM::PRO4SAIL(LUT[i,1],LUT[i,2],LUT[i,3],LUT[i,4],LUT[i,5],LUT[i,6],LUT[i,7],LUT[i,8],LUT[i,9],
-                           LUT[i,10],LUT[i,11],LUT[i,12],LUT[i,13],LUT[i,14],LUT[i,15],LUT[i,16],LUT[i,17],rsoil0[[i]]) #rsoil[[i]]
-    
-    #data.prosail is a  list(rdot,rsot,rddt,rsdt)
-    rdot<-data.prosail[[1]]
-    rsot<-data.prosail[[2]]
-    
-    ##############################
-    #	direct / diffuse light	##
-    ##############################
-    # the direct and diffuse light are taken into account as proposed by:
-    # Francois et al. (2002) Conversion of 400?1100 nm vegetation albedo
-    # measurements into total shortwave broadband albedo using a canopy
-    # radiative transfer model, Agronomie
-    # Es = direct
-    # Ed = diffuse
-    
-    Es  <- data[,9]
-    Ed  <- data[,10]
-    rd  <- pi/180
-    skyl	 <- 	0.847- 1.61*sin((90-LUT$tts[i])*rd)+ 1.04*sin((90-LUT$tts[i])*rd)*sin((90-LUT$tts[i])*rd)# # diffuse radiation
-    
-    PARdiro	 <- 	(1-skyl)*Es
-    PARdifo	 <- 	(skyl*Ed)
-    #print(paste('simulation ',i,sep=''))
-    
-    resv	 <-  (rdot*PARdifo+ rsot*PARdiro)/(PARdiro+PARdifo)  # resv : directional reflectance
-    sim.rfl[[i]]<-resv
-        
-    }
 stopCluster(cl)
 end_time <- Sys.time()
-end_time - start_time
+print(end_time - start_time)
 
+## choose number of processors/cores
+no_cores <- parallel::detectCores() - 2 
+cl <- parallel::makeCluster(no_cores)
+doParallel::registerDoParallel(cl)
+start_time <- Sys.time()
+
+
+sim.rfl<-list()
+sims<-foreach(i=1:n_cases) %dopar% {
+  data.prosail<-ToolsRTM::PRO4SAIL(LUT[i,1],LUT[i,2],LUT[i,3],LUT[i,4],LUT[i,5],LUT[i,6],LUT[i,7],LUT[i,8],LUT[i,9],
+                         LUT[i,10],LUT[i,11],LUT[i,12],LUT[i,13],LUT[i,14],LUT[i,15],LUT[i,16],LUT[i,17],
+                         rsoil[[i]],PROSPECTversion = 'PRO')
+  #data.prosail is a  list(rdot,rsot,rddt,rsdt)
+  rdot<-data.prosail[[1]]
+  rsot<-data.prosail[[2]]
+  
+  ##############################
+  #	direct / diffuse light	##
+  ##############################
+  # the direct and diffuse light are taken into account as proposed by:
+  # Francois et al. (2002) Conversion of 400?1100 nm vegetation albedo
+  # measurements into total shortwave broadband albedo using a canopy
+  # radiative transfer model, Agronomie
+  # Es = direct
+  # Ed = diffuse
+  
+  Es  <- data[,9]
+  Ed  <- data[,10]
+  rd  <- pi/180
+  skyl	 <- 	0.847- 1.61*sin((90-LUT$tts[i])*rd)+ 1.04*sin((90-LUT$tts[i])*rd)*sin((90-LUT$tts[i])*rd)# # diffuse radiation
+  
+  PARdiro	 <- 	(1-skyl)*Es
+  PARdifo	 <- 	(skyl*Ed)
+  #print(paste('simulation ',i,sep=''))
+  
+  resv	 <-  (rdot*PARdifo+ rsot*PARdiro)/(PARdiro+PARdifo)  # resv : directional reflectance
+  sim.rfl[[i]]<-resv
+  
+} ##end paralle
+
+parallel::stopCluster(cl)
+end_time <- Sys.time()
+final_time= end_time - start_time
+print(final_time)
 #######################################################################################################################################
 ######################## 3.   Convert Simulations to Hsdar packages ----     
 ##############################################################################################################################
