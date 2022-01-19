@@ -1,10 +1,10 @@
 
-InversionOpt_nOpt<-function (rfl.sensor=NULL,rfl.prosail=NULL,LUT=NULL,wave=NULL, n=NULL,method=NULL,nOpt=NULL) 
+InversionOpt<-function (rfl.sensor=NULL,rfl.prosail=NULL,LUT=NULL,wave=NULL, n=NULL,method=NULL,nOpt=NULL) 
 {
   ##rfl.sensor is a matrix
   ##rfl.prosail is a matrix
   ### wave wavelengths
-  ### n_cases =n (number of simulations)
+  ### nSamples =n (number of simulations)
   ##method is the method (opt ='merit-RMSE','merit-DWT',merit-1stD')
   ## LUT = Look-up table with the inputs
   ###############################################################################
@@ -37,7 +37,7 @@ InversionOpt_nOpt<-function (rfl.sensor=NULL,rfl.prosail=NULL,LUT=NULL,wave=NULL
     progress_bar = txtProgressBar(min=0, max=dim(rfl.sensor)[1], style = 3, char="=")
     for (i in (1:dim(rfl.sensor)[1])){
       rfl.sensor.i<-rfl.sensor[i,]
-      for (j in 1:n_cases){
+      for (j in 1:nSamples){
         rfl.prosail.i<-rfl.prosail[j,]
         rmse<-rmse_f(rfl.prosail.i,rfl.sensor.i)
         RMSE_sim[j]=rmse
@@ -45,7 +45,7 @@ InversionOpt_nOpt<-function (rfl.sensor=NULL,rfl.prosail=NULL,LUT=NULL,wave=NULL
         
       }
       RSME_j<-do.call(rbind, lapply(RMSE_sim, as.data.frame))
-      #Table.rmse<-cbind(ID_lut = 1:n_cases, RSME_j)
+      #Table.rmse<-cbind(ID_lut = 1:nSamples, RSME_j)
       Table.rmse<-cbind(ID_lut = 1:dim(LUT)[1], RSME_j)
       colnames(Table.rmse)<-c('ID_lut','RMSE')
       Table.rmse<-cbind(Table.rmse,LUT)
@@ -85,7 +85,7 @@ InversionOpt_nOpt<-function (rfl.sensor=NULL,rfl.prosail=NULL,LUT=NULL,wave=NULL
     progress_bar = txtProgressBar(min=0, max=dim(rfl.sensor)[1], style = 3, char="=")
     for (i in (1:dim(rfl.sensor)[1])){
       rfl.sensor.i<-rfl.sensor[i,]
-      for (j in 1:n_cases){
+      for (j in 1:nSamples){
         rfl.prosail.i<-rfl.prosail[j,]
         wt.dwt.sim <- dwt(rfl.prosail.i, filter="haar", fast = T)
         wt.dwt.sim<-as.vector(unlist(wt.dwt.sim@W))
@@ -97,7 +97,7 @@ InversionOpt_nOpt<-function (rfl.sensor=NULL,rfl.prosail=NULL,LUT=NULL,wave=NULL
         
       }
       RSME_j<-do.call(rbind, lapply(RMSE_sim, as.data.frame))
-      #Table.rmse<-cbind(ID_lut = 1:n_cases, RSME_j)
+      #Table.rmse<-cbind(ID_lut = 1:nSamples, RSME_j)
       Table.rmse<-cbind(ID_lut = 1:dim(LUT)[1], RSME_j)
       colnames(Table.rmse)<-c('ID_lut','RMSE')
       ## order for spectrum
@@ -146,7 +146,7 @@ InversionOpt_nOpt<-function (rfl.sensor=NULL,rfl.prosail=NULL,LUT=NULL,wave=NULL
     
     for (i in (1:dim(d1.sensor)[1])){
       d1.sensor.i<-d1.sensor[i,]
-      for (j in 1:n_cases){
+      for (j in 1:nSamples){
         d1.sim.i<-d1.sim[j,]
         rmse<-rmse_f(d1.sim.i,d1.sensor.i)
         RMSE_sim[j]=rmse
@@ -154,7 +154,7 @@ InversionOpt_nOpt<-function (rfl.sensor=NULL,rfl.prosail=NULL,LUT=NULL,wave=NULL
         
       }
       RSME_j<-do.call(rbind, lapply(RMSE_sim, as.data.frame))
-      #Table.rmse<-cbind(ID_lut = 1:n_cases, RSME_j)
+      #Table.rmse<-cbind(ID_lut = 1:nSamples, RSME_j)
       Table.rmse<-cbind(ID_lut = 1:dim(LUT)[1], RSME_j)
       colnames(Table.rmse)<-c('ID_lut','RMSE')
       Table.rmse<-cbind(Table.rmse,LUT)
