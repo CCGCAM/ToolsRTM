@@ -5,26 +5,13 @@ rm(list= ls())
 #	0. Libraries   -----    
 ##############################################################################################################################
 
-if (!require("raster")) { install.packages("raster"); require("raster") }  ### hsdar for PROSAIL
 if (!require("hsdar")) { install.packages("hsdar"); require("hsdar") }  ### hsdar for PROSAIL
 if (!require("RColorBrewer")) { install.packages("RColorBrewer"); require("RColorBrewer") }  ### colors
-if (!require("pls")) { install.packages("pls"); require("pls") }  ### PLSR
 if (!require("signal")) { install.packages("signal"); require("signal") }  ### interpolations
-if (!require("prospectr")) { install.packages("prospectr"); require("prospectr") }  ## for resample2
-if (!require("MASS")) { install.packages("MASS"); require("MASS") }  ## for smoth t the rfl from leaves
-if (!require("caret")) { install.packages("caret"); require("caret") }  ##  models (random forest)
-
-if (!require("nnet")) { install.packages("nnet"); require("nnet") }  ## nNEt models
-if (!require("NeuralNetTools")) { install.packages("NeuralNetTools"); require("NeuralNetTools") }  ## nNEt models
-if (!require("neuralnet")) { install.packages("neuralnet"); require("neuralnet") }  ## nNEt models
-if (!require("e1071")) { install.packages("e1071"); require("e1071") }  ### SVM model
 if (!require("parallel")) { install.packages("parallel"); require("parallel") }  ### Paralell
 if (!require("doParallel")) { install.packages("doParallel"); require("doParallel") }  ### Paralell foreach and caret
-
 # My packages in R
 if (!require("ToolsRTM")) { install.packages("ToolsRTM"); require("ToolsRTM") }  ### Paralell foreach and caret
-
-
 
 ##############################################################################################################################
 ######################## 1. generate the  LUT matrix -----    
@@ -33,10 +20,8 @@ if (!require("ToolsRTM")) { install.packages("ToolsRTM"); require("ToolsRTM") } 
 version<-'Opt_v1'
 n_sim<-'500'
 set.seed(1256)
-n_cases<-500
-n_casesNorm<-n_cases*4
-
-ID=(1:n_cases)    
+nSamples<-500
+ID=(1:nSamples)    
 
 #####################################################################################
 #	1.1. Soil form PRSOAIL model
@@ -51,148 +36,71 @@ Rsoil2 <- data[,12]  # rsoil2 = wet soil
 #rsoil0  <- psoil*Rsoil1+(1-psoil)*Rsoil2
 #plot(rsoil0)
 set.seed(1256)
-psoil	 <-  runif(n_cases, 0, 1) 
+psoil	 <-  runif(nSamples, 0, 0.5) 
 rsoil0<-list()
-for (i in c(1:n_cases)){
+for (i in c(1:nSamples)){
   rsoil<- c(psoil[i]*Rsoil1+(1-psoil[i])*Rsoil2)
   rsoil0[[i]]<-rsoil#
 }
 
-
 ########################################
-#	1.2 PROSPECT-RPO Leaf properties
-#########################################
-### uniforme distribuccion
-N<-runif(n_cases, 1.9, 3)      # structure coefficient (mesophyll)
-hist(N)
-##### normal respecto a una media y sd es Gaussinana
-N<-rnorm(n_cases, mean=2.5, sd=0.55)
-hist(N)
-
-N<-gauss_byMin_Max(n=n_cases, m=1.5, s=0.25, lwr=1.0, upr=3, nnorm=n_casesNorm)
-hist(N)
-
-Cab<-runif(n_cases, 20,50)   # chlorophyll content (?g.cm-2)
-#Cab<-rnorm(n_cases, mean=35, sd=15)
-Cab<-gauss_byMin_Max(n=n_cases, m=35, s=5, lwr=20, upr=50, nnorm=n_casesNorm)
-hist(Cab)
-#Cab<-rnorm(n_cases, mean=35, sd=15)
-#Car = correlatedValue(x=Cab/4, r=.8)
-
-Car<-runif(n_cases, 0,25) 
-#Car = correlatedValue(x=Cab/4, r=.8)
-plot(Car,Cab)
-#summary(Car)
-#Ant = correlatedValue(x=Car/1.5, r=.8)
-#Ant = abs(Ant-max(Ant))
-Ant<-runif(n_cases, 0,7) 
-hist(Ant)
-#summary(Ant)
-#plot(Car,Ant)
-#plot(Cab,Ant)
-#Car<-runif(n_cases, 0, 15)   # carotenoid content (?g.cm-2)
-#Ant<-runif(n_cases, 0,7)   # Anthocyanins content (?g.cm-2)
-Cbrown=0#runif(n_cases,0.0,1) # value fixed 0 brown pigment content (arbitrary units)
-#Cw<-runif(n_cases, 0.005,0.02) ## default 0.009  # EWT  (g.cm-2)
-Cw<-rnorm(n_cases, mean=0.0116, sd=0.002)
-hist(Cw)
-#summary(Cw)
-
-Cm<-runif(n_cases, 0.002,0.01) ## default 0.012  LMA (g.cm-2)
-#Cm<-rnorm(n_cases, mean=0.019, sd=0.002)
-hist(Cm)
-summary(Cm)
-### leaf dry matter (LMA)  in  (g.cm-2) ### Si Fijamos Prot=0 and NonProt=0 es PROSPECT-D 
-# LMA == PROt + NonProtet (CBC) 
-# LMA == proteins and carbon-based constituents (CBC)
-Prot   = 0 #runif(n_cases, 0.000001,0.0015)	# Protein content (g.cm-2) ## default 0.001
-NonProt    =  0 #runif(n_cases, 0.000001,0.0015)	# CBC Carbon-based constituents (g.cm-2) ## default 0.009
-alpha_pro=runif(n_cases, 30,40) 
-
-########################################
-#	1.3  LIDFs
+#	1.2 Get parameters with distribution
 #########################################
 
-TypeLidf <- 2
+# define min and max values for all parameters defined in TypeDistrib
+minval <- data.frame('N' = 1.0,'Cab'=5,'Car'=0,'Ant' = 0,'Cbrown'= 0,
+                     'Cw' = 0.001,'Prot' =  0.00001, 'NonProt' = 0.00001,
+                     'LIDFa' = 10, 'LAI' = 0.5)
 
-# if 2-parameters LIDF: TypeLidf=1
-if (TypeLidf==1){
-  # LIDFa LIDF parameter a, which controls the average leaf slope
-  # LIDFb LIDF parameter b, which controls the distribution's bimodality
-  #	LIDF type 		a 		 b
-  #	Planophile 		1		 0
-  #	Erectophile    -1	 	 0
-  #	Plagiophile 	0		-1
-  #	Extremophile 	0		 1
-  #	Spherical 	   -0.35 	-0.15
-  #	Uniform 0 0
-  # 	requirement: |LIDFa| + |LIDFb| < 1
-  LIDFa	 <- 	-0.35
-  LIDFb	 <- 	-0.15
-  
-  # if ellipsoidal LIDF: TypeLidf=2
-} else if (TypeLidf==2){
-  # 	LIDFa	= average leaf angle (degrees) 0 = planophile	/	90 = erectophile
-  # 	LIDFb = 0
-  LIDFa	 <- 	runif(n_cases, 40,70)#sample(seq(from=30, to=60, by=0.05), size=n_cases, replace=TRUE)
-  LIDFb	 <- 	0
-}
+# define min and max values for all parameters defined in TypeDistrib
+maxval <- data.frame('N' = 3,'Cab'=70,'Car'=30,'Ant' = 7,'Cbrown'= 0.5,
+                     'Cw' = 0.015,'Prot' =  0.0015, 'NonProt' = 0.0015,
+                     'LIDFa' = 70, 'LAI' = 3)
 
-###################################################
-#	1.4  4SAIL canopy structure parameteres 	
-##################################################
+TypeDistrib<-data.frame('N' = 'Gaussian','Cab'='Gaussian','Car'='Gaussian',
+                        'Ant' = 'Uniform','Cbrown'= 'Uniform',
+                        'Cw' = 'Uniform',
+                        'Prot' =  'Uniform', 'NonProt' = 'Uniform',
+                        'LIDFa' = 'Uniform', 'LAI' = 'Gaussian')
+# define mean and STD for gaussian distributions
+Mean_gauss <- data.frame('N'=2.5,'Cab'=60,'Car'=8,'LAI' = 2.25)
+std_gauss <- Mean_gauss/2.0
 
-LAI<-runif(n_cases, 1.5, 3)   # leaf area index (m^2/m^2)
-hist(LAI)
-#LAI<-rnorm(n_cases, mean=3, sd=0.25)
-#hist(LAI)
-summary(LAI)
-hspot = 0.01                # hot spot
-tts = 27#runif(n_cases,0,27)#25,45)   # solar zenith angle (?)
-tto = 0     #runif(n_cases,0,45) #15 #65    #tto Observer zenith angle
-psi = 0               #Relative azimuth angle
+data.LUT<-get_distributionLUT(minval=minval,maxval=maxval,
+                              nSamples=nSamples,TypeDistrib=TypeDistrib,
+                              Mean_gauss=Mean_gauss, Std_gauss=std_gauss,DepCab = T)
+#plot(data.LUT$Cab,data.LUT$Car)
+names(data.LUT)
 
 ###################################################
 #	1.3  Create the LUT table 	
 ##################################################
 
-LUT<-data.frame(N,Cab,Car,Ant,Cbrown,Cw,Cm,Prot,NonProt,#alpha_pro,
-                LIDFa,rep(LIDFb,length(n_cases)),rep(TypeLidf,length(n_cases)),LAI,
-                hspot,tts, rep(tto,length(n_cases)), rep(psi,length(n_cases)))
+LUT<-data.frame(data.LUT$N,data.LUT$Cab,data.LUT$Car,data.LUT$Ant,data.LUT$Cbrown,
+                data.LUT$Cw,Cm=0,data.LUT$Prot,data.LUT$NonProt,#alpha_pro,
+                data.LUT$LIDFa,LIDFb=0,TypeLidf=2,data.LUT$LAI,
+                hspot=0.01,tts=20, tto=0, psi=0)
 
 colnames(LUT)<-c("N","Cab",'Car','Ant',"Cbrown","Cw","Cm","Prot","NonProt",#"alpha_pro",
                  "LIDFa","LIDFb","TypeLidf","LAI",
                  "hspot","tts","tto","psi")
 
+head(LUT)
 #filename <- paste('Tables/LUT/LUT_PROSAIL-PRO_',version,'_',n_sim,'.txt', sep = "")
 #write.table(LUT, file = filename, sep=",", row.names = FALSE, col.names = T,append = F)
-head(LUT)
 
 ##############################################################################################################################
 ######################## 2.   CALL  ModelPRO4SAIL  ----     
 ##############################################################################################################################
 
-require(doParallel)
-no_cores <- parallel::detectCores() - 2 
+## choose number of processors/cores
+no_cores <- detectCores() - 2 
 cl <- makeCluster(no_cores)
 registerDoParallel(cl)
 
 start_time <- Sys.time()
-sims<-ToolsRTM::prospectsail(LUT = LUT,rsoil = rsoil0, PROSPECTversion = 'PRO')
-
-stopCluster(cl)
-end_time <- Sys.time()
-print(end_time - start_time)
-
-## choose number of processors/cores
-no_cores <- parallel::detectCores() - 2 
-cl <- parallel::makeCluster(no_cores)
-doParallel::registerDoParallel(cl)
-start_time <- Sys.time()
-
-
 sim.rfl<-list()
-sims<-foreach(i=1:n_cases) %dopar% {
+sims<-foreach(i=1:nSamples) %dopar% {
   data.prosail<-ToolsRTM::PRO4SAIL(LUT[i,1],LUT[i,2],LUT[i,3],LUT[i,4],LUT[i,5],LUT[i,6],LUT[i,7],LUT[i,8],LUT[i,9],
                          LUT[i,10],LUT[i,11],LUT[i,12],LUT[i,13],LUT[i,14],LUT[i,15],LUT[i,16],LUT[i,17],
                          rsoil[[i]],PROSPECTversion = 'PRO')
@@ -224,10 +132,9 @@ sims<-foreach(i=1:n_cases) %dopar% {
   
 } ##end paralle
 
-parallel::stopCluster(cl)
+stopCluster(cl)
 end_time <- Sys.time()
-final_time= end_time - start_time
-print(final_time)
+print(end_time - start_time)
 #######################################################################################################################################
 ######################## 3.   Convert Simulations to Hsdar packages ----     
 ##############################################################################################################################
@@ -236,12 +143,12 @@ sim.canopy<-do.call(rbind,sims)
 wave<-data[,1]
 #soil.matrix<-rbind(soil.matrix,t(soil.scope_2nm), t(soil.scope_3nm))
 Spec.simula<- speclib(sim.canopy, wave)
-IDs<-c(1:n_cases)
+IDs<-c(1:nSamples)
 ### Add IDs
 idSpeclib(Spec.simula) <- as.character(IDs)
 SI(Spec.simula) <- LUT
 mask(Spec.simula)<-c(801,990,1098,1190,1311,1505,1680,2600)
-plot(Spec.simula)
+#plot(Spec.simula)
 
 #save.image(paste('Tables/Sims/Simulations_',version,'.RData',sep=''))
 
@@ -298,12 +205,12 @@ par(mfrow=c(1,1),  mar = c(5,5,1.1,1),bg= "white",
     font.lab=2, cex.lab=1.0)
 
 
-plot(NA,NA, lwd=2,lty=2,type='l',col='forestgreen',ylim=c(0,0.6),xlim=c(400,800),xlab=axis_x,ylab=axis_y)
+plot(NA,NA, lwd=2,lty=2,type='l',col='forestgreen',ylim=c(0,0.6),xlim=c(400,1800),xlab=axis_x,ylab=axis_y)
 rect(par("usr")[1],par("usr")[3],par("usr")[2],par("usr")[4],col = "gray")
 par(new=T)
-plot(Spec.simula, lwd=2,lty=2,type='l',col='navyblue',ylim=c(0,0.6),xlim=c(400,800),xlab=axis_x,ylab=axis_y)
+plot(Spec.simula, lwd=2,lty=2,type='l',col='navyblue',ylim=c(0,0.6),xlim=c(400,1800),xlab=axis_x,ylab=axis_y)
 par(new=T)
-plot(Spec.data, lwd=2,lty=2,type='l',col='red',ylim=c(0,0.6),xlim=c(400,800),xlab=axis_x,ylab=axis_y)
+plot(Spec.data, lwd=2,lty=2,type='l',col='red',ylim=c(0,0.6),xlim=c(400,1800),xlab=axis_x,ylab=axis_y)
 
 legend("topright", legend = c(expression(bold('PROSAIL-PRO')),expression(bold('Dataset'))),
        fill=c('navyblue','red'),cex=0.8)
@@ -330,11 +237,11 @@ rfl.prosail <- as.matrix(spectra(Spec.simula))
 ###################################################################################################################################
 ###################################################################################################################################
 
-inv.RMSE<-InversionOpt_nOpt(rfl.sensor=rfl.sensor, #observado
+inv.RMSE<-ToolsRTM::InversionOpt(rfl.sensor=rfl.sensor, #observado
                             rfl.prosail=rfl.prosail, #500
                             LUT=LUT,
                             wave=wave.vnir.swir, 
-                            n=n_cases, #500
+                            n=nSamples, #500
                             method='merit-RMSE', 
                             nOpt=100)
 
@@ -342,7 +249,7 @@ inv.RMSE<-InversionOpt_nOpt(rfl.sensor=rfl.sensor, #observado
 Table.bestOpt_RMSE<-inv.RMSE[[1]]
 print(Table.bestOpt_RMSE)
 #filename=paste('Tables/Results/1-Inversion_',version,'_',n_sim,'.csv')
-w#rite.table(Table.bestOpt_RMSE, file = filename, sep=",", row.names = F, col.names = T,append = F)
+#rite.table(Table.bestOpt_RMSE, file = filename, sep=",", row.names = F, col.names = T,append = F)
 
 method=c('merit-RMSE','merit-DWT','merit-1stD')
 
