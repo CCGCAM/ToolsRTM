@@ -9,7 +9,7 @@ Authors@R:
            comment = c(ORCID = "0000-0001-5188-4406"))
 Description: A series of tools for simulating spectra with PROSAIL model.
 Depends: R (>= 4.0.2)
-Import: hsdar, caret, signal, expint, doParallel
+Import: hsdar, caret, signal, expint, doParallel, wavelets, parallel
 License: `use_gpl3_license()`
 Encoding: UTF-8
 LazyData: true
