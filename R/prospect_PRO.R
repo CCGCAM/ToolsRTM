@@ -13,16 +13,16 @@
 #       - Car = carotenoids content in ?g/cm?
 #       - Anth = Anthocyanin content in nmol/cm?
 #       - Cbrown= brown pigments content in arbitrary units
-#       - Cw  = equivalent water thickness in g/cm? or cm
-#       - Cm  = dry matter content in g/cm?
+#       - EWT  = equivalent water thickness in g/cm? or cm
+#       - LMA  = dry matter content in g/cm?
 #       - Prot = protein content g/cm?
-#       - NonProt= non protein dry matter content in g/cm?
+#       - CBC= non protein dry matter content in g/cm?
 #
 # Here are some examples observed during the LOPEX'93 experiment on
 # fresh (F) and dry (D) leaves :
 #
 # ---------------------------------------------
-#                N     Cab     Cw        Cm    
+#                N     Cab     EWT        LMA    
 # ---------------------------------------------
 # min          1.000    0.0  0.004000  0.001900
 # max          3.000  100.0  0.040000  0.016500
@@ -44,8 +44,26 @@
 # Authors: Wout Verhoef, Christiaan van der Tol (tol@itc.nl), Joris Timmermans, 
 # Date: 2007
 # Update from PROSPECT to FLUSPECT: January 2011 (CvdT)
-#if (!require("expint")) { install.packages("expint"); require("expint") }  
-prospect_PRO<-function(N,Cab,Car,Anth,Cbrown,Cw,Cm,Prot,NonProt){  
+
+#'
+#' @param SpecPROSPECT list. Includes optical constants
+#' refractive index, specific absorption coefficients and corresponding spectral bands
+#' @param N numeric. Leaf structure parameter
+#' @param Cab numeric. Chlorophyll content (microg.cm-2)
+#' @param Car numeric. Carotenoid content (microg.cm-2)
+#' @param Ant numeric. Anthocyain content (microg.cm-2)
+#' @param Cbrown numeric. Brown pigment content (Arbitrary units)
+#' @param EWT numeric. Equivalent Water Thickness (g.cm-2)
+#' @param LMA numeric. Leaf Mass per Area (g.cm-2)
+#' @param Prot numeric. protein content  (g.cm-2)
+#' @param CBC numeric. NonProtCarbon-based constituent content (g.cm-2)
+#' @param alpha numeric. Solid angle for incident light at surface of leaf
+#'
+#' @return leaf directional-hemisphrical reflectance and transmittance
+#' @importFrom expint expint
+#' @export
+
+prospect_PRO<-function(N,Cab,Car,Anth,Cbrown,EWT,LMA,alpha,Prot,CBC){  
 
 
 getwd()
@@ -61,11 +79,12 @@ Km      <- data[,8] ## specific absorption coefficient of dry matter (cm2.g-1)
 Kprot   <- data[,9] ## specific absorption coefficient of proteins (cm2.g-1)   
 Knonprot<- data[,10] ## specific absorption coefficient of non proteic dry matter (cm2.g-1)  
 
-Kall    <- (Cab*Kab+Car*Kcar+Anth*Kant+Cbrown*KBrown+Cw*Kw+Cm*Km+Prot*Kprot+NonProt*Knonprot)/N
+Kall    <- (Cab*Kab+Car*Kcar+Anth*Kant+Cbrown*KBrown+EWT*Kw+LMA*Km+Prot*Kprot+CBC*Knonprot)/N
 
 j       <- which(Kall>0)# Non-conservative scattering (normal case)
 t1      <- (1-Kall)*exp(-Kall)
 t2      <- Kall^2*expint::expint(Kall)
+#t2      <- Kall^2*expint(Kall)
 tau     <- rep(1, length(t1))
 tau[j]  <- t1[j]+t2[j]
 
@@ -78,7 +97,8 @@ tau[j]  <- t1[j]+t2[j]
 # ***********************************************************************
 # reflectivity and transmissivity at the interface
 #-------------------------------------------------
-talf    <- calctav(40,nr)
+#talf    <- calctav(40,nr) ##default alpha=40
+talf    <- calctav(alpha,nr)
 ralf    <- 1-talf
 t12     <- calctav(90,nr)
 r12     <- 1-t12
@@ -125,7 +145,7 @@ Rsub[j]	 <-  1-Tsub[j]
 # Reflectance and transmittance of the leaf: combine top layer with next N-1 layers
 denom   <- 1-Rsub*r
 tran    <- Ta*Tsub/denom
-refl    <- Ra+Ta*Rsub*t/denom
+refl    <- Ra+(Ta*Rsub*t)/denom
 
 LRT<- list(lambda,refl, tran)
 return(LRT)
