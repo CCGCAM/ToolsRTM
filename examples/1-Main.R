@@ -49,18 +49,18 @@ for (i in c(1:nSamples)){
 
 # define min and max values for all parameters defined in TypeDistrib
 minval <- data.frame('N' = 1.0,'Cab'=5,'Car'=0,'Ant' = 0,'Cbrown'= 0,
-                     'Cw' = 0.001,'Prot' =  0.00001, 'NonProt' = 0.00001,
-                     'LIDFa' = 10, 'LAI' = 0.5)
+                     'EWT' = 0.001,'Prot' =  0.00001, 'CBC' = 0.00001,
+                     'LIDFa' = 40, 'LAI' = 0.5)
 
 # define min and max values for all parameters defined in TypeDistrib
 maxval <- data.frame('N' = 3,'Cab'=70,'Car'=30,'Ant' = 7,'Cbrown'= 0.5,
-                     'Cw' = 0.015,'Prot' =  0.0015, 'NonProt' = 0.0015,
+                     'EWT' = 0.015,'Prot' =  0.0015, 'CBC' = 0.0015,
                      'LIDFa' = 70, 'LAI' = 3)
 
 TypeDistrib<-data.frame('N' = 'Gaussian','Cab'='Gaussian','Car'='Gaussian',
                         'Ant' = 'Uniform','Cbrown'= 'Uniform',
-                        'Cw' = 'Uniform',
-                        'Prot' =  'Uniform', 'NonProt' = 'Uniform',
+                        'EWT' = 'Uniform',
+                        'Prot' =  'Uniform', 'CBC' = 'Uniform',
                         'LIDFa' = 'Uniform', 'LAI' = 'Gaussian')
 # define mean and STD for gaussian distributions
 Mean_gauss <- data.frame('N'=2.5,'Cab'=60,'Car'=8,'LAI' = 2.25)
@@ -77,20 +77,27 @@ names(data.LUT)
 ##################################################
 
 LUT<-data.frame(data.LUT$N,data.LUT$Cab,data.LUT$Car,data.LUT$Ant,data.LUT$Cbrown,
-                data.LUT$Cw,Cm=0,data.LUT$Prot,data.LUT$NonProt,#alpha_pro,
-                data.LUT$LIDFa,LIDFb=0,TypeLidf=2,data.LUT$LAI,
-                hspot=0.01,tts=20, tto=0, psi=0)
+                data.LUT$EWT,LMA=0.00,alpha=40,
+                ## PROSPECT-PRO
+                data.LUT$Prot,data.LUT$CBC,
+                ## input for fourSAIL
+                data.LUT$LIDFa,
+                LIDFb=0,TypeLidf=2,
+                data.LUT$LAI,hspot=0.01,tts=20, tto=0, psi=0,
+                ### input for 4SAIL2
+                fraction_brown = 0.5, diss = 0.0, Cv = 1,Zeta = 1)
 
-colnames(LUT)<-c("N","Cab",'Car','Ant',"Cbrown","Cw","Cm","Prot","NonProt",#"alpha_pro",
+colnames(LUT)<-c("N","Cab",'Car','Ant',"Cbrown","EWT","LMA","alpha","Prot","CBC",
                  "LIDFa","LIDFb","TypeLidf","LAI",
-                 "hspot","tts","tto","psi")
+                 "hspot","tts","tto","psi",
+                 "fraction_brown","diss" ,"Cv","Zeta")
 
 head(LUT)
 #filename <- paste('Tables/LUT/LUT_PROSAIL-PRO_',version,'_',n_sim,'.txt', sep = "")
 #write.table(LUT, file = filename, sep=",", row.names = FALSE, col.names = T,append = F)
 
 ##############################################################################################################################
-######################## 2.   CALL  ModelPRO4SAIL  ----     
+######################## 2.   CALL  PROSPECT + Model4SAIL  ----     
 ##############################################################################################################################
 
 ## choose number of processors/cores
@@ -101,40 +108,82 @@ registerDoParallel(cl)
 start_time <- Sys.time()
 sim.rfl<-list()
 sims<-foreach(i=1:nSamples) %dopar% {
-  data.prosail<-ToolsRTM::PRO4SAIL(LUT[i,1],LUT[i,2],LUT[i,3],LUT[i,4],LUT[i,5],LUT[i,6],LUT[i,7],LUT[i,8],LUT[i,9],
-                         LUT[i,10],LUT[i,11],LUT[i,12],LUT[i,13],LUT[i,14],LUT[i,15],LUT[i,16],LUT[i,17],
-                         rsoil[[i]],PROSPECTversion = 'PRO')
+  data.prosail<-ToolsRTM::m4SAIL(inputLUT=LUT[i,],rsoil=rsoil[[i]],PROSPECTversion = 'D')
+ 
+   #data.prosail is a  list(rdot,rsot,rddt,rsdt)
+  rdot<-data.prosail[[1]]
+  rsot<-data.prosail[[2]]
+  
+  #Computes bidirectional reflectance factor based on outputs from PROSAIL and sun position
+  BRF<-ToolsRTM::Compute_BRF(rdot=rdot,rsot=rsot,tts=LUT[i,'tts'],SpecATM_Sensor=ToolsRTM::dataSpec_PDB)
+  #
+  sim.rfl[[i]]<-BRF
+  
+} ##end paralle
+stopCluster(cl)
+end_time <- Sys.time()
+print(end_time - start_time)
+#######################################################################################################################################
+######################## 2.2   Convert Simulations to Hsdar packages ----     
+##############################################################################################################################
+
+sim.canopy<-do.call(rbind,sims)
+wave<-data[,1]
+#soil.matrix<-rbind(soil.matrix,t(soil.scope_2nm), t(soil.scope_3nm))
+Spec.simula<- speclib(sim.canopy, wave)
+IDs<-c(1:nSamples)
+### Add IDs
+idSpeclib(Spec.simula) <- as.character(IDs)
+SI(Spec.simula) <- LUT
+mask(Spec.simula)<-c(801,990,1098,1190,1311,1505,1680,2600)
+plot(Spec.simula)
+
+##############################################################################################################################
+######################## 2.2   CALL  PROSPECT + Model4SAIL2  ----     
+##############################################################################################################################
+
+# define a couple of leaf chemical constituents corresponding to green and brown leaves
+
+LUT_Green_BrownVeg<-data.frame(N=c(1.5, 2), Cab=c(40,5),Car=c(8,5),Ant=c(0,1),Cbrown=c(0,1),
+                               EWT=c(0.01, 0.005), LMA=c(0.009,0.008), alpha=c(40,40),
+                               Prot=c(0 , 0),CBC=c(0 , 0))
+
+## choose number of processors/cores
+no_cores <- detectCores() - 2 
+cl <- makeCluster(no_cores)
+registerDoParallel(cl)
+
+start_time <- Sys.time()
+sim.rfl<-list()
+sims<-foreach(i=1:nSamples) %dopar% {
+  data.prosail<-ToolsRTM::m4SAIL2(LUT_GB=LUT_Green_BrownVeg,inputLUT=LUT[i,],rsoil=rsoil[[i]],PROSPECTversion = 'PRO')
   #data.prosail is a  list(rdot,rsot,rddt,rsdt)
   rdot<-data.prosail[[1]]
   rsot<-data.prosail[[2]]
   
-  ##############################
-  #	direct / diffuse light	##
-  ##############################
-  # the direct and diffuse light are taken into account as proposed by:
-  # Francois et al. (2002) Conversion of 400?1100 nm vegetation albedo
-  # measurements into total shortwave broadband albedo using a canopy
-  # radiative transfer model, Agronomie
-  # Es = direct
-  # Ed = diffuse
-  
-  Es  <- data[,9]
-  Ed  <- data[,10]
-  rd  <- pi/180
-  skyl	 <- 	0.847- 1.61*sin((90-LUT$tts[i])*rd)+ 1.04*sin((90-LUT$tts[i])*rd)*sin((90-LUT$tts[i])*rd)# # diffuse radiation
-  
-  PARdiro	 <- 	(1-skyl)*Es
-  PARdifo	 <- 	(skyl*Ed)
-  #print(paste('simulation ',i,sep=''))
-  
-  resv	 <-  (rdot*PARdifo+ rsot*PARdiro)/(PARdiro+PARdifo)  # resv : directional reflectance
-  sim.rfl[[i]]<-resv
+  #Computes bidirectional reflectance factor based on outputs from PROSAIL and sun position
+  BRF<-ToolsRTM::Compute_BRF(rdot=rdot,rsot=rsot,tts=LUT[i,'tts'],SpecATM_Sensor=ToolsRTM::dataSpec_PDB)
+  #
+  sim.rfl[[i]]<-BRF
   
 } ##end paralle
 
 stopCluster(cl)
 end_time <- Sys.time()
 print(end_time - start_time)
+
+
+sim.canopy<-do.call(rbind,sims)
+wave<-data[,1]
+#soil.matrix<-rbind(soil.matrix,t(soil.scope_2nm), t(soil.scope_3nm))
+Spec.simula<- speclib(sim.canopy, wave)
+IDs<-c(1:nSamples)
+### Add IDs
+idSpeclib(Spec.simula) <- as.character(IDs)
+SI(Spec.simula) <- LUT
+mask(Spec.simula)<-c(801,990,1098,1190,1311,1505,1680,2600)
+plot(Spec.simula)
+
 #######################################################################################################################################
 ######################## 3.   Convert Simulations to Hsdar packages ----     
 ##############################################################################################################################
@@ -148,7 +197,7 @@ IDs<-c(1:nSamples)
 idSpeclib(Spec.simula) <- as.character(IDs)
 SI(Spec.simula) <- LUT
 mask(Spec.simula)<-c(801,990,1098,1190,1311,1505,1680,2600)
-#plot(Spec.simula)
+plot(Spec.simula)
 
 #save.image(paste('Tables/Sims/Simulations_',version,'.RData',sep=''))
 
