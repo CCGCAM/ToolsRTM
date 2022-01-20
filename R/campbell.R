@@ -1,13 +1,18 @@
 #********************************************************************************
-#*                          Campbell.f
-#*
-#*    Computation of the leaf angle distribution function value (freq)
-#*    Ellipsoidal distribution function caracterised by the average leaf
-#*    inclination angle in degree (ala)
-#*    Campbell 1986
-#*
+#'                          Campbell.f
+#'
+#'    Computation of the leaf angle distribution function value (freq)
+#'   Ellipsoidal distribution function caracterised by the average leaf
+#'    inclination angle in degree (ala)
+#'    Campbell 1986
+#'
 #********************************************************************************
-# edit 2017 12 28: change sampling of angles to match with dladgen.m
+#' edit 2017 12 28: change sampling of angles to match with dladgen.m
+#'
+#' @param ala average leaf angle
+#' @return foliar_distrib list. lidf and litab
+#' @export
+#' 
 
 campbell<- function(ala){
 tx1 <- c(10,20,30,40,50,60,70,80,82,84,86,88,90)
@@ -48,6 +53,7 @@ for (i in 1:n){
 }
 sum0 <- sum(freq)
 freq0 <- freq/sum0
-return(list(freq0,litab))
+LeafDistribution <- list("lidf" = freq0,"litab" =litab)
+return(LeafDistribution)
 
 }

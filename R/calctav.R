@@ -7,6 +7,14 @@
 # dielectric surface in two and three dimensions, J. Opt. Soc. Am.,
 # 63(6):664-666.
 # ***********************************************************************
+#' computation of transmissivity of a dielectric plane surface,
+#' averaged over all directions of incidence and over all polarizations.
+#'
+#' @param alpha numeric. Maximum incidence angle defining the solid angle of incident light
+#' @param nr numeric. refractive index
+#'
+#' @return numeric. Transmissivity of a dielectric plane surface
+#' @export
 calctav <- function (alfa,nr){
 
 

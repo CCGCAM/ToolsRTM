@@ -1,3 +1,12 @@
+#' dcum function
+#' @param a numeric. controls the average leaf slope
+#' @param b numeric. controls the distribution's bimodality
+#' @param t numeric. angle
+#' @return f
+#' @export
+#' edit 2017 12 28: change sampling of angles to match with dcum.m
+#' 
+
 dcum <- function(a,b,t) {
 
     rd <- pi/180
@@ -16,5 +25,6 @@ if (a>=1){
                 delx <- abs(dx)
             }
     	f <- (2.0*y+p)/pi
-        }
+    }
+return(f) ##added
 }
