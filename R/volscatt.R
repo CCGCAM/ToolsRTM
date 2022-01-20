@@ -1,3 +1,15 @@
+
+
+#' Compute volume scattering functions and interception coefficients
+#' for given solar zenith, viewing zenith, azimuth and leaf inclination angle.
+#'
+#'#' edit 2017 12 28: 
+#' @param tts numeric. solar zenith
+#' @param tto numeric. viewing zenith
+#' @param psi numeric. azimuth
+#' @param ttl numeric. leaf inclination angle
+#' @return res list. includes chi_s, chi_o, frho, ftau
+#' @export
 volscatt <- function(tts,tto,psi,ttl) #,chi_s,chi_o,frho,ftau
   {
  
@@ -138,7 +150,7 @@ if (frho<0){
 if (ftau<0){
 	ftau <- 0
 }
-
+#anglesList<- list("chi_s" = chi_s,"chi_o" =chi_o,"frho" =frho,"ftau" =ftau) #
 return(list(chi_s,chi_o,frho,ftau))
 
 } #end function
