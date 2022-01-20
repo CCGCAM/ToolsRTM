@@ -29,14 +29,14 @@
 #       - Car = carotenoids content in ?g/cm?
 #       - Anth = Anthocyanin content in ?g/cm?
 #       - Cbrown= brown pigments content in arbitrary units
-#       - Cw  = equivalent water thickness in g/cm? or cm
-#       - Cm  = dry matter content in g/cm?
+#       - EWT  = equivalent water thickness in g/cm? or cm
+#       - LMA  = dry matter content in g/cm?
 #
 # Here are some examples observed during the LOPEX'93 experiment on
 # fresh (F) and dry (D) leaves :
 #
 # ---------------------------------------------
-#                N     Cab     Cw        Cm
+#                N     Cab     EWT        LMA
 # ---------------------------------------------
 # min          1.000    0.0  0.004000  0.001900
 # max          3.000  100.0  0.040000  0.016500
@@ -71,7 +71,7 @@
 # spectra. Remote Sens. Environ. 186, 596?615. doi:10.1016/j.rse.2016.09.017
 
 #if (!require("expint")) { install.packages("expint"); require("expint") }  
-prospect_DB<-function(N,Cab,Car,Ant,Brown,Cw,Cm){
+prospect_DB<-function(N,Cab,Car,Ant,Brown,EWT,LMA,alpha){
 # ***********************************************************************
 # Jacquemoud S., Baret F. (1990), PROSPECT: a model of leaf optical
 # properties spectra, Remote Sens. Environ., 34:75-91.
@@ -93,10 +93,11 @@ Kant    <- data[,5]
 KBrown  <- data[,6]
 Kw      <- data[,7]
 Km      <- data[,8]
-Kall    <- (Cab*Kab+Car*Kcar+Ant*Kant+Brown*KBrown+Cw*Kw+Cm*Km)/N
+Kall    <- (Cab*Kab+Car*Kcar+Ant*Kant+Brown*KBrown+EWT*Kw+LMA*Km)/N
 j       <- which(Kall>0)# Non-conservative scattering (normal case)
 t1      <- (1-Kall)*exp(-Kall)
 t2      <- Kall^2*expint::expint(Kall)
+#t2      <- Kall^2*expint(Kall)
 tau     <- rep(1, length(t1))
 tau[j]  <- t1[j]+t2[j]
 
@@ -109,7 +110,8 @@ tau[j]  <- t1[j]+t2[j]
 # ***********************************************************************
 # reflectivity and transmissivity at the interface
 #-------------------------------------------------
-talf    <- calctav(40,nr)
+#talf    <- calctav(40,nr) ##default alpha=40
+talf    <- calctav(alpha,nr)
 ralf    <- 1-talf
 t12     <- calctav(90,nr)
 r12     <- 1-t12
@@ -155,7 +157,7 @@ Rsub[j]	 <-  1-Tsub[j]
 # Reflectance and transmittance of the leaf: combine top layer with next N-1 layers
 denom   <- 1-Rsub*r
 tran    <- Ta*Tsub/denom
-refl    <- Ra+Ta*Rsub*t/denom
+refl    <- Ra+(Ta*Rsub*t)/denom
 
 LRT<- list(lambda,refl, tran)
 return(LRT)
