@@ -48,14 +48,14 @@ for (i in c(1:nSamples)){
 #########################################
 
 # define min and max values for all parameters defined in TypeDistrib
-minval <- data.frame('N' = 1.0,'Cab'=5,'Car'=0,'Ant' = 0,'Cbrown'= 0,
+minval <- data.frame('N' = 1.0,'Cab'=5,'Car'=0,'Ant' = 0,'Cbrown'= 0.5,
                      'EWT' = 0.001,'Prot' =  0.00001, 'CBC' = 0.00001,
                      'LIDFa' = 40, 'LAI' = 0.5)
 
 # define min and max values for all parameters defined in TypeDistrib
-maxval <- data.frame('N' = 3,'Cab'=70,'Car'=30,'Ant' = 7,'Cbrown'= 0.5,
-                     'EWT' = 0.015,'Prot' =  0.0015, 'CBC' = 0.0015,
-                     'LIDFa' = 70, 'LAI' = 3)
+maxval <- data.frame('N' = 3,'Cab'=70,'Car'=25,'Ant' = 7,'Cbrown'= 1,
+                     'EWT' = 0.1,'Prot' =  0.0015, 'CBC' = 0.0015,
+                     'LIDFa' = 70, 'LAI' = 4)
 
 TypeDistrib<-data.frame('N' = 'Gaussian','Cab'='Gaussian','Car'='Gaussian',
                         'Ant' = 'Uniform','Cbrown'= 'Uniform',
@@ -63,7 +63,7 @@ TypeDistrib<-data.frame('N' = 'Gaussian','Cab'='Gaussian','Car'='Gaussian',
                         'Prot' =  'Uniform', 'CBC' = 'Uniform',
                         'LIDFa' = 'Uniform', 'LAI' = 'Gaussian')
 # define mean and STD for gaussian distributions
-Mean_gauss <- data.frame('N'=2.5,'Cab'=60,'Car'=8,'LAI' = 2.25)
+Mean_gauss <- data.frame('N'=2.2,'Cab'=45,'Car'=8,'LAI' = 2.25)
 std_gauss <- Mean_gauss/2.0
 
 data.LUT<-get_distributionLUT(minval=minval,maxval=maxval,
@@ -77,14 +77,15 @@ names(data.LUT)
 ##################################################
 
 LUT<-data.frame(data.LUT$N,data.LUT$Cab,data.LUT$Car,data.LUT$Ant,data.LUT$Cbrown,
-                data.LUT$EWT,LMA=0.00,alpha=40,
+                data.LUT$EWT,LMA=0.05,alpha=40,
                 ## PROSPECT-PRO
                 data.LUT$Prot,data.LUT$CBC,
                 ## input for fourSAIL
                 data.LUT$LIDFa,
                 LIDFb=0,TypeLidf=2,
-                data.LUT$LAI,hspot=0.01,tts=20, tto=0, psi=0,
+                data.LUT$LAI,hspot=0.2,tts=20, tto=0, psi=0,
                 ### input for 4SAIL2
+                
                 fraction_brown = 0.5, diss = 0.0, Cv = 1,Zeta = 1)
 
 colnames(LUT)<-c("N","Cab",'Car','Ant',"Cbrown","EWT","LMA","alpha","Prot","CBC",
