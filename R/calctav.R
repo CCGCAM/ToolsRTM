@@ -7,7 +7,8 @@
 # dielectric surface in two and three dimensions, J. Opt. Soc. Am.,
 # 63(6):664-666.
 # ***********************************************************************
-#' computation of transmissivity of a dielectric plane surface,
+# edit 2017 12 28: change sampling of angles to match with dcum.m
+#' Computation of transmissivity of a dielectric plane surface,
 #' averaged over all directions of incidence and over all polarizations.
 #'
 #' @param alpha numeric. Maximum incidence angle defining the solid angle of incident light

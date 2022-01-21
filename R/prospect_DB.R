@@ -71,6 +71,22 @@
 # spectra. Remote Sens. Environ. 186, 596?615. doi:10.1016/j.rse.2016.09.017
 
 #if (!require("expint")) { install.packages("expint"); require("expint") }  
+#'  PROSPECT-Dynamic with brown pigments
+#'
+#' @param N numeric. Leaf structure parameter
+#' @param Cab numeric. Chlorophyll content (microg.cm-2)
+#' @param Car numeric. Carotenoid content (microg.cm-2)
+#' @param Ant numeric. Anthocyain content (microg.cm-2)
+#' @param Cbrown numeric. Brown pigment content (Arbitrary units)
+#' @param EWT numeric. Equivalent Water Thickness (g.cm-2). Default is 0.009 Default is  0.012   
+#' @param LMA numeric. Leaf Mass per Area (g.cm-2). Default is  0.012 
+#' @param alpha numeric. Maximum incidence angle defining the solid angle of incident light.By default is 40
+
+#' @return List of lambda with leaf directional-hemisphrical reflectance and transmittance 
+#'
+#' @examples
+#' 
+#' 
 prospect_DB<-function(N,Cab,Car,Ant,Brown,EWT,LMA,alpha){
 # ***********************************************************************
 # Jacquemoud S., Baret F. (1990), PROSPECT: a model of leaf optical

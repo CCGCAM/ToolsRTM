@@ -1,15 +1,4 @@
-# ============================================================================= =
-# ToolsRTM
-# get_distributionLUT.R
-# ============================================================================= =
-# Author:
-# Carlos Camino
-# Copyright 2022/Carlos Camino
-# ============================================================================= =
-# This Library includes functions dedicated to generating LUTs for PROSAIL model
-# ============================================================================= =
-
-#' This function generates distribution of biophysical parameters used as input parameters in PRO4SAIL
+#' This function generates distribution of biophysical parameters used as input parameters in the RRT model
 #'
 #' @param minval list. Defines the minimum value to be set for a list of parameters randomly produced
 #' @param maxval list. Defines the maximum value to be set for a list of parameters randomly produced

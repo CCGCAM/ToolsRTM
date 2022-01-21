@@ -34,23 +34,6 @@ volscatt <- function(tts,tto,psi,ttl) #,chi_s,chi_o,frho,ftau
 
 #	Wout Verhoef, april 2001, for CROMA
 
-# REAL(KIND=8),INTENT(in) :: tts
-# REAL(KIND=8),INTENT(in) :: tto
-# REAL(KIND=8),INTENT(in) :: psi
-# REAL(KIND=8),INTENT(in) :: ttl
-# REAL(KIND=8),INTENT(inout) :: chi_s
-# REAL(KIND=8),INTENT(inout) :: chi_o
-# REAL(KIND=8),INTENT(inout) :: frho
-# REAL(KIND=8),INTENT(inout) :: ftau
-#
-# REAL(KIND=8) costs,costo,sints,sinto,cospsi
-# REAL(KIND=8) psir
-# REAL(KIND=8) costl,sintl,cs,co,ss,so,ds
-# REAL(KIND=8) cosbts,cosbto,bts,bto
-# REAL(KIND=8) btran1,btran2,bt1,bt2,bt3,t1,t2
-# REAL(KIND=8) doo
-# REAL(KIND=8) denom
-  
 rd <- pi/180
 costs <- cos(rd*tts)
 costo <- cos(rd*tto)

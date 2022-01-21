@@ -3,38 +3,46 @@
 #' Jean-Baptiste F?ret takes the entire responsibility for this version
 #' All comments, changes or questions should be sent to:
 
-#' Jean-Baptiste FERET
-#' UMR-TETIS, IRSTEA Montpellier
-#' Maison de la T?l?d?tection
-#' 500 rue Jean-Fracois Breton
-#' 34093 Montpellier cedex 5
-#' E-mail: jb.feret@teledetection.fr
-
-#'this model PRO4SAIL is based on a version provided by	Wout Verhoef
-#	'NLR
-#	'April/May 2003,
+#'this model PRO4SAIL is based on a version provided by	Wout Verhoef et al. (2007) 
 #	'original version downloadable at http://teledetection.ipgp.jussieu.fr/prosail/
+
 #	'Improved and extended version of SAILH model that avoids numerical singularities
 #	'and works more efficiently if only few parameters change.
 # 'References:
 # '	Verhoef et al. (2007) Unified Optical-Thermal Four-Stream Radiative
 # '	Transfer Theory for Homogeneous Vegetation Canopies, IEEE TRANSACTIONS
 # '	ON GEOSCIENCE AND REMOTE SENSING, VOL. 45, NO. 6, JUNE 2007
+############################################################################################################
+############################################################################################################
+#       - TypeLidf  = Type of leaf inclination distribution function
+#       - LIDFa = Parameter a.
+#         if TypeLidf ==1, controls the average leaf slope
+#	        LIDF type 		a 		 b
+#	        Planophile 		1		 0
+#	        Erectophile    -1	 	 0
+#	        Plagiophile 	0		-1
+#	        Extremophile 	0		 1
+#	        Spherical 	   -0.35 	-0.15
+#	        Uniform 0 0
+#
+#         if TypeLidf ==2, corresponds to average leaf angle
+#       - LIDFb = Parameter b
+#         if TypeLidf ==1, unused
+#         if TypeLidf ==2, controls the distribution's bimodality
+#         LIDFa	= average leaf angle (degrees) 0 = planophile	/	90 = erectophile
 
-#' and corresponding spectral bands
-#' @param TypeLidf numeric. Type of leaf inclination distribution function
-#' @param LIDFa numeric.
-#' if TypeLidf ==1, controls the average leaf slope
-#' if TypeLidf ==2, corresponds to average leaf angle
-#' @param LIDFb numeric.
-#' if TypeLidf ==1, unused
-#' if TypeLidf ==2, controls the distribution's bimodality
-#' @param lai numeric. Leaf Area Index
-#' @param q numeric. Hot Spot parameter
-#' @param tts numeric. Sun zeith angle
-#' @param tto numeric. Observer zeith angle
-#' @param psi numeric. Azimuth Sun / Observer
+#       - lai = Leaf Area Index
+#       - hot = Hot Spot parameter = ratio of the correlation length of leaf projections in the horizontal plane and the canopy height (doi:10.1016/j.rse.2006.12.013)
+#       - tts = Sun zeith angle
+#       - tto = Observer zeith angle
+#       - psi = Azimuth Sun / Observer
+#       - rsoil = Soil reflectance
+############################################################################################################
+############################################################################################################
+#'
 #' @param rsoil numeric. Soil reflectance
+#' @param inputLUT LUT table with distribution of biophysical parameters used as input parameters in the model
+#' @param PROSPECTversion Version of PROSPECT model. 'PRO' or 'D' is accepted. By default 'PRO' is used.
 #'
 #' @return list. rdot,rsot,rddt,rsdt
 #' 

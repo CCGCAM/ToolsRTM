@@ -1,12 +1,19 @@
-##############################################################################################################################
-######################## 2.   CALL  ModelPRO4SAIL  ----     
-##############################################################################################################################
+#' ALL  Model fourSAIL + PROSPECT
+#'
+#' @param LUT a LUT table with all input (mandatory correct order)
+#' @param rsoil soil reflectance spectrum
+#' @param PROSPECTversion  choose one leaf model
+#'
+#' @return a list with rdot,rsot,rsdt and rddt
+#' @export
+#'
+#' rdot: hemispherical-directional reflectance factor in viewing direction
+#' rsot: bi-directional reflectance factor
+#' rsdt: directional-hemispherical reflectance factor for solar incident flux
+#' rddt: bi-hemispherical reflectance factor
 
-# rdot: hemispherical-directional reflectance factor in viewing direction
-# rsot: bi-directional reflectance factor
-# rsdt: directional-hemispherical reflectance factor for solar incident flux
-# rddt: bi-hemispherical reflectance factor
-
+#' @examples
+#' 
 prospectsail<- function(LUT=NULL, rsoil=NULL, PROSPECTversion=NULL){
     n_cases=dim(LUT)[1]
     version=PROSPECTversion

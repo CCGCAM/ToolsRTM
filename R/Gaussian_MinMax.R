@@ -1,4 +1,19 @@
 
+#' Gaussion distribution
+#'
+#' @param n number of cases in numeric format
+#' @param m  mean value in numeric format
+#' @param s  standard deviation in numeric format
+#' @param lwr  min value in numeric format
+#' @param upr max value in numeric format
+#' @param nnorm  number of cases * a number (numeric format). This value is taken by the function to
+#' take values in the selected range (min-max) upt to have the complete the number of cases
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' 
 gauss_byMin_Max <- function(n, m, s, lwr, upr, nnorm) {
   set.seed(42)
   samp <- rnorm(nnorm, m, s)

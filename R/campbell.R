@@ -1,5 +1,5 @@
 #********************************************************************************
-#'                          Campbell.f
+#'                          Campbell function
 #'
 #'    Computation of the leaf angle distribution function value (freq)
 #'   Ellipsoidal distribution function caracterised by the average leaf
@@ -7,8 +7,8 @@
 #'    Campbell 1986
 #'
 #********************************************************************************
-#' edit 2017 12 28: change sampling of angles to match with dladgen.m
-#'
+# edit 2017 12 28: change sampling of angles to match with dcum.m
+#' This function is used by the fourSAIL and fourSAIL2 model
 #' @param ala average leaf angle
 #' @return foliar_distrib list. lidf and litab
 #' @export

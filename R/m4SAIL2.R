@@ -1,25 +1,48 @@
 #' Performs PRO4SAIL2 simulation based on a set of combinations of input parameters
-#' @param leafgreen list. includes reflectance and transmittance for vegetation #1 (e.g. green vegetation)
-#' @param leafbrown list. includes reflectance and transmittance for vegetation #2 (e.g. brown vegetation)
-#' @param TypeLidf numeric. Type of leaf inclination distribution function
-#' @param LIDFa numeric.
-#' if TypeLidf ==1, controls the average leaf slope
-#' if TypeLidf ==2, corresponds to average leaf angle
-#' @param LIDFb numeric.
-#' if TypeLidf ==1, unused
-#' if TypeLidf ==2, controls the distribution's bimodality
-#' @param lai numeric. Leaf Area Index
-#' @param hot numeric. Hot Spot parameter = ratio of the correlation length of leaf projections in the horizontal plane and the canopy height (doi:10.1016/j.rse.2006.12.013)
-#' @param tts numeric. Sun zeith angle
-#' @param tto numeric. Observer zeith angle
-#' @param psi numeric. Azimuth Sun / Observer
+# ============================================================================= =
+# This Library includes functions dedicated to PROSAIL simulation
+# SAIL versions available are 4SAIL and 4SAIL2
+# ============================================================================= =
+#' @param LUT_GB dataframe Includes distribution of biophysical parameters used as green vegetation  (first column).
+#' Includes distribution of biophysical parameters used  (second column)
+#       - Leafbrown  includes reflectance and 
+#' @param inputLUT LUT table with distribution of biophysical parameters used as input parameters in the model
 #' @param rsoil numeric. Soil reflectance
-#' @param fraction_brown numeric. Fraction of brown leaf area
-#' @param diss numeric. Layer dissociation factor
-#' @param Cv numeric. vertical crown cover percentage
-#' = % ground area covered with crowns as seen from nadir direction
-#' @param Zeta numeric. Tree shape factor
-#' = ratio of crown diameter to crown height
+#' @param PROSPECTversion Version of PROSPECT model. 'PRO' or 'D' is accepted. By default 'PRO' is used.
+#'
+############################################################################################################
+############################################################################################################
+#       - TypeLidf  = Type of leaf inclination distribution function
+#       - LIDFa = Parameter a.
+#         if TypeLidf ==1, controls the average leaf slope
+#	        LIDF type 		a 		 b
+#	        Planophile 		1		 0
+#	        Erectophile    -1	 	 0
+#	        Plagiophile 	0		-1
+#	        Extremophile 	0		 1
+#	        Spherical 	   -0.35 	-0.15
+#	        Uniform 0 0
+#
+#         if TypeLidf ==2, corresponds to average leaf angle
+#       - LIDFb = Parameter b
+#         if TypeLidf ==1, unused
+#         if TypeLidf ==2, controls the distribution's bimodality
+#         LIDFa	= average leaf angle (degrees) 0 = planophile	/	90 = erectophile
+
+#       - lai = Leaf Area Index
+#       - hot = Hot Spot parameter = ratio of the correlation length of leaf projections in the horizontal plane and the canopy height (doi:10.1016/j.rse.2006.12.013)
+#       - tts = Sun zeith angle
+#       - tto = Observer zeith angle
+#       - psi = Azimuth Sun / Observer
+#       - rsoil = Soil reflectance
+#       - fraction_brown  = Fraction of brown leaf area
+#       - diss  = Layer dissociation factor
+#       - Cv = vertical crown cover percentage = % ground area covered with crowns as seen from nadir direction
+#       - Zeta = Tree shape factor =  = ratio of crown diameter to crown height
+#l      - Leafgreen  includes reflectance and transmittance for green vegetation
+#       - Leafbrown  includes reflectance and transmittance for brown vegetation
+############################################################################################################
+############################################################################################################
 #'
 #' @return list. rdot,rsot,rddt,rsdt
 #' rdot: hemispherical-directional reflectance factor in viewing direction
@@ -43,18 +66,7 @@ Prot=inputLUT[,'Prot'];CBC=inputLUT[,'CBC']
 LIDFa=inputLUT[,'LIDFa']; LIDFb=inputLUT[,'LIDFb']; TypeLidf=inputLUT[,'TypeLidf']; lai=inputLUT[,'LAI']
 hot=inputLUT[,'hspot']; tts=inputLUT[,'tts']; tto=inputLUT[,'tto']; psi=inputLUT[,'psi']
 fraction_brown = inputLUT[,'fraction_brown']; diss = inputLUT[,'diss']; Cv = inputLUT[,'Cv'];Zeta = inputLUT[,'Zeta']
-## fourSAIL2
 
-#'this model PRO4SAIL is based on a version provided by	Wout Verhoef
-#	'NLR
-#	'April/May 2003,
-#	'original version downloadable at http://teledetection.ipgp.jussieu.fr/prosail/
-#	'Improved and extended version of SAILH model that avoids numerical singularities
-#	'and works more efficiently if only few parameters change.
-# 'References:
-# '	Verhoef et al. (2007) Unified Optical-Thermal Four-Stream Radiative
-# '	Transfer Theory for Homogeneous Vegetation Canopies, IEEE TRANSACTIONS
-# '	ON GEOSCIENCE AND REMOTE SENSING, VOL. 45, NO. 6, JUNE 2007
 
 if (is.null(LUT_GB)){
   message('Please define same spectral domain for GreenVegetation and BrownVegetation and SpecPROSPECT')

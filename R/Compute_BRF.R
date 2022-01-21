@@ -1,10 +1,11 @@
 
-#' Computes bidirectional reflectance factor based on outputs from PROSAIL and sun position
+#' Computes bidirectional reflectance factor based on outputs from PRO-4SAIL and sun position
 #'
 #' The direct and diffuse light are taken into account as proposed by:
 #' Francois et al. (2002) Conversion of 400-1100 nm vegetation albedo
 #' measurements into total shortwave broadband albedo using a canopy
 #' radiative transfer model, Agronomie
+#' 
 #' Es = direct
 #' Ed = diffuse
 #'

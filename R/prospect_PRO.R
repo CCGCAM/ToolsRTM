@@ -46,7 +46,6 @@
 # Update from PROSPECT to FLUSPECT: January 2011 (CvdT)
 
 #'
-#' @param SpecPROSPECT list. Includes optical constants
 #' refractive index, specific absorption coefficients and corresponding spectral bands
 #' @param N numeric. Leaf structure parameter
 #' @param Cab numeric. Chlorophyll content (microg.cm-2)
@@ -55,11 +54,12 @@
 #' @param Cbrown numeric. Brown pigment content (Arbitrary units)
 #' @param EWT numeric. Equivalent Water Thickness (g.cm-2)
 #' @param LMA numeric. Leaf Mass per Area (g.cm-2)
+#' @param alpha numeric. Solid angle for incident light at surface of leaf
 #' @param Prot numeric. protein content  (g.cm-2)
 #' @param CBC numeric. NonProtCarbon-based constituent content (g.cm-2)
-#' @param alpha numeric. Solid angle for incident light at surface of leaf
+
 #'
-#' @return leaf directional-hemisphrical reflectance and transmittance
+#' @return List of lambda with leaf directional-hemisphrical reflectance and transmittance 
 #' @importFrom expint expint
 #' @export
 

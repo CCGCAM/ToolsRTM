@@ -1,4 +1,16 @@
 
+#' extract spectral indices at Sentinel-2 resolution
+#'
+#' @param df a dataframe with reflectance where each rows correspond with an spectrum 
+#' @param wavelengths  wavelent of each reflectance
+#' @param df.data  dataset with IDs that corresponde with each spectrum
+#' @param header TRUE organize the indices by caterioas / False only return then name
+#'
+#' @return a dataframe with indices and your dataset
+#' @export
+#'
+#' @examples
+#' 
 getIndicesSE2a <- function(df, wavelengths,df.data, header = F) {
   
   range2interpo <- c(442.7,492.4,559.8,664.6,704.1,740.5,782.8,832.8,864.7,945.1,1373.5,1613.7,2202.4)

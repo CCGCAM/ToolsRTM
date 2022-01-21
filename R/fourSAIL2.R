@@ -1,5 +1,5 @@
 
-#' Performs PRO4SAIL2 simulation based on a set of combinations of input parameters
+#' FourSAIL2 simulation based on a set of combinations of input parameters
 #' @param leafgreen list. includes reflectance and transmittance for vegetation #1 (e.g. green vegetation)
 #' @param leafbrown list. includes reflectance and transmittance for vegetation #2 (e.g. brown vegetation)
 #' @param TypeLidf numeric. Type of leaf inclination distribution function
@@ -130,10 +130,10 @@ fourSAIL2  <- function(leafgreen, leafbrown,
       # and two portions of the volume scattering phase function to be
       # multiplied by rho and tau, respectively
       resVolscatt <- volscatt(tts,tto,psi,ttl)
-      chi_s <- resVolscatt$chi_s
-      chi_o <- resVolscatt$chi_o
-      frho <- resVolscatt$frho
-      ftau <- resVolscatt$ftau
+      chi_s <- resVolscatt[[1]]# $chi_s
+      chi_o <- resVolscatt[[2]]#$chi_o
+      frho <- resVolscatt[[3]]#frho
+      ftau <- resVolscatt[[4]]#ftau
       # Extinction coefficients
       ksli <- chi_s/cts
       koli <- chi_o/cto

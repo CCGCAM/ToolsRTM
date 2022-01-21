@@ -1,5 +1,21 @@
 
-InversionOpt<-function (rfl.sensor=NULL,rfl.prosail=NULL,LUT=NULL,wave=NULL, n=NULL,method=NULL,nOpt=NULL) 
+#' LUT inversion using a RTM
+#'
+#' @param rfl.sensor is a matrix with reflectance values of the observed sensor.
+#' @param rfl.rtm is a matrix with reflectance values simulated by the Radiative transfer (RT) model.
+#' @param LUT a LUT table with the distribution of biophysical parameters used as input parameters in the RT model
+#' @param wave vector with the wavelength to compare
+#' @param method Function cost used in the inversion of the model, the default option is method= opt ='merit-RMSE'. The 
+#' other method are 'merit-DWT' and 'merit-1stD'. Where merit-DWT applies a wavelets transformation. Where 
+#' merit-1stD uses the first derivative in both data.
+#' @param nOpt Solutions uses by the chosen method 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' 
+InversionOpt<-function (rfl.sensor=NULL,rfl.rtm=NULL,LUT=NULL,wave=NULL,method=NULL,nOpt=NULL) 
 {
   ##rfl.sensor is a matrix
   ##rfl.prosail is a matrix
@@ -15,6 +31,7 @@ InversionOpt<-function (rfl.sensor=NULL,rfl.prosail=NULL,LUT=NULL,wave=NULL, n=N
   ###############################################################################
   ###############################################################################
   ## Outputs-------
+  nSamples=dim(LUT)[1]
   RMSE_sim<-c()
   number_id<-list()
   
@@ -45,7 +62,7 @@ InversionOpt<-function (rfl.sensor=NULL,rfl.prosail=NULL,LUT=NULL,wave=NULL, n=N
         
       }
       RSME_j<-do.call(rbind, lapply(RMSE_sim, as.data.frame))
-      #Table.rmse<-cbind(ID_lut = 1:nSamples, RSME_j)
+      
       Table.rmse<-cbind(ID_lut = 1:dim(LUT)[1], RSME_j)
       colnames(Table.rmse)<-c('ID_lut','RMSE')
       Table.rmse<-cbind(Table.rmse,LUT)

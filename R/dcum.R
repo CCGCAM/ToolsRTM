@@ -4,7 +4,7 @@
 #' @param t numeric. angle
 #' @return f
 #' @export
-#' edit 2017 12 28: change sampling of angles to match with dcum.m
+# edit 2017 12 28: change sampling of angles to match with dcum.m
 #' 
 
 dcum <- function(a,b,t) {
