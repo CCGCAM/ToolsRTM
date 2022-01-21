@@ -1,6 +1,6 @@
 Package: ToolsRTM
 Title: Optimization functions for RT models
-Version: 0.1
+Version: 0.2
 Authors@R: 
     person(given = "Carlos",
            family = "Camino",
