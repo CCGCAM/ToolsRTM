@@ -53,11 +53,11 @@
 #' alfadt: canopy absorptance for hemispherical diffuse incident flux
 #' @export
 #' 
-m4SAIL2 <- function(LUT_GB=NULL, inputLUT,rsoil, PROSPECTversion='PRO'){
+m4SAIL2 <- function(LUT_GB=NULL, inputLUT,rsoil, PROSPECTversion='PRO',FieldObserv=NULL){
 
 #define alll inputs in the models. retreived from LUT tables
 ## Prospect-D
-N=inputLUT[,'N']; Cab=inputLUT[,'Cab']; Car=inputLUT[,'Car']; Ant=inputLUT[,'Ant']; Cbrown=inputLUT[,'Cbrown']
+N=inputLUT[,'N']; Cab=inputLUT[,'Cab']; Car=inputLUT[,'Car']; Anth=inputLUT[,'Anth']; Cbrown=inputLUT[,'Cbrown']
 EWT=inputLUT[,'EWT']; LMA=inputLUT[,'LMA'];alpha=inputLUT[,'alpha']
 ## Prospect-PRO
 ### fixed Cm=0.000 in LUTs 
@@ -70,8 +70,8 @@ fraction_brown = inputLUT[,'fraction_brown']; diss = inputLUT[,'diss']; Cv = inp
 
 if (is.null(LUT_GB)){
   message('Please define same spectral domain for GreenVegetation and BrownVegetation and SpecPROSPECT')
-  stop()
-} else {
+  #stop()
+  } else {
   #message('4SAIL2 needs two sets of optical properties for green and brown vegetation')
 }
 
@@ -81,27 +81,32 @@ if (is.null(LUT_GB)){
 if (PROSPECTversion == 'PRO') {
   #PROSPECTversion = 'PRO'
 
-  LRT <- prospect_PRO(N,Cab,Car,Ant,Cbrown,EWT,LMA,alpha,Prot,CBC)
-  GreenVegetation<-prospect_PRO(LUT_GB[1,'N'],LUT_GB[1,'Cab'],LUT_GB[2,'Car'],LUT_GB[2,'Ant'],
+  LRT <- prospect_PRO(N,Cab,Car,Anth,Cbrown,EWT,LMA,alpha,Prot,CBC)
+  GreenVegetation<-prospect_PRO(LUT_GB[1,'N'],LUT_GB[1,'Cab'],LUT_GB[2,'Car'],LUT_GB[2,'Anth'],
                                 LUT_GB[1,'Cbrown'],LUT_GB[1,'EWT'],LUT_GB[2,'LMA'],LUT_GB[2,'alpha'],
                                 LUT_GB[1,'Prot'],LUT_GB[1,'CBC'])
-  BrownVegetation<-prospect_PRO(LUT_GB[2,'N'],LUT_GB[2,'Cab'],LUT_GB[2,'Car'],LUT_GB[1,'Ant'],
+  BrownVegetation<-prospect_PRO(LUT_GB[2,'N'],LUT_GB[2,'Cab'],LUT_GB[2,'Car'],LUT_GB[1,'Anth'],
                                 LUT_GB[2,'Cbrown'],LUT_GB[2,'EWT'],LUT_GB[2,'LMA'],LUT_GB[2,'alpha'],
                                 LUT_GB[2,'Prot'],LUT_GB[2,'CBC'])
   
   print(message('SAIL with PROSPECT-PRO is processing'))
 }  else {
   #PROSPECTversion ='D'
-  LRT <- LRT <- prospect_DB(N,Cab,Car,Ant,Cbrown,EWT,LMA,alpha)
-  GreenVegetation<-prospect_DB(LUT_GB[1,'N'],LUT_GB[1,'Cab'],LUT_GB[2,'Car'],LUT_GB[2,'Ant'],
+  LRT <- LRT <- prospect_DB(N,Cab,Car,Anth,Cbrown,EWT,LMA,alpha)
+  GreenVegetation<-prospect_DB(LUT_GB[1,'N'],LUT_GB[1,'Cab'],LUT_GB[2,'Car'],LUT_GB[2,'Anth'],
                                 LUT_GB[1,'Cbrown'],LUT_GB[1,'EWT'],LUT_GB[2,'LMA'],LUT_GB[2,'alpha'])
-  BrownVegetation<-prospect_DB(LUT_GB[2,'N'],LUT_GB[2,'Cab'],LUT_GB[2,'Car'],LUT_GB[1,'Ant'],
+  BrownVegetation<-prospect_DB(LUT_GB[2,'N'],LUT_GB[2,'Cab'],LUT_GB[2,'Car'],LUT_GB[1,'Anth'],
                                 LUT_GB[2,'Cbrown'],LUT_GB[2,'EWT'],LUT_GB[2,'LMA'],LUT_GB[2,'alpha'])
   print(message('SAIL with PROSPECT-D is processing'))
 }
 
-
-  ### Asign in a list thw two refernces spectrum for Green Vegetation and Brown Vegetation
+###force to use different Green vegetation
+if (is.null(FieldObserv)){
+  GreenVegetation<-LRT
+  BrownVegetation<-LRT
+}
+  
+  ### Asign in a list the two references spectrum for Green Vegetation and Brown Vegetation
 leafgreen<-list()
 leafgreen$Reflectance<-GreenVegetation[[2]]
 leafgreen$Transmittance<-GreenVegetation[[3]]
@@ -112,14 +117,14 @@ leafbrown$Transmittance<-BrownVegetation[[3]]
 #tau	 <- 	LRT[[3]] #tau Transmittance
 
 ########################################
-#	1.2 Geometric quantities
+#	1.2 Geometric quAnthities
 #########################################
 
 #	This version does not include non-Lambertian soil properties.
 #	original codes do, and only need to add the following variables as input
 rddsoil <- rdosoil <- rsdsoil <- rsosoil <- rsoil
 
-#	Geometric quantities
+#	Geometric quAnthities
 rd <- pi/180
 
 #	Generate leaf angle distribution from average leaf angle (ellipsoidal) or (a,b) parameters
@@ -148,10 +153,10 @@ if (lai<0){
   cts <- cos(rd*tts)
   cto <- cos(rd*tto)
   ctscto <- cts*cto
-  tants <- tan(rd*tts)
-  tanto <- tan(rd*tto)
+  tAnths <- tan(rd*tts)
+  tAntho <- tan(rd*tto)
   cospsi <- cos(rd*psi)
-  dso <- sqrt(tants*tants+tanto*tanto-2.0*tants*tanto*cospsi)
+  dso <- sqrt(tAnths*tAnths+tAntho*tAntho-2.0*tAnths*tAntho*cospsi)
   ### ### ### ### ### ### ### ### ### ### ### ### ###
   ## Crown and vegatation clumping effects
   ## similar to flim implementation
@@ -266,7 +271,7 @@ if (lai<0){
     x1 <- y1 <- 0.0
     f1 <- 1.0
     ca <- exp(alf*(fb-1.0))
-    fint <- (1.0-ca)*.05
+    fint <- (1.0-ca)*0.05
     s1 <- 0.0
     for (istep in 1:20){
       if (istep<20){
@@ -281,7 +286,7 @@ if (lai<0){
       y1 <- y2
       f1 <- f2
     }
-    fint <- (ca-exp(-alf))*.05
+    fint <- (ca-exp(-alf))*0.05
     s2 <- 0.0
     for (istep in 1:20){
       if (istep<20){

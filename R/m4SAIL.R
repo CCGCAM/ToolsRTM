@@ -57,7 +57,7 @@ m4SAIL <- function(inputLUT,rsoil, PROSPECTversion='PRO'){
 
   #define alll inputs in the models. retreived from LUT tables
   ## Prospect-D
-  N=inputLUT[,'N']; Cab=inputLUT[,'Cab']; Car=inputLUT[,'Car']; Ant=inputLUT[,'Ant']; Cbrown=inputLUT[,'Cbrown']
+  N=inputLUT[,'N']; Cab=inputLUT[,'Cab']; Car=inputLUT[,'Car']; Anth=inputLUT[,'Anth']; Cbrown=inputLUT[,'Cbrown']
   EWT=inputLUT[,'EWT']; LMA=inputLUT[,'LMA'];alpha=inputLUT[,'alpha']
   ## Prospect-PRO
   ### fixed Cm=0.000 in LUTs 
@@ -72,11 +72,11 @@ m4SAIL <- function(inputLUT,rsoil, PROSPECTversion='PRO'){
 #########################################
 if (PROSPECTversion == 'PRO') {
   #PROSPECTversion = 'PRO'
-  LRT <- prospect_PRO(N,Cab,Car,Ant,Cbrown,EWT,LMA,alpha,Prot,CBC)
+  LRT <- prospect_PRO(N,Cab,Car,Anth,Cbrown,EWT,LMA,alpha,Prot,CBC)
   print(message('SAIL with PROSPECT-PRO is processing'))
 }  else{
   #PROSPECTversion ='D'
-  LRT <- prospect_DB(N,Cab,Car,Ant,Cbrown,EWT,LMA,alpha)
+  LRT <- prospect_DB(N,Cab,Car,Anth,Cbrown,EWT,LMA,alpha)
   print(message('SAIL with PROSPECT-D is processing'))
 }
   
@@ -85,17 +85,18 @@ rho	 <- 	LRT[[2]]
 tau	 <- 	LRT[[3]]
 
 ########################################
-#	1.2 Geometric quantities
+#	1.2 Geometric quAnthities
 #########################################
 
 rd <- pi/180
 cts		 <-  cos(rd*tts)
 cto		 <-  cos(rd*tto)
 ctscto	 <-  cts*cto
-tants	 <-  tan(rd*tts)
-tanto	 <-  tan(rd*tto)
+tAnths	 <-  tan(rd*tts)
+tAntho	 <-  tan(rd*tto)
 cospsi	 <-  cos(rd*psi)
-dso		 <-  sqrt(tants*tants+tanto*tanto-2*tants*tanto*cospsi)
+dso		 <-  sqrt(tAnths*tAnths+tAntho*tAntho-2*tAnths*tAntho*cospsi)
+
 
 
 ###########################################################################################################################
@@ -113,6 +114,7 @@ litab <- LeafDistribution$litab
   litab <- LeafDistribution$litab
 }
 
+
   # angular distance, compensation of shadow length
 	#	Calculate geometric factors associated with extinction and scattering
 	#	Initialise sums
@@ -126,8 +128,8 @@ litab <- LeafDistribution$litab
     na <- length(litab)
     #ksli<-rep(NA,13)
 	for (i in 1:na){
+	  
 		ttl <- litab[i]# leaf inclination discrete values
-	
 		ctl <- cos(rd*ttl)
 		#	SAIL volume scattering phase function gives interception and portions to be
 		#	multiplied by rho and tau
@@ -137,7 +139,7 @@ litab <- LeafDistribution$litab
 		chi_o<-chi_s_chi_o_frho_ftau[[2]]
 		frho<-chi_s_chi_o_frho_ftau[[3]]
 		ftau<-chi_s_chi_o_frho_ftau[[4]] 
-		
+
 		#********************************************************************************
 		#*                   SUITS SYSTEM COEFFICIENTS
 		#*
@@ -167,6 +169,8 @@ litab <- LeafDistribution$litab
 		bf	 <-  bf+bfli*lidf[i]
 		sob	 <-  sob+sobli*lidf[i]
 		sof	 <-  sof+sofli*lidf[i]
+		######
+		
 	}
     
   ######################################################
@@ -177,8 +181,10 @@ litab <- LeafDistribution$litab
 	sdf	 <-  0.5*(ks-bf)
 	dob	 <-  0.5*(ko+bf)
 	dof	 <-  0.5*(ko-bf)
-	ddb	 <-  0.5*(1+bf)
-	ddf	 <-  0.5*(1-bf)
+	ddb	 <-  0.5*(1.+bf)
+	ddf	 <-  0.5*(1.-bf)
+
+
 
 	#	Here rho and tau come in
 	sigb <-  ddb*rho+ddf*tau
@@ -195,6 +201,7 @@ litab <- LeafDistribution$litab
 	vf	 <-  dof*rho+dob*tau
 	w	 <-  sob*rho+sof*tau
 
+	
 	######################################################
 	#	Here the LAI comes in
 	#   Outputs for the case LAI = 0
@@ -221,7 +228,9 @@ litab <- LeafDistribution$litab
 		rsost	 <-  rsoil
 		rsot	 <-  rsoil
 
-  }
+	} else {
+    
+
 	######################################################
 	#	Other cases (LAI > 0)
 	######################################################
@@ -329,7 +338,8 @@ litab <- LeafDistribution$litab
     			f1 <- f2
          }
 		  tsstoo <- f1
-        }
+      }
+  
 	######################################################################
 	
 	
@@ -340,19 +350,19 @@ litab <- LeafDistribution$litab
 #	Total canopy contribution
 	rso <- rsos+rsod
 
-#	Interaction with the soil
-dn <- 1-rsoil*rdd
-# rddt: bi-hemispherical reflectance factor
-rddt <- rdd+tdd*rsoil*tdd/dn
-# rsdt: directional-hemispherical reflectance factor for solar incident flux
-rsdt <- rsd+(tsd+tss)*rsoil*tdd/dn
-# rdot: hemispherical-directional reflectance factor in viewing direction
-rdot <- rdo+tdd*rsoil*(tdo+too)/dn
-# rsot: bi-directional reflectance factor
-rsodt <- rsod+((tss+tsd)*tdo+(tsd+tss*rsoil*rdd)*too)*rsoil/dn
-rsost <- rsos+tsstoo*rsoil
-rsot <- rsost+rsodt
-
+  #	Interaction with the soil
+  dn <- 1-rsoil*rdd
+  # rddt: bi-hemispherical reflectance factor
+  rddt <- rdd+tdd*rsoil*tdd/dn
+  # rsdt: directional-hemispherical reflectance factor for solar incident flux
+  rsdt <- rsd+(tsd+tss)*rsoil*tdd/dn
+  # rdot: hemispherical-directional reflectance factor in viewing direction
+  rdot <- rdo+tdd*rsoil*(tdo+too)/dn
+  # rsot: bi-directional reflectance factor
+  rsodt <- rsod+((tss+tsd)*tdo+(tsd+tss*rsoil*rdd)*too)*rsoil/dn
+  rsost <- rsos+tsstoo*rsoil
+  rsot <- rsost+rsodt
+}
 LSTa<- list(rdot,rsot,rddt,rsdt)
 return(LSTa)
 
