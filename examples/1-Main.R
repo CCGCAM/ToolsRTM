@@ -7,6 +7,7 @@ rm(list= ls())
 
 if (!require("hsdar")) { install.packages("hsdar"); require("hsdar") }  ### hsdar for PROSAIL
 if (!require("RColorBrewer")) { install.packages("RColorBrewer"); require("RColorBrewer") }  ### colors
+
 if (!require("signal")) { install.packages("signal"); require("signal") }  ### interpolations
 if (!require("parallel")) { install.packages("parallel"); require("parallel") }  ### Paralell
 if (!require("doParallel")) { install.packages("doParallel"); require("doParallel") }  ### Paralell foreach and caret
@@ -48,17 +49,17 @@ for (i in c(1:nSamples)){
 #########################################
 
 # define min and max values for all parameters defined in TypeDistrib
-minval <- data.frame('N' = 1.0,'Cab'=5,'Car'=0,'Ant' = 0,'Cbrown'= 0.5,
+minval <- data.frame('N' = 1.0,'Cab'=5,'Car'=0,'Anth' = 0,'Cbrown'= 0.5,
                      'EWT' = 0.001,'Prot' =  0.00001, 'CBC' = 0.00001,
                      'LIDFa' = 40, 'LAI' = 0.5)
 
 # define min and max values for all parameters defined in TypeDistrib
-maxval <- data.frame('N' = 3,'Cab'=70,'Car'=25,'Ant' = 7,'Cbrown'= 1,
+maxval <- data.frame('N' = 3,'Cab'=70,'Car'=25,'Anth' = 7,'Cbrown'= 1,
                      'EWT' = 0.1,'Prot' =  0.0015, 'CBC' = 0.0015,
                      'LIDFa' = 70, 'LAI' = 4)
 
 TypeDistrib<-data.frame('N' = 'Gaussian','Cab'='Gaussian','Car'='Gaussian',
-                        'Ant' = 'Uniform','Cbrown'= 'Uniform',
+                        'Anth' = 'Uniform','Cbrown'= 'Uniform',
                         'EWT' = 'Uniform',
                         'Prot' =  'Uniform', 'CBC' = 'Uniform',
                         'LIDFa' = 'Uniform', 'LAI' = 'Gaussian')
@@ -76,7 +77,7 @@ names(data.LUT)
 #	1.3  Create the LUT table 	
 ##################################################
 
-LUT<-data.frame(data.LUT$N,data.LUT$Cab,data.LUT$Car,data.LUT$Ant,data.LUT$Cbrown,
+LUT<-data.frame(data.LUT$N,data.LUT$Cab,data.LUT$Car,data.LUT$Anth,data.LUT$Cbrown,
                 data.LUT$EWT,LMA=0.05,alpha=40,
                 ## PROSPECT-PRO
                 data.LUT$Prot,data.LUT$CBC,
@@ -85,13 +86,17 @@ LUT<-data.frame(data.LUT$N,data.LUT$Cab,data.LUT$Car,data.LUT$Ant,data.LUT$Cbrow
                 LIDFb=0,TypeLidf=2,
                 data.LUT$LAI,hspot=0.2,tts=20, tto=0, psi=0,
                 ### input for 4SAIL2
-                
-                fraction_brown = 0.5, diss = 0.0, Cv = 1,Zeta = 1)
+                fraction_brown = 0.5, diss = 0.0, Cv = 1,Zeta = 1,#
+                #skyl
+                skyl=0.1,
+                ### input for INFORM
+                phi = 0, LAIu = 0.5, sd = 650,cd = 4.5 , h=20, psoil=psoil)
 
-colnames(LUT)<-c("N","Cab",'Car','Ant',"Cbrown","EWT","LMA","alpha","Prot","CBC",
+colnames(LUT)<-c("N","Cab",'Car','Anth',"Cbrown","EWT","LMA","alpha","Prot","CBC",
                  "LIDFa","LIDFb","TypeLidf","LAI",
                  "hspot","tts","tto","psi",
-                 "fraction_brown","diss" ,"Cv","Zeta")
+                 "fraction_brown","diss" ,"Cv","Zeta",'skyl',
+                 'phi','LAIu', 'sd','cd', 'h', 'psoil')
 
 head(LUT)
 #filename <- paste('Tables/LUT/LUT_PROSAIL-PRO_',version,'_',n_sim,'.txt', sep = "")
@@ -109,7 +114,7 @@ registerDoParallel(cl)
 start_time <- Sys.time()
 sim.rfl<-list()
 sims<-foreach(i=1:nSamples) %dopar% {
-  data.prosail<-ToolsRTM::m4SAIL(inputLUT=LUT[i,],rsoil=rsoil[[i]],PROSPECTversion = 'D')
+  data.prosail<-ToolsRTM::m4SAIL(inputLUT=LUT[i,],rsoil=rsoil0[[i]],PROSPECTversion = 'D')
  
    #data.prosail is a  list(rdot,rsot,rddt,rsdt)
   rdot<-data.prosail[[1]]
@@ -139,13 +144,14 @@ SI(Spec.simula) <- LUT
 mask(Spec.simula)<-c(801,990,1098,1190,1311,1505,1680,2600)
 plot(Spec.simula)
 
+
 ##############################################################################################################################
 ######################## 2.2   CALL  PROSPECT + Model4SAIL2  ----     
 ##############################################################################################################################
 
 # define a couple of leaf chemical constituents corresponding to green and brown leaves
 
-LUT_Green_BrownVeg<-data.frame(N=c(1.5, 2), Cab=c(40,5),Car=c(8,5),Ant=c(0,1),Cbrown=c(0,1),
+LUT_Green_BrownVeg<-data.frame(N=c(1.5, 2), Cab=c(40,5),Car=c(8,5),Anth=c(0,1),Cbrown=c(0,1),
                                EWT=c(0.01, 0.005), LMA=c(0.009,0.008), alpha=c(40,40),
                                Prot=c(0 , 0),CBC=c(0 , 0))
 
@@ -157,7 +163,7 @@ registerDoParallel(cl)
 start_time <- Sys.time()
 sim.rfl<-list()
 sims<-foreach(i=1:nSamples) %dopar% {
-  data.prosail<-ToolsRTM::m4SAIL2(LUT_GB=LUT_Green_BrownVeg,inputLUT=LUT[i,],rsoil=rsoil[[i]],PROSPECTversion = 'PRO')
+  data.prosail<-ToolsRTM::m4SAIL2(LUT_GB=LUT_Green_BrownVeg,inputLUT=LUT[i,],rsoil=rsoil0[[i]],PROSPECTversion = 'PRO')
   #data.prosail is a  list(rdot,rsot,rddt,rsdt)
   rdot<-data.prosail[[1]]
   rsot<-data.prosail[[2]]
@@ -166,6 +172,47 @@ sims<-foreach(i=1:nSamples) %dopar% {
   BRF<-ToolsRTM::Compute_BRF(rdot=rdot,rsot=rsot,tts=LUT[i,'tts'],SpecATM_Sensor=ToolsRTM::dataSpec_PDB)
   #
   sim.rfl[[i]]<-BRF
+  
+} ##end paralle
+
+stopCluster(cl)
+end_time <- Sys.time()
+print(end_time - start_time)
+
+
+sim.canopy<-do.call(rbind,sims)
+wave<-data[,1]
+#soil.matrix<-rbind(soil.matrix,t(soil.scope_2nm), t(soil.scope_3nm))
+Spec.simula<- speclib(sim.canopy, wave)
+IDs<-c(1:nSamples)
+### Add IDs
+idSpeclib(Spec.simula) <- as.character(IDs)
+SI(Spec.simula) <- LUT
+mask(Spec.simula)<-c(801,990,1098,1190,1311,1505,1680,2600)
+plot(Spec.simula)
+
+
+##############################################################################################################################
+######################## 2.2   CALL  PROSPECT + INFORM  ----     
+##############################################################################################################################
+
+
+## choose number of processors/cores
+no_cores <- detectCores() - 2 
+cl <- makeCluster(no_cores)
+registerDoParallel(cl)
+
+start_time <- Sys.time()
+sim.rfl<-list()
+sims<-foreach(i=1:nSamples) %dopar% {
+  data.inform<-ToolsRTM::inform_prospect(inputLUT = LUT[i,], psoil =LUT[i,'psoil'],rsoil=rsoil0[[i]],PROSPECTversion = 'PRO')
+  #data.prosail is a  list(rdot,rsot,rddt,rsdt)
+  sim.rfl[[i]]<-data.inform
+  
+  #Computes bidirectional reflectance factor based on outputs from PROSAIL and sun position
+  #BRF<-ToolsRTM::Compute_BRF(rdot=rdot,rsot=rsot,tts=LUT[i,'tts'],SpecATM_Sensor=ToolsRTM::dataSpec_PDB)
+  #
+  #sim.rfl[[i]]<-BRF
   
 } ##end paralle
 

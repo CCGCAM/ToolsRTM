@@ -4,7 +4,13 @@
 \alias{m4SAIL2}
 \title{Performs PRO4SAIL2 simulation based on a set of combinations of input parameters}
 \usage{
-m4SAIL2(LUT_GB = NULL, inputLUT, rsoil, PROSPECTversion = "PRO")
+m4SAIL2(
+  LUT_GB = NULL,
+  inputLUT,
+  rsoil,
+  PROSPECTversion = "PRO",
+  FieldObserv = NULL
+)
 }
 \arguments{
 \item{LUT_GB}{dataframe Includes distribution of biophysical parameters used as green vegetation  (first column).

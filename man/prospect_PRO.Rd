@@ -13,6 +13,8 @@ prospect_PRO(N, Cab, Car, Anth, Cbrown, EWT, LMA, alpha, Prot, CBC)
 
 \item{Car}{numeric. Carotenoid content (microg.cm-2)}
 
+\item{Anth}{numeric. Anthocyain content (microg.cm-2)}
+
 \item{Cbrown}{numeric. Brown pigment content (Arbitrary units)}
 
 \item{EWT}{numeric. Equivalent Water Thickness (g.cm-2)}
@@ -24,8 +26,6 @@ prospect_PRO(N, Cab, Car, Anth, Cbrown, EWT, LMA, alpha, Prot, CBC)
 \item{Prot}{numeric. protein content  (g.cm-2)}
 
 \item{CBC}{numeric. NonProtCarbon-based constituent content (g.cm-2)}
-
-\item{Ant}{numeric. Anthocyain content (microg.cm-2)}
 }
 \value{
 List of lambda with leaf directional-hemisphrical reflectance and transmittance
