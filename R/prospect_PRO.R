@@ -50,7 +50,7 @@
 #' @param N numeric. Leaf structure parameter
 #' @param Cab numeric. Chlorophyll content (microg.cm-2)
 #' @param Car numeric. Carotenoid content (microg.cm-2)
-#' @param Ant numeric. Anthocyain content (microg.cm-2)
+#' @param Anth numeric. Anthocyain content (microg.cm-2)
 #' @param Cbrown numeric. Brown pigment content (Arbitrary units)
 #' @param EWT numeric. Equivalent Water Thickness (g.cm-2)
 #' @param LMA numeric. Leaf Mass per Area (g.cm-2)
@@ -65,8 +65,6 @@
 
 prospect_PRO<-function(N,Cab,Car,Anth,Cbrown,EWT,LMA,alpha,Prot,CBC){  
 
-
-getwd()
 data <- ToolsRTM::dataSpec_PRO # read.table('parameters/dataSpec_PRO.csv',header = T, sep=',')
 lambda  <- data[,1] ##wavelenght
 nr      <- data[,2] ## refractive index of leaf material
@@ -81,6 +79,21 @@ Knonprot<- data[,10] ## specific absorption coefficient of non proteic dry matte
 
 Kall    <- (Cab*Kab+Car*Kcar+Anth*Kant+Cbrown*KBrown+EWT*Kw+LMA*Km+Prot*Kprot+CBC*Knonprot)/N
 
+############################################################################################ 
+## This is for INFORM model
+############################################################################################ 
+# ## When N = 0 and is used for estimating reflectance understory
+# Kall_t<-c()
+# if (Kall[1] == 'Inf') { ## when dividing by cero
+#   Kall[which(Kall == 'Inf')]<-1
+# } else {
+#     for (i in c(1:length(Kall))){
+#     Kall_t[i]=(1-Kall[i])*exp(-Kall[i])+Kall[i]^(2)*ToolsRTM::s13aaf(Kall[i])
+#     }
+#   Kall = Kall_t
+# }
+############################################################################################ 
+############################################################################################ 
 j       <- which(Kall>0)# Non-conservative scattering (normal case)
 t1      <- (1-Kall)*exp(-Kall)
 t2      <- Kall^2*expint::expint(Kall)
@@ -105,14 +118,16 @@ r12     <- 1-t12
 t21     <- t12/(nr^2)
 r21     <- 1-t21
 
+
 # top surface side
-denom   <- 1-r21*r21*tau^2
-Ta      <- talf*tau*t21/denom
-Ra      <- ralf+r21*tau*Ta
+denom   <- 1-(r21*r21*(tau^2))
+Ta      <- (talf*tau*t21)/denom
+Ra      <- ralf+(r21*tau*Ta)
 
 # bottom surface side
 t       <- t12*tau*t21/denom
-r       <- r12+r21*tau*t
+r       <- r12+(r21*tau*t)
+
 
 # ***********************************************************************
 # reflectance and transmittance of N layers
@@ -130,6 +145,7 @@ a       <- (1+rq-tq+D)/(2*r)
 b       <- (1-rq+tq+D)/(2*t)
 
 
+
 bNm1    <- b^(N-1)#
 bN2     <- bNm1^2
 a2      <- a^2
@@ -137,10 +153,12 @@ denom   <- a2*bN2-1
 Rsub    <- a*(bN2-1)/denom
 Tsub    <- bNm1*(a2-1)/denom
 
+
 # Case of zero absorption
 j       <- which(r+t >= 1)
 Tsub[j] <- t[j]/(t[j]+(1-t[j])*(N-1))
 Rsub[j]	 <-  1-Tsub[j]
+
 
 # Reflectance and transmittance of the leaf: combine top layer with next N-1 layers
 denom   <- 1-Rsub*r

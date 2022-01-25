@@ -76,7 +76,7 @@
 #' @param N numeric. Leaf structure parameter
 #' @param Cab numeric. Chlorophyll content (microg.cm-2)
 #' @param Car numeric. Carotenoid content (microg.cm-2)
-#' @param Ant numeric. Anthocyain content (microg.cm-2)
+#' @param Anth numeric. Anthocyain content (microg.cm-2)
 #' @param Cbrown numeric. Brown pigment content (Arbitrary units)
 #' @param EWT numeric. Equivalent Water Thickness (g.cm-2). Default is 0.009 Default is  0.012   
 #' @param LMA numeric. Leaf Mass per Area (g.cm-2). Default is  0.012 
@@ -87,7 +87,7 @@
 #' @examples
 #' 
 #' 
-prospect_DB<-function(N,Cab,Car,Ant,Brown,EWT,LMA,alpha){
+prospect_DB<-function(N,Cab,Car,Anth,Brown,EWT,LMA,alpha){
 # ***********************************************************************
 # Jacquemoud S., Baret F. (1990), PROSPECT: a model of leaf optical
 # properties spectra, Remote Sens. Environ., 34:75-91.
@@ -109,7 +109,7 @@ Kant    <- data[,5]
 KBrown  <- data[,6]
 Kw      <- data[,7]
 Km      <- data[,8]
-Kall    <- (Cab*Kab+Car*Kcar+Ant*Kant+Brown*KBrown+EWT*Kw+LMA*Km)/N
+Kall    <- (Cab*Kab+Car*Kcar+Anth*Kant+Brown*KBrown+EWT*Kw+LMA*Km)/N
 j       <- which(Kall>0)# Non-conservative scattering (normal case)
 t1      <- (1-Kall)*exp(-Kall)
 t2      <- Kall^2*expint::expint(Kall)
@@ -135,9 +135,16 @@ t21     <- t12/(nr^2)
 r21     <- 1-t21
 
 # top surface side
-denom   <- 1-r21*r21*tau^2
-Ta      <- talf*tau*t21/denom
-Ra      <- ralf+r21*tau*Ta
+
+denom   <- 1-(r21*r21*(tau^2))
+Ta      <- (talf*tau*t21)/denom
+Ra      <- ralf+(r21*tau*Ta)
+
+
+
+# bottom surface side
+t       <- t12*tau*t21/denom
+r       <- r12+(r21*tau*t)
 
 # bottom surface side
 t       <- t12*tau*t21/denom
