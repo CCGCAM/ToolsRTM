@@ -1,0 +1,260 @@
+
+#' Title
+#'
+#' @param LUT  Dataset with inputs and Bands
+#' @param input variable to estimate
+#' @param split  ratio between 0 and 1 for splitting the dataset in training and testing
+#' @param setseed  set random number
+#' @param method  Machine learning approach for estimating each plant traits, the options are 'SVM', 'RF' and 'LDA'
+#' @param Field.data  dataframe with observations
+#' #' @param acron acronynm for the observation measure: e.g., Cab_obsrv, where acron='_observ' and Cab has same name as input
+#' @export
+#'
+#' @examples
+#' 
+hybrid_inversion<-function(LUT=NULL,input=NULL,split=0.8,setseed=NULL,method='SVM',Field.data=NULL, acron=NULL){
+  
+  if (is.null(acron)){
+    message('please add the acronym for the ground data')
+    stop()
+  }
+  dataset=LUT
+  xi_y1=split
+  ### partition datasets
+  index <- as.vector(caret::createDataPartition(dataset[,input], p = xi_y1, list = F))
+  
+  data.train<-dataset[index,]
+  data.test<-dataset[-index,]
+  
+  keep.varibles<-names(dataset[,grep(colnames(dataset),pattern="R.",fixed = TRUE)])
+  fmla <- as.formula(paste(input," ~ ", paste(keep.varibles, collapse= "+")))
+  set.seed(setseed)
+  if (method == 'SVM' | is.null(method)){
+    message('processing hybrid inversion using SVM model ....')
+    
+    clusters <- detectCores()-1
+    cl <- makePSOCKcluster(clusters)
+    doParallel::registerDoParallel(cl)
+    ## Support Vector Machines (SVM)
+    tobj <- e1071::tune.svm(fmla, data = data.train, gamma = 2^(-4:1), cost = 2^(1:4),
+                     tunecontrol=e1071::tune.control(cross=10), # by default scale=T
+                     parallel.cores =cl )
+    
+    cc <- as.numeric(tobj$best.parameters[2]) ##cost
+    gg <- as.numeric(tobj$best.parameters[1]) ### gamma
+    
+    model<- e1071::svm(fmla, kernel="radial", data = data.train, gamma= gg, cost= cc,
+                # cross=10,  # k-fold de 10 reduce overffiting
+                probability=T,  ## problabilidad
+                fitted=T) ### predichos
+    stopCluster(cl)
+    
+  } else if (method == 'RF'){
+    message('processing hybrid approach using Random Forest model')
+    clusters <- detectCores()-1
+    cl <- makePSOCKcluster(clusters)
+    
+    ##random forest model RF
+    #mtry: Number of variables randomly sampled as candidates at each split.
+    #ntree: Number of trees to grow.
+    
+    # Random Search
+    fit.control <- caret::trainControl(method="repeatedcv", allowParallel=T,
+                                   number=10, repeats=3, search="random")
+    
+    #tune.grid <- expand.grid(.mtry=c(2, 4, 8,16,32))
+    tune.grid <- expand.grid(.mtry=sqrt(ncol(data.train))*2)
+    
+    model <- caret::train(fmla, data=data.train, method="rf", metric='RMSE', 
+                          preProcess = c("center", "scale"),
+                          trControl=fit.control, tuneGrid=tune.grid, ntree=500)
+
+    
+    stopCluster(cl)
+
+  } else if (method == 'GB'){
+    message('processing hybrid approach using Gradient Boosting')
+    clusters <- detectCores()-1
+    cl <- makePSOCKcluster(clusters)
+    ##Gradient Boosting
+    fit.control <- caret::trainControl(method="repeatedcv", allowParallel=T,
+                                       number=10, repeats=3, search="random")
+    tune.grid <- expand.grid(shrinkage = seq(0.1, 1, by = 0.2), 
+                      interaction.depth = c(1, 3, 7, 10),
+                      n.minobsinnode = c(2, 5, 10),
+                      n.trees = c(100, 300, 500, 1000))
+    model<- caret::train(fmla, data = data.train,  method = "gbm", metric='RMSE',
+                 preProcess = c("center", "scale"),
+                 trControl = fit.control, tuneGrid =tune.grid, verbose = FALSE)
+
+
+    stopCluster(cl)
+  }
+  else if (method == 'nnet'){
+    message('processing hybrid approach using a nnet')
+    clusters <- detectCores()-1
+    cl <- makePSOCKcluster(clusters)
+    ##nnet Model 
+    fit.control <- caret::trainControl(method="repeatedcv", allowParallel=T,
+                                       number=10, repeats=3, search="random",
+                                       returnResamp = "all",
+                                       savePredictions = "all")
+    tune.grid <- expand.grid(shrinkage = seq(0.1, 1, by = 0.2), 
+                             interaction.depth = c(1, 3, 7, 10),
+                             n.minobsinnode = c(2, 5, 10),
+                             n.trees = c(100, 300, 500, 1000))
+
+    nnet.grid <- expand.grid(.decay = seq(0,0.1,by=0.01), .size = seq(1,10,by=1))
+    nnet.fit <- caret::train(fmla, data = data.train,method = "nnet",  trControl = fit.control,
+                             preProcess = c("center", "scale"),threshold = 0.3,
+                             metric='Rsquared',maxit = 50, tuneGrid = nnet.grid,linout=TRUE,
+                             verbose = FALSE) 
+    size<-getElement(nnet.fit,"bestTune")$size
+    decay<-getElement(nnet.fit,"bestTune")$decay
+    
+    #nne model with the best tune parameters for 500 iterations
+    model <- nnet(fmla,data=data.train,size=size,decay=decay,trace=F,linout=TRUE,skip=T)
+    best.value <- model$value
+    value <- NULL
+    for(i in 1:500)
+    {
+      aux.nnet <- nnet(fmla,data=data.train,size=size,decay=decay,trace=F,linout=TRUE,skip=F)
+      value[i] <- aux.nnet$value
+      if(aux.nnet$value < best.value)
+      {
+        model <- aux.nnet
+        best.value <- model$value
+      }
+      
+    }
+    
+    stopCluster(cl)
+  }
+  
+  
+  else {
+    message('processing hybrid approach using LDA model')
+    clusters <- detectCores()-1
+    cl <- makePSOCKcluster(clusters)
+    stopCluster(cl)
+    stop()
+  }
+
+## Predictions on train and test
+pred.train<-c(predict(object = model,data.train))
+pred.test<-c(predict(object = model,data.test))
+
+#### Skill scores for training data
+r2.train<-round(cor(pred.train,data.train[input],use='pairwise.complete.obs')^2,2)
+rmse.train<-round(ToolsRTM::RMSE(pred.train,data.train[,input]),2)
+mae.train<-round(ToolsRTM::MAE(pred.train,data.train[,input]),2)
+#### Skill scores for testing data
+r2.test<-round(cor(pred.test,data.test[,input],use='pairwise.complete.obs')^2,2)
+rmse.test<-round(ToolsRTM::RMSE(pred.test,data.test[,input]),2)
+mae.test<-round(ToolsRTM::MAE(pred.test,data.test[,input]),2)
+## add skill scores in table
+stats<-data.frame(r2=c(r2.train,r2.test),
+                  rmse=c(rmse.train,rmse.test),
+                  mae=c(mae.train,mae.test))
+### Some input for scatter-plots
+
+mylabel.r.test = bquote(bold(r)^2 == .(format(stats[2,1], digits = 3)))
+mylabel.rmse.test = bquote(bold(rmse) == .(format(stats[2,2], digits = 3)))
+
+statsLabel = paste0("r2 = ", round(stats[2,1],2), ", RMSE = ", round(stats[2,2],4))
+
+## save results in data frame for plotting  
+data.plot<-list()
+data.plot$input<-c(data.test[,input])
+data.plot$pred<-pred.test
+
+data.plot<-data.frame(do.call(cbind,data.plot))
+
+axis_x<-bquote(bold(.(input)['measured'])) # axis x
+axis_y<-bquote(bold(.(input)['predicted']))# axis y
+
+scatter_plot<-ggplot(data.plot, aes(y=pred, x=input)) +
+  geom_point(alpha=0.6) + geom_smooth(method=lm, aes(group = 1)) + theme_bw()+
+  geom_abline(intercept = 0, slope = 1,linetype="dashed", size=0.5,color='gray')+
+  coord_fixed(ratio = 1,xlim = c(0, max(data.plot$input)), ylim = c(0, max(data.plot$pred))) +
+  xlab(axis_x) + ylab(axis_y) + ggtitle(statsLabel) 
+
+
+if (is.null(Field.data)) {
+  message('no field data is added ....')
+  #################
+
+  Hybrid = list('model'=model,'Stats'=stats,'Plot'=scatter_plot)
+  
+  return(Hybrid)
+  
+} else {
+ 
+  predict.obs<-c(predict(object = model,Field.data[,keep.varibles]))
+  Field.data$pred<-predict.obs
+  names_f<-names(Field.data)
+  colnames(Field.data)<-c(names(Field.data)[1:(length(names_f)-1)],paste(input,'_pred',sep=''))
+  #### Skill scores for training data
+  r2.obs<-round(cor(predict.obs,Field.data[,paste(input,acron,sep='')],use='pairwise.complete.obs')^2,2)
+  rmse.obs<-round(ToolsRTM::RMSE(predict.obs,Field.data[,paste(input,acron,sep='')]),2)
+  mae.obs<-round(ToolsRTM::MAE(predict.obs,Field.data[,paste(input,acron,sep='')]),2)
+  
+  stats<-data.frame(r2=c(r2.train,r2.test,r2.obs),
+                    rmse=c(rmse.train,rmse.test,rmse.obs),
+                    mae=c(mae.train,mae.test,mae.obs))
+  
+  mylabel.r.test = bquote(bold(r)^2 == .(format(stats[3,1], digits = 3)))
+  mylabel.rmse.test = bquote(bold(rmse) == .(format(stats[3,2], digits = 3)))
+  statsLabel = paste0("r2 = ", round(stats[3,1],2), ", RMSE = ", round(stats[3,2],4))
+  ## save results in data frame for plotting  
+  data.plot<-list()
+  data.plot$input<-c(Field.data[,paste(input,acron,sep='')])
+  data.plot$pred<-predict.obs
+  data.plot<-data.frame(do.call(cbind,data.plot))
+  
+  axis_x<-bquote(bold(.(input)['measured at Field level'])) # axis x
+  axis_y<-bquote(bold(.(input)['predicted']))# axis y
+  
+  scatter_obs<-ggplot(data.plot, aes(y=pred, x=input)) +
+    geom_point(alpha=0.6) + geom_smooth(method=lm, aes(group = 1)) + theme_bw()+
+    geom_abline(intercept = 0, slope = 1,linetype="dashed", size=0.5,color='gray')+
+    coord_fixed(ratio = 1,xlim = c(0, max(data.plot$input)), ylim = c(0, max(data.plot$pred))) +
+    xlab(axis_x) + ylab(axis_y) + ggtitle(statsLabel) 
+  
+  
+  
+  
+  Hybrid = list('model'=model,'Stats'=stats,'Plot'=scatter_plot,'Plot_field'=scatter_obs, 'Field.pred'=Field.data)
+  return(Hybrid)
+  
+}
+  
+}
+
+
+#' Function that returns Mean Absolute Error
+#'
+#' @param m 
+#' @param o 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' 
+MAE <- function(m,o){
+  error<-m - o
+  mean(abs(error))}
+
+#' Function that returns Root Mean Square Error
+#'
+#' @param m 
+#' @param o 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' 
+RMSE = function(m, o){
+  sqrt(mean((m - o)^2))}
