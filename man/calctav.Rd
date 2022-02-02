@@ -8,7 +8,7 @@ averaged over all directions of incidence and over all polarizations.}
 calctav(alfa, nr)
 }
 \arguments{
-\item{nr}{numeric. refractive index}
+\item{nr}{numeric. refractive index (for PROSAIL)}
 
 \item{alpha}{numeric. Maximum incidence angle defining the solid angle of incident light}
 }

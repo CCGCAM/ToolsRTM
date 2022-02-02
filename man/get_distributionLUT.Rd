@@ -11,7 +11,8 @@ get_distributionLUT(
   TypeDistrib = NULL,
   Mean_gauss = NULL,
   Std_gauss = NULL,
-  DepCab = NULL
+  DepCab = NULL,
+  setseed = NULL
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ get_distributionLUT(
 
 \item{Std_gauss}{list. standard deviation for parameters with Gaussian distribution}
 
+\item{setseed}{An integer vector, containing the random number generator (RNG) state for random number generation in R.}
+
 \item{nbSamples}{numeric. Number of samples to be generated}
 }
 \value{
@@ -32,4 +35,7 @@ LUT in data frame
 }
 \description{
 This function generates distribution of biophysical parameters used as input parameters in the RRT model
+}
+\examples{
+
 }
