@@ -4,12 +4,10 @@
 .Ruserdata
 ._*
 # exclude everything in folders
-parameters/*
+examples/parameters/*
 examples/SCOPE_v2.1/*
-examples/data/*
-examples/data_python/*
 examples/outputs/*
-examples/plots/*
-examples/stats/*
 examples/codesSE/*
 examples/codes/*
+examples/SEdata/*
+examples/field-dataset/*
