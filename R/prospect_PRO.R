@@ -9,14 +9,14 @@
 # 2500 nm (1 nm step) with the following parameters:
 #
 #       - N   = leaf structure parameter
-#       - Cab = chlorophyll a+b content in ?g/cm?
+#       - Cab = chlorophyll a+b content in ?g/cm2
 #       - Car = carotenoids content in ?g/cm?
-#       - Anth = Anthocyanin content in nmol/cm?
+#       - Anth = Anthocyanin content in nmol/cm2
 #       - Cbrown= brown pigments content in arbitrary units
 #       - EWT  = equivalent water thickness in g/cm? or cm
-#       - LMA  = dry matter content in g/cm?
-#       - Prot = protein content g/cm?
-#       - CBC= non protein dry matter content in g/cm?
+#       - LMA  = dry matter content in g/cm2
+#       - Prot = protein content g/cm2
+#       - CBC= non protein dry matter content in g/cm2
 #
 # Here are some examples observed during the LOPEX'93 experiment on
 # fresh (F) and dry (D) leaves :
@@ -76,6 +76,14 @@ Kw      <- data[,7] ## specific absorption coefficient of water (cm-1)
 Km      <- data[,8] ## specific absorption coefficient of dry matter (cm2.g-1)  
 Kprot   <- data[,9] ## specific absorption coefficient of proteins (cm2.g-1)   
 Knonprot<- data[,10] ## specific absorption coefficient of non proteic dry matter (cm2.g-1)  
+
+if (LMA > 0 & (Prot > 0 | CBC > 0)) {
+  message('With LMA=0 proteins and CBC should be set to 0')
+  message('LMA = PROT + CBC')
+  message("We run prospect-pro model with LMA=0")
+  LMA <- 0
+}
+
 
 Kall    <- (Cab*Kab+Car*Kcar+Anth*Kant+Cbrown*KBrown+EWT*Kw+LMA*Km+Prot*Kprot+CBC*Knonprot)/N
 
