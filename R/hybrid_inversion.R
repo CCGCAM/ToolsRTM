@@ -18,6 +18,7 @@ hybrid_inversion<-function(LUT=NULL,input=NULL,split=0.8,setseed=NULL,method='SV
     message('please add the acronym for the ground data')
     stop()
   }
+  options(warn=-1) ###avoid warnings
   dataset=LUT
   xi_y1=split
   ### partition datasets
@@ -26,8 +27,8 @@ hybrid_inversion<-function(LUT=NULL,input=NULL,split=0.8,setseed=NULL,method='SV
   data.train<-dataset[index,]
   data.test<-dataset[-index,]
   
-  keep.varibles<-names(dataset[,grep(colnames(dataset),pattern="R.",fixed = TRUE)])
-  fmla <- as.formula(paste(input," ~ ", paste(keep.varibles, collapse= "+")))
+  keep.variables<-names(dataset[,grep(colnames(dataset),pattern="R.",fixed = TRUE)])
+  fmla <- as.formula(paste(input," ~ ", paste(keep.variables, collapse= "+")))
   set.seed(setseed)
   if (method == 'SVM' | is.null(method)){
     message('processing hybrid inversion using SVM model ....')
@@ -35,6 +36,7 @@ hybrid_inversion<-function(LUT=NULL,input=NULL,split=0.8,setseed=NULL,method='SV
     clusters <- detectCores()-1
     cl <- makePSOCKcluster(clusters)
     doParallel::registerDoParallel(cl)
+    set.seed(setseed)
     ## Support Vector Machines (SVM)
     tobj <- e1071::tune.svm(fmla, data = data.train, gamma = 2^(-4:1), cost = 2^(1:4),
                      tunecontrol=e1071::tune.control(cross=10), # by default scale=T
@@ -44,8 +46,8 @@ hybrid_inversion<-function(LUT=NULL,input=NULL,split=0.8,setseed=NULL,method='SV
     gg <- as.numeric(tobj$best.parameters[1]) ### gamma
     
     model<- e1071::svm(fmla, kernel="radial", data = data.train, gamma= gg, cost= cc,
-                # cross=10,  # k-fold de 10 reduce overffiting
-                probability=T,  ## problabilidad
+                cross=10,  # k-fold de 10 reduce overffiting
+                probability=F,  ## probabilidad
                 fitted=T) ### predichos
     stopCluster(cl)
     
@@ -53,22 +55,39 @@ hybrid_inversion<-function(LUT=NULL,input=NULL,split=0.8,setseed=NULL,method='SV
     message('processing hybrid approach using Random Forest model')
     clusters <- detectCores()-1
     cl <- makePSOCKcluster(clusters)
-    
+    set.seed(setseed)
     ##random forest model RF
     #mtry: Number of variables randomly sampled as candidates at each split.
     #ntree: Number of trees to grow.
-    
     # Random Search
     fit.control <- caret::trainControl(method="repeatedcv", allowParallel=T,
-                                   number=10, repeats=3, search="random")
+                           returnResamp = "all",
+                           savePredictions = "all",
+                          number=10, repeats=3, search="random")
     
-    #tune.grid <- expand.grid(.mtry=c(2, 4, 8,16,32))
-    tune.grid <- expand.grid(.mtry=sqrt(ncol(data.train))*2)
+    tune.grid <- expand.grid(.mtry = c(1: dim(data.train[,keep.variables])[2]-1))
+    #tune.grid <- expand.grid(.mtry=sqrt(ncol(data.train))*2)
     
     model <- caret::train(fmla, data=data.train, method="rf", metric='RMSE', 
-                          preProcess = c("center", "scale"),
-                          trControl=fit.control, tuneGrid=tune.grid, ntree=500)
-
+                   # preProc = c('center', 'scale','BoxCox', 'YeoJohnson', 'expoTrans'),
+                    trControl=fit.control, tuneGrid=tune.grid, ntree=500)
+    ## for ntree search in caret package
+    ## not implemented for the computing time
+    # #results_rf <- list()
+    # for (ntree in c(100,200,500,600,800, 1000, 2000)) {
+    #   set.seed(setseed)
+    #   m_trees <- train(fmla,data = data_train,method = "rf",metric='RMSE',
+    #                       preProcess = c("center", "scale"),
+    #                       trControl=fit.control, tuneGrid=tune.grid, 
+    #                        nodesize = 14,
+    #                        maxnodes = 24,
+    #                        ntree = ntree)
+    #   i_model <- toString(ntree)
+    #   results_rf[[i_model]] <- m_trees
+    # }
+    # results_tree <- resamples(store_maxtrees)
+    # summary(results_tree)
+    
     
     stopCluster(cl)
 
@@ -77,15 +96,18 @@ hybrid_inversion<-function(LUT=NULL,input=NULL,split=0.8,setseed=NULL,method='SV
     clusters <- detectCores()-1
     cl <- makePSOCKcluster(clusters)
     ##Gradient Boosting
+    set.seed(setseed)
     fit.control <- caret::trainControl(method="repeatedcv", allowParallel=T,
-                                       number=10, repeats=3, search="random")
+                         returnResamp = "all",
+                         savePredictions = "all",
+                        number=10, repeats=3, search="random")
     tune.grid <- expand.grid(shrinkage = seq(0.1, 1, by = 0.2), 
                       interaction.depth = c(1, 3, 7, 10),
                       n.minobsinnode = c(2, 5, 10),
                       n.trees = c(100, 300, 500, 1000))
     model<- caret::train(fmla, data = data.train,  method = "gbm", metric='RMSE',
-                 preProcess = c("center", "scale"),
-                 trControl = fit.control, tuneGrid =tune.grid, verbose = FALSE)
+                 # preProc = c('center', 'scale','BoxCox', 'YeoJohnson', 'expoTrans', 'ica'),
+                  trControl = fit.control, tuneGrid =tune.grid, verbose = FALSE)
 
 
     stopCluster(cl)
@@ -95,49 +117,115 @@ hybrid_inversion<-function(LUT=NULL,input=NULL,split=0.8,setseed=NULL,method='SV
     clusters <- detectCores()-1
     cl <- makePSOCKcluster(clusters)
     ##nnet Model 
+    set.seed(setseed)
     fit.control <- caret::trainControl(method="repeatedcv", allowParallel=T,
                                        number=10, repeats=3, search="random",
+                                       index = createFolds(data.train[,input], 5),
                                        returnResamp = "all",
                                        savePredictions = "all")
-    tune.grid <- expand.grid(shrinkage = seq(0.1, 1, by = 0.2), 
-                             interaction.depth = c(1, 3, 7, 10),
-                             n.minobsinnode = c(2, 5, 10),
-                             n.trees = c(100, 300, 500, 1000))
+
 
     nnet.grid <- expand.grid(.decay = seq(0,0.1,by=0.01), .size = seq(1,10,by=1))
     nnet.fit <- caret::train(fmla, data = data.train,method = "nnet",  trControl = fit.control,
-                             preProcess = c("center", "scale"),threshold = 0.3,
-                             metric='Rsquared',maxit = 50, tuneGrid = nnet.grid,linout=TRUE,
+                     #   preProc = c("center", "scale"),
+                        cross=10,
+                        threshold = 0.3,
+                        metric='Rsquared',maxit = 100, tuneGrid = nnet.grid,linout=TRUE,
                              verbose = FALSE) 
     size<-getElement(nnet.fit,"bestTune")$size
     decay<-getElement(nnet.fit,"bestTune")$decay
     
     #nne model with the best tune parameters for 500 iterations
-    model <- nnet(fmla,data=data.train,size=size,decay=decay,trace=F,linout=TRUE,skip=T)
+    model <- nnet::nnet(fmla,data=data.train,size=size,decay=decay,trace=F,linout=TRUE,skip=T,
+                        maxit=200)
     best.value <- model$value
     value <- NULL
-    for(i in 1:500)
+    progress_bar = txtProgressBar(min=0, max=1000, style = 3, char="=")
+    for(i in 1:1000)
     {
-      aux.nnet <- nnet(fmla,data=data.train,size=size,decay=decay,trace=F,linout=TRUE,skip=F)
+      aux.nnet <- nnet::nnet(fmla,data=data.train,size=size,decay=decay,trace=F,linout=TRUE,skip=F,
+                             maxit=200)
       value[i] <- aux.nnet$value
       if(aux.nnet$value < best.value)
       {
         model <- aux.nnet
         best.value <- model$value
       }
-      
+      setTxtProgressBar(progress_bar, value = i)
     }
-    
+    close(progress_bar)
     stopCluster(cl)
   }
   
   
-  else {
-    message('processing hybrid approach using LDA model')
+  else if (method == 'Ensemble') {
+    message('processing hybrid approach using Ensemble by stacking approach ....')
+    message('list of models: SVM,Gradient Boosting and Neural Network ')
+    message('list of models: SVM,Gradient Boosting and Neural Network ')
     clusters <- detectCores()-1
     cl <- makePSOCKcluster(clusters)
+    set.seed(setseed)
+   
+    algorithmList <- c('gbm', #Gradient-boosted machines
+                       'svmRadial', #SVM with RBF Kernel
+                       'nnet') #neural network
+    ### tuning parameters for each model
+    
+    # gmb
+    tune.grid.gbm <- expand.grid(shrinkage = seq(0.1, 1, by = 0.2), 
+                             interaction.depth = c(1, 3, 7, 10),
+                             n.minobsinnode = c(2, 5, 10),
+                             n.trees = c(100, 300, 500, 1000))
+    # svm
+    tuneGrid.svm = expand.grid(C = c(2^(1:4)),sigma=c(2^(-4:1)))
+    # nnet
+    tune.grid.nne <- expand.grid(.decay = seq(0.001,0.2,by=0.01), .size = seq(1,10,by=1))
+  
+    ### tunning in a list
+    #in caret PreProc can be:
+    #BoxCox, YeoJohnson, expoTrans, invHyperbolicSine, center, scale, range, 
+    #nnImpute, bagImpute, medianImpute, pca, ica, spatialSign, ignore, keep, 
+    #remove, zv, nzv, conditionalX, corr
+    models.ensemble=list(gbm=caretModelSpec(method="gbm",  #metric='MAE', 
+                                #   preProc = c("center", "scale"),
+                                     tuneGrid=tune.grid.gbm),
+                  svmRadial=caretModelSpec(method="svmRadial", # metric='MAE',
+                             # preProc = c("center","scale"),
+                              tuneGrid=tuneGrid.svm,#tuneLength=10,
+                               threshold = 0.3),
+                               #tuneGrid=tuneGrid.svm),
+                  nnet=caretModelSpec(method="nnet", #metric='MAE',
+                                   #   preProc = c("center", "scale"),
+                                      threshold = 0.3,
+                                      tuneGrid=tune.grid.nne,
+                                      #tuneGrid = tune.grid.nne,
+                                      linout=TRUE,
+                                      trace=FALSE))
+    fit.control<- trainControl(method="repeatedcv", 
+                              number=10, 
+                              savePredictions=TRUE,
+                              #index = createFolds(data.train[,input], 5),
+                              repeats=3,
+                              search = "random")
+    
+    models <- caretEnsemble::caretList(fmla, data = data.train, 
+                                       trControl=fit.control,
+                                       verbose=FALSE,
+                                       tuneList = models.ensemble,
+                                       methodList=algorithmList) 
+    # Combine Predictions from multiple models
+    set.seed(setseed)
+    stackControl <- trainControl(method="repeatedcv", 
+                                 number=10, 
+                                 repeats=3,
+                                 index = createFolds(data.train[,input], 5),
+                                 savePredictions = "all",
+                                 search = "random")
+    
+    # Ensemble the predictions of `models` to form a new combined prediction based on glm
+    model <- caretEnsemble::caretStack(models, method="glm", trControl=stackControl)
     stopCluster(cl)
-    stop()
+    #stop()
   }
 
 ## Predictions on train and test
@@ -190,12 +278,12 @@ if (is.null(Field.data)) {
   
 } else {
  
-  predict.obs<-c(predict(object = model,Field.data[,keep.varibles]))
+  predict.obs<-c(predict(object = model,Field.data[,keep.variables]))
   Field.data$pred<-predict.obs
   names_f<-names(Field.data)
   colnames(Field.data)<-c(names(Field.data)[1:(length(names_f)-1)],paste(input,'_pred',sep=''))
   #### Skill scores for training data
-  r2.obs<-round(cor(predict.obs,Field.data[,paste(input,acron,sep='')],use='pairwise.complete.obs')^2,2)
+  r2.obs<-round(cor(predict.obs,Field.data[,paste(input, '_obsv',sep='')],use='pairwise.complete.obs')^2,2)
   rmse.obs<-round(ToolsRTM::RMSE(predict.obs,Field.data[,paste(input,acron,sep='')]),2)
   mae.obs<-round(ToolsRTM::MAE(predict.obs,Field.data[,paste(input,acron,sep='')]),2)
   
