@@ -240,15 +240,15 @@ colnames(rfl.sentineltoExport)<-paste('R.',Spec.simula.sentinel@wavelength,sep='
 head(rfl.sentineltoExport)
 LUT_rfl.sentinel<-cbind(ID=IDs, LUT,rfl.sentineltoExport)
 
-filename=paste('examples/data//1-LUT_',model_rtm,'_',version,j,'_',n_sim,'.csv',sep='')
+filename=paste('examples/outputs/LUTS/1-LUT_',model_rtm,'_',version,j,'_',n_sim,'.csv',sep='')
 write.table(LUT_rfl.sentinel, file = filename, sep=",", row.names = FALSE, col.names = T,append = F)
 
 #} # end j
 
 library(plyr)
-dataset <- ldply(list.files('examples/data/', pattern = '10k',full.names = T), read.csv, header=TRUE)
+dataset <- ldply(list.files('examples/outputs/LUTS/', pattern = '10k',full.names = T), read.csv, header=TRUE)
 dim(dataset)
-filename=paste('examples/data/1-LUT_',model_rtm,'_with_100k.csv',sep='')
+filename=paste('examples/outputs/LUTS/1-LUT_',model_rtm,'_with_100k.csv',sep='')
 write.table(dataset, file = filename, sep=",", row.names = FALSE, col.names = T,append = F)
 
 

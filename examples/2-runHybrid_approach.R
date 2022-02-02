@@ -26,7 +26,7 @@ if (!require("ToolsRTM")) { install.packages("ToolsRTM"); require("ToolsRTM") } 
 #	0. load  LUT table  -----    
 ##############################################################################################################################
 
-LUT    <- read.table('examples/data/fourSAIL2/1-LUT_fourSAIL2-PRO_with_100k.csv',header = T, sep=',') #fourSAIL2
+LUT    <- read.table('examples/outputs/LUTS/fourSAIL2/1-LUT_fourSAIL2-PRO_with_100k.csv',header = T, sep=',') #fourSAIL2
 #LUT    <- read.table('examples/data/INFORM_vR/1-LUT_Ve_1_10k.csv',header = T, sep=',') #INFOMR
 #LUT    <- read.table('examples/data/INFORM_type1/1-LUT_Ve_1_10k.csv',header = T, sep=',') #INFOMR with type
 
@@ -41,7 +41,7 @@ data.rtm<-data.frame(LUT[,input_to],spectra(Spec.rtm))
 colnames(data.rtm)<-c(input_to,paste('R.',round(Spec.rtm@wavelength,4), sep=''))
 head(data.rtm)
 
-data.field    <- read.table('examples/data/field_data/Lanzhot_Leaf_mergeSE.csv',header = T, sep=',')
+data.field    <- read.table('examples/field-dataset/Lanzhot_Leaf_mergeSE.csv',header = T, sep=',')
 main_inputs<-c('ID_leaf','TreeID','Species','Date_field','Date_SE','DOY_field','DOY_SE','Total_chloro_ug_cm2','LAI_measured',SE_20m)
 data.field.sb<-data.field[,main_inputs]
 colnames(data.field.sb)<-c('IDleaf','TreeID','Species','Date_field','Date_SE','DOY_field','DOY_SE','Cab_obsv','LAI_obsv',rfl.bands)
@@ -76,12 +76,12 @@ for (i in inputsNames){
                                             Field.data = data.field.sb, acron = '_obsv')
   print(r.hybrid[[i]]$Plot)
   print(r.hybrid[[i]]$Plot_field)
-  saveRDS(r.hybrid, file=paste('examples/outputs/',i,'_',hybrid_method,'_',rtm_model,'_',n_samp,'.RData',sep=''))
+  saveRDS(r.hybrid, file=paste('examples/outputs/models/',i,'_',hybrid_method,'_',rtm_model,'_',n_samp,'.RData',sep=''))
   print(r.hybrid[[i]]$Plot)
-  ggsave(paste('examples/plots/',i,'_',hybrid_method,'_',rtm_model,'_',n_samp,'_testing.png',sep=''))
+  ggsave(paste('examples/outputs/plots/',i,'_',hybrid_method,'_',rtm_model,'_',n_samp,'_testing.png',sep=''))
   
   print(r.hybrid[[i]]$Plot_field)
-  ggsave(paste('examples/plots/',i,'_',hybrid_method,'_',rtm_model,'_',n_samp,'_Field_data.png',sep=''))
+  ggsave(paste('examples/outputs/plots/',i,'_',hybrid_method,'_',rtm_model,'_',n_samp,'_Field_data.png',sep=''))
   
   data.pred<-r.hybrid[[i]]$Field.pred
   data.pred$DOY_dif<-abs(data.pred$DOY_field -data.pred$DOY_SE)
@@ -104,7 +104,7 @@ for (i in inputsNames){
       summarise(
         RMSE = rmse(Cab_obsv, Cab_pred)
         ,R2 = cor(Cab_obsv, Cab_pred)^2) %>%
-      write.csv(paste('examples/stats/',i,'_',hybrid_method,'_',rtm_model,'_',n_samp,'.csv',sep=''))
+      write.csv(paste('examples/outputs/stats/',i,'_',hybrid_method,'_',rtm_model,'_',n_samp,'.csv',sep=''))
     
   } else{
     print('no stats')
@@ -127,7 +127,7 @@ for (i in inputsNames){
     # coord_fixed(ratio = 1,xlim = c(0, max(data.pred$Cab_obsv)), ylim = c(0, max(data.pred$Cab_pred))) +
     xlab(axis_x) + ylab(axis_y) + ggtitle(statsTitle) + scale_size(range = c(2, 8)) +
     labs(color='DOY diff') +  xlim(0, 80) +ylim(0,80)
-  ggsave(paste('examples/plots/',i,'_',hybrid_method,'_',rtm_model,'_',n_samp,'byDOY.png',sep=''))
+  ggsave(paste('examples/outputs/plots/',i,'_',hybrid_method,'_',rtm_model,'_',n_samp,'byDOY.png',sep=''))
   
   ggplot(data.pred.sb, aes(y=Cab_pred, x=Cab_obsv,color = as.factor(Species))) +
     geom_point(alpha=0.6,show.legend = F) + theme_bw()+
@@ -137,7 +137,7 @@ for (i in inputsNames){
     # coord_fixed(ratio = 1,xlim = c(0, max(data.pred$Cab_obsv)), ylim = c(0, max(data.pred$Cab_pred))) +
     xlab(axis_x) + ylab(axis_y) + ggtitle(statsTitle) + scale_size(range = c(1, 2)) +
     labs(color='DOY diff') +  xlim(0, 80) +ylim(0,80)
-  ggsave(paste('examples/plots/',i,'_',hybrid_method,'_',rtm_model,'_',n_samp,'_byDOY_l5.png',sep=''))
+  ggsave(paste('examples/outputs/plots/',i,'_',hybrid_method,'_',rtm_model,'_',n_samp,'_byDOY_l5.png',sep=''))
 
   
   end_time <- Sys.time()
