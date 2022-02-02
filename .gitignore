@@ -5,11 +5,11 @@
 ._*
 # exclude everything in folders
 parameters/*
-SCOPE_v2.1/*
+examples/SCOPE_v2.1/*
 examples/data/*
 examples/data_python/*
 examples/outputs/*
 examples/plots/*
 examples/stats/*
-codesSE/*
+examples/codesSE/*
 examples/codes/*
