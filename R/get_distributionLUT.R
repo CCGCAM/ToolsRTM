@@ -6,24 +6,35 @@
 #' @param TypeDistrib list. specify if uniform or Gaussian distribution to be applied. default = Uniform
 #' @param Mean_gauss list. mean value for parameters with Gaussian distribution
 #' @param Std_gauss list. standard deviation for parameters with Gaussian distribution
+#' @param setseed An integer vector, containing the random number generator (RNG) state for random number generation in R.
 #'
 #' @return LUT in data frame
 #' @importFrom stats runif rnorm sd
 #' @importFrom ToolsRTM gauss_byMin_Max
+#' @examples 
+#' 
 #' @export
-get_distributionLUT<-function(minval=NULL,maxval=NULL,nSamples=NULL,TypeDistrib=NULL,Mean_gauss=NULL, Std_gauss=NULL, DepCab=NULL){
+
+#' 
+get_distributionLUT<-function(minval=NULL,maxval=NULL,nSamples=NULL,TypeDistrib=NULL,Mean_gauss=NULL, Std_gauss=NULL, DepCab=NULL, setseed=NULL){
   # define InputPROSAIL # 3 random parameters
    inputLUT<-list()
-
+   
    n_casesNorm=nSamples*2
-   set.seed(1256)
+   
+   value_seed=setseed
+   set.seed(value_seed)
+ 
    for (i in 1:length(minval)){
+      
       trait <- names(minval)[i]
      
       # if uniform distribution
       if(TypeDistrib[[trait]] == 'Uniform') {
+   
         inputLUT[[trait]] <- stats::runif(nSamples,min = minval[1,trait],max=maxval[1,trait])
          if (names(inputLUT)[i] == 'Car' & DepCab == T){
+        
          inputLUT[[trait]] <- ToolsRTM::correlatedValue(x=inputLUT[['Cab']]/4, r=.8) 
          }
         
@@ -31,8 +42,10 @@ get_distributionLUT<-function(minval=NULL,maxval=NULL,nSamples=NULL,TypeDistrib=
       }
       # if Gaussian distribution
       else  {
+   
       inputLUT[[trait]] <- ToolsRTM::gauss_byMin_Max(n=nSamples, m=Mean_gauss[1,trait], s=std_gauss[1,trait], lwr=minval[1,trait], upr=maxval[1,trait], nnorm=n_casesNorm)
       if (names(inputLUT)[i] == 'Car' & DepCab == T){
+         set.seed(value_seed)
          inputLUT[[trait]] <- ToolsRTM::correlatedValue(x=inputLUT[['Cab']]/4, r=.8) 
       }
       
@@ -41,5 +54,6 @@ get_distributionLUT<-function(minval=NULL,maxval=NULL,nSamples=NULL,TypeDistrib=
     
    }
    LUT.dataframe <-data.frame(do.call(cbind,inputLUT))
+   set.seed(Sys.time())
   return(LUT.dataframe)
 }
