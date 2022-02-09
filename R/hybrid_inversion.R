@@ -262,7 +262,7 @@ axis_x<-bquote(bold(.(input)['measured'])) # axis x
 axis_y<-bquote(bold(.(input)['predicted']))# axis y
 
 scatter_plot<-ggplot(data.plot, aes(y=pred, x=input)) +
-  geom_point(alpha=0.6) + geom_smooth(method=lm, aes(group = 1)) + theme_bw()+
+  geom_point(alpha=0.6) + geom_smooth(method=lm, formula = 'y ~ x') + theme_bw()+
   geom_abline(intercept = 0, slope = 1,linetype="dashed", size=0.5,color='gray')+
   coord_fixed(ratio = 1,xlim = c(0, max(data.plot$input)), ylim = c(0, max(data.plot$pred))) +
   xlab(axis_x) + ylab(axis_y) + ggtitle(statsLabel) 
@@ -304,7 +304,7 @@ if (is.null(Field.data)) {
   axis_y<-bquote(bold(.(input)['predicted']))# axis y
   
   scatter_obs<-ggplot(data.plot, aes(y=pred, x=input)) +
-    geom_point(alpha=0.6) + geom_smooth(method=lm, aes(group = 1)) + theme_bw()+
+    geom_point(alpha=0.6) + geom_smooth(method=lm, formula = 'y ~ x') + theme_bw()+
     geom_abline(intercept = 0, slope = 1,linetype="dashed", size=0.5,color='gray')+
     coord_fixed(ratio = 1,xlim = c(0, max(data.plot$input)), ylim = c(0, max(data.plot$pred))) +
     xlab(axis_x) + ylab(axis_y) + ggtitle(statsLabel) 
