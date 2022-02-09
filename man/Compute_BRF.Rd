@@ -4,7 +4,7 @@
 \alias{Compute_BRF}
 \title{Computes bidirectional reflectance factor based on outputs from PRO-4SAIL and sun position}
 \usage{
-Compute_BRF(rdot = NULL, rsot = NULL, tts = NULL, SpecATM_Sensor = NULL)
+Compute_BRF(rdot = NULL, rsot = NULL, tts = NULL, data.light = NULL)
 }
 \arguments{
 \item{rdot}{numeric. Hemispherical-directional reflectance factor in viewing direction}
@@ -13,7 +13,7 @@ Compute_BRF(rdot = NULL, rsot = NULL, tts = NULL, SpecATM_Sensor = NULL)
 
 \item{tts}{numeric. Solar zenith angle}
 
-\item{SpecATM_Sensor}{list. direct and diffuse radiation for clear conditions}
+\item{data.light}{list. direct and diffuse radiation for clear conditions, is NULL use default values}
 }
 \value{
 BRF numeric. Bidirectional reflectance factor

@@ -4,14 +4,14 @@
 \alias{getIndicesSE2a}
 \title{extract spectral indices at Sentinel-2 resolution}
 \usage{
-getIndicesSE2a(df, wavelengths, df.data, header = F)
+getIndicesSE2a(df, wavelengths, df.data = NULL, header = F)
 }
 \arguments{
 \item{df}{a dataframe with reflectance where each rows correspond with an spectrum}
 
 \item{wavelengths}{wavelent of each reflectance}
 
-\item{df.data}{dataset with IDs that corresponde with each spectrum}
+\item{df.data}{dataset with IDs that corresponde with each spectrum, is null is also enable}
 
 \item{header}{TRUE organize the indices by caterioas / False only return then name}
 }
