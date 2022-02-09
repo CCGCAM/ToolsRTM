@@ -167,8 +167,8 @@ sims<-foreach(i=1:nSamples) %dopar% {
   data.foursail_pro<-ToolsRTM::m4SAIL(inputLUT=LUT[i,],rsoil=rsoil0[[i]],PROSPECTversion = 'PRO')
   rdot<-data.foursail_pro[[1]]
   rsot<-data.foursail_pro[[2]]
-  rfl.prosail<-ToolsRTM::Compute_BRF(rdot=rdot,rsot=rsot,tts=LUT[i,'tts'],SpecATM_Sensor=ToolsRTM::dataSpec_PDB)
-  #data.foursail2_pro<-ToolsRTM::Compute_BRF(rdot=rdot,rsot=rsot,tts=LUT[i,'tts'],SpecATM_Sensor=ToolsRTM::dataSpec_PDB)
+  rfl.prosail<-ToolsRTM::Compute_BRF(rdot=rdot,rsot=rsot,tts=LUT[i,'tts'],data.light=ToolsRTM::dataSpec_PDB)
+  #data.foursail2_pro<-ToolsRTM::Compute_BRF(rdot=rdot,rsot=rsot,tts=LUT[i,'tts'],data.light=ToolsRTM::dataSpec_PDB)
   
   #sim.rfl[[i]]<-data.inform[[1]]
   #sim.rfl[[i]]<-data.foursail-pro

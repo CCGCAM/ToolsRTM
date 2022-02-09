@@ -59,12 +59,12 @@ start_time <- Sys.time()
 #d1.first <- derivative.speclib(Spec.simu.interp)
 rtm_model='fourSAIL2'
 #hybrid_method='Ensemble'
-n_samples<-1200
-n_samp<-'1200'
+n_samples<-5000
+n_samp<-'5k'
 data.rtm.sb<-data.rtm[sample(nrow(data.rtm), n_samples), ]
 dim(data.rtm.sb)
 inputsNames<-c( 'Cab')#,'LAI')#,'LAI','Car','EWT' )
-names_methods<-'SVM'#c('nnet','SVM','RF','GB') #'Ensemble',
+names_methods<-'nnet'#c('nnet','SVM','RF','GB') #'Ensemble',
 r.hybrid<-list()
 for (i in inputsNames){
   print(i)
