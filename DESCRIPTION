@@ -1,5 +1,5 @@
 Package: ToolsRTM
-Title: Optimization functions for RT models
+Title: Tools for simulating and spatial trait mappings
 Version: 0.2
 Authors@R: 
     person(given = "Carlos",
@@ -7,14 +7,14 @@ Authors@R:
            role = c("aut", "cre"),
            email = "carlos.camino-gonzalez@ec.europa.eu",
            comment = c(ORCID = "0000-0001-5188-4406"))
-Description: A series of tools for simulating spectra with PROSAIL model.
-Depends: R (>= 4.0.2)
-Import: hsdar, caret, rgdal,signal, expint, doParallel, wavelets, parallel,stats, raster,e1071, nnet
+Description: A series of tools for simulating spectra with radiative transfer models  and Sentinel-2 data.
+Depends: R (>= 4.1.2)
+Import: hsdar, caret, rgdal,signal, expint, doParallel, wavelets, parallel,stats, raster,e1071, nnet,gdalutils
 License: `use_gpl3_license()`
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 VignetteBuilder: knitr
 Suggests: 
     knitr,
