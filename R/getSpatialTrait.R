@@ -1,33 +1,35 @@
-#' Spaital mapping of the main triats
+#' function for Spatial mapping of the main traits
 #'
-#' @param rasterFiles  path with the images (in RasterBrick/RasterStack formats) or a single stackRaster
-#' @param ForestMask  shape
-#' @param factorR 
-#'
-#' @return
+#' @param rasterFiles path with the image (in RasterBrick/RasterStack formats) or a single stackRaster
+#' @param ForestLayer  path with the images of the forest mask. This code is adapted to from
+#' COPERNICUS Land Monitoring Service
+#' @param Sensor by default is 'Sentinel2a', is not needed
+#' @param saveFile path with the path to save the spatial trait mapping
+#' @param proj projection of the files (shapefile and raster should be in same projection)
+#' @param shapeLayer path with the shapefile with your study area. This shape is use for cropping images
+#' @param model.ML  Machine learning model
+#' @param trait trais to estimate (actually for Cab and LAI)
+#' @return a list with: i) a scatter-plot between trait and best indicator, and ii) spatial trait mappping mask with the forest map
 #' @export
 #'
 #' @examples
-getSpatialTrait<-function(rasterFiles=NULL,ForestLayers=NULL,
-                          saveFile=NULL,proj=3035,shape.Path=NULL,
+#' 
+
+
+getSpatialTrait<-function(rasterFiles=NULL,ForestLayer=NULL,Sensor=NULL,
+                          saveFile=NULL,proj=3035,shapeLayer=NULL,
                           model.ML =NULL, trait='Cab',
-                          factorR=NULL, GetMosaics=T ){
+                          factorR=NULL){
   options(warn=-1) ###avoid warnings
+  #message('Processing ....')
   
-  ### to remove   ######################
-  rasterFiles='examples/SEdata/TIFFs/Area1/Stacks/'
-  model.ML<-readRDS('examples/outputs/models/Cab_nnet_fourSAIL2_5k.RData')
-  model.ML<-model.ML$Cab$model
-  saveFile='examples/SEdata/ForestMaps/outs/'
-  shapePath='examples/field-dataset/Shapefiles/Areas_byETRS89/Area_1.shp'
-  factorR=1/10000
-  trait='Cab'
-  proj=3035
-  ######################
-  
-  shape<-sf::read_sf(shapePath)
-  files.sensor = list.files(rasterFiles,pattern="*.tif$", full.names=TRUE)
-  
+  shape.area<-sf::read_sf(shapeLayer,quiet = TRUE)
+  files.sensor = rasterFiles#list.files(rasterFiles,pattern="*.tif$", full.names=TRUE)
+  Split <- strsplit(files.sensor, "/")
+  names.files = Split[[1]][length(Split[[1]])]#list.files(rasterFiles,pattern="*.tif$", full.names=FALSE)
+  ############################################################
+  ########### is projec is null apply proj =3035
+  ############################################################
   if (is.null(proj)) {
     message('missing projection')
     message('EPSG:3035 will be used')
@@ -40,7 +42,9 @@ getSpatialTrait<-function(rasterFiles=NULL,ForestLayers=NULL,
   
   crs_files <- sf::st_crs(proj)
   crs_to_raster<-crs_files$proj4string
-  
+  ############################################################
+  ### check bands for Sensor (only Sentinel-2 is implemented)
+  ############################################################
   if (is.null(Sensor) | Sensor == 'Sentinel2a'){
     sensor.bands <- data.frame('B01'=442.7,'B02'=492.4, 'B03'=559.8, 'B04'=664.6, 'B05'=704.1, 'B06'=740.5,
                         'B07' = 782.8, 'B08' = 832.8, 'B8A' = 864.7, 'B09' = 945.1, 'B11' = 1613.7, 'B12' = 2202.4)
@@ -50,113 +54,235 @@ getSpatialTrait<-function(rasterFiles=NULL,ForestLayers=NULL,
     message('Please provide information for bands')
     stop(' needs a sensor information')
   }
-  
-  if (GetMosaics == T ){
-    files.forest = list.files(ForestLayers,pattern="*.tif$", full.names=TRUE)
-    shape.area<-sf::read_sf(shapePath)
-    e <- extent(shape.area)
-    template <- raster(e)
-    projection(template) <- crs_to_raster
-    writeRaster(template, file=paste(saveFile,"Forest_mask_v2.tif",sep=''), format="GTiff", overwrite=T)
-    gdalUtils::mosaic_rasters(gdalfile=files.forest,dst_dataset=paste(saveFile,"Forest_mask.tif",sep=''),of="GTiff")
-    ## clean memory in raster folder
-    file.remove(list.files(paste(tempdir(),'raster/',sep=''),full.names = T))
-    forest_m<-raster::brick(paste(saveFile,"Forest_mask.tif",sep=''))
-    
-  } else{
-    files.forest = list.files(ForestLayers,pattern="*.tif$", full.names=TRUE)
-    forest_m<-brick(files.forest[1])
-  }
+  ############################################################
+  ## get Mosaic with FOrest Maks (Forest type 2018 later from COPERNICUS)
+  ############################################################
+  files.forest = ForestLayer
+  forest_m<-brick(files.forest[1])
   
   ##### Generate a mask for forest map in fishnet area
-  forest.sb<-raster::crop(forest_m,shape)
-  raster::values(forest.sb)[raster::values(forest.sb) < 1] = NA
-  writeRaster(forest.sb, filename=paste(saveFile,"Forest_mask_crop.tif",sep=''), "GTiff", overwrite=TRUE,bylayer=F)
-  
+  forest_m<-raster::crop(forest_m,shape.area)
+  forest_m<-raster::clamp(forest_m, useValues=FALSE)
+  forest_m[forest_m < 1] = NA
+  #raster::values(forest_m)[raster::values(forest_m) < 1] = NA
+ 
   ##get_clouds of points
-  ncases= round((raster::ncell(forest.sb)-raster::freq(forest.sb, value = NA)) / 100,0)
-  shp_points <- raster::sampleRandom(forest.sb, size = ncases, xy = TRUE, sp=TRUE, na.rm = TRUE)
+  ncases= round((raster::ncell(forest_m)-raster::freq(forest_m, value = NA)) / 100,0)
+  if (ncases < 1500){
+    ncases=1500
+  }
+  shp_points <- raster::sampleRandom(forest_m, size = ncases, xy = TRUE, sp=TRUE, na.rm = TRUE)
   shp_points$ID<-c(1:dim(shp_points)[1])
-  shp_sf<-sf::st_as_sf(shp_points,crs = st_crs(3035))
-  sf::st_write(shp_sf, paste(saveFile,"Forest_points.shp",sep=''),delete_layer = TRUE) # overwrites
+  shp_sf<-sf::st_as_sf(shp_points,crs = st_crs(3035),quiet = TRUE)
   
-  plot(forest.sb,col='blue')
-  plot(shp_points, add=T, col='black', pch=20)
-  # initiate progress bar
-  bar.progress <- progress::progress_bar$new(format = "Processing [:bar] :percent in :elapsedfull, estimated time remaining :eta",
-                                             total = length(files.sensor), clear = F, width= 100)
-  for (i in c(1:length(files.sensor))){
-    bar.progress$tick()
-    raster.to<- raster::brick(files.sensor[i]) * factorR
-    names(raster.to)<-names(sensor.bands)
-    ##get Reflectance for predict specific trait
-    df.e <- raster::extract(raster.to, shp_points, df = T, na.rm = T, cellnumbers = T)
-    df.e <- na.omit(df.e)
-    colnames(df.e)<-c('ID', 'cell',sensor.rfl)
-    df.e$pred<-predict(object = model.ML,df.e[,sensor.rfl])
-
-    
-   
-    if (trait == 'Cab') {
-      df.e$pred = ifelse(df.e$pred < 0.5, NA, df.e$pred)
-      df.e$pred = ifelse(df.e$pred > 90, NA, df.e$pred)
-      df.e<-na.omit(df.e)
-      shape_togetIndices<-merge(shp_points[,'ID'],df.e, by.x='ID' ,by.y='ID', all.x=F)
-    } else if (trait == 'LAI') {
-      df.e$pred = ifelse(df.e$pred < 0.1, NA, df.e$pred)
-      df.e$pred = ifelse(df.e$pred > 7, NA, df.e$pred)
-      df.e<-na.omit(df.e)
-      shape_togetIndices<-merge(shp_points[,'ID'],df.e, by.x='ID' ,by.y='ID', all.x=F)
-    }
+  path_cloudPoints<-paste(saveFile,'points/',sep='')
+  ifelse(!dir.exists(path_cloudPoints), dir.create(path_cloudPoints), FALSE)
+  sf::st_write(shp_sf, paste(path_cloudPoints,"Forest_points.shp",sep=''),delete_layer = TRUE,quiet = TRUE) # overwrites
   
-    
-    
-    filter.column<-list()
-    names_i<-colnames(df.e)[c(3:dim(df.e)[2])]
-    for (i in c(1:length(names_i))){
-      filter.column[[i]]<-ToolsRTM::filter_outliers(df=df.e, input=names_i[i])
-    }
-    df<-cbind(df.e[,1:2],do.call(cbind, filter.column))
-    colnames(df)<-names(df.e)
-    plot(df$R.664.6,df$pred)
-    rm(df.e)
-    df$pred_grop <- cut(df$pred,
-                        breaks = seq(0,100,0.2))
-    
-    df.mean = aggregate(df[,names_i],
-                    by = list(df$pred_grop),
-                    FUN=quantile, probs  = 0.5,  na.rm = TRUE)
-    for (i in sensor.rfl){
-    plot(df.mean$pred, df.mean[,i])
-    print(i)
-    print(round(cor(df.mean$pred, df.mean[,i],use='pairwise.complete.obs')^2,5))
-    }
-    
-    ### applicar for all bands and indices
-    #getIndices in table
-    ## get lm models with the best indice,
-  # get de spatial map
+  # initiate progress bar for the files
+  #progress_bar = txtProgressBar(min=0, max=length(files.sensor), style = 3, char="=")
+  list.trait<-list()
+  list.plot<-list()
+  #for (i in c(1:length(files.sensor))){
+  raster.to<- raster::brick(files.sensor[1]) * factorR
+  names(raster.to)<-names(sensor.bands)
+  ##get Reflectance for predict specific trait
+  df.e <- raster::extract(raster.to, shp_points, df = T, na.rm = T, cellnumbers = T)
+  df.e <- na.omit(df.e)
+  colnames(df.e)<-c('ID', 'cell',sensor.rfl)
+  df.e$pred<-predict(object = model.ML,df.e[,sensor.rfl])
 
-    
-    
-    
-    
+  
+  ############################################################
+  ### filter by trait some outliers (negative and out of range)
+  if (trait == 'Cab') {
+    df.e$pred = ifelse(df.e$pred < 0.5, NA, df.e$pred)
+    df.e$pred = ifelse(df.e$pred > 90, NA, df.e$pred)
+    df.e<-na.omit(df.e)
+    shape_togetIndices<-merge(shp_points[,'ID'],df.e, by.x='ID' ,by.y='ID', all.x=F)
+  } else if (trait == 'LAI') {
+    df.e$pred = ifelse(df.e$pred < 0.1, NA, df.e$pred)
+    df.e$pred = ifelse(df.e$pred > 7, NA, df.e$pred)
+    df.e<-na.omit(df.e)
+    shape_togetIndices<-merge(shp_points[,'ID'],df.e, by.x='ID' ,by.y='ID', all.x=F)
+  }
+  
+  ############################################################ 
+  ### remove outliers
+  ############################################################
+  filter.column<-list()
+  names_j<-colnames(df.e)[c(3:dim(df.e)[2])]
+  for (j in c(1:length(names_j))){
+    filter.column[[j]]<-ToolsRTM::filter_outliers(df=df.e, input=names_j[j])
+  }
+  ############################################################
+  df<-cbind(df.e[,1:2],do.call(cbind, filter.column))
+  colnames(df)<-names(df.e)
+  df<-na.omit(df)
+  wave=as.numeric( sub("R.", "", sensor.rfl, fixed = TRUE))
+  df.indices<-ToolsRTM::getIndicesSE2a(df=df, wavelengths=wave,df.data=NULL, header = F)
+  names_indices<-names(df.indices)
+  names_df<-c('ID','cell',names(sensor.bands),'pred')
+  colnames(df)<-names_df
+  df.rfl.indices<-cbind(df,df.indices)
+  
+  ### change according to trait
+  if (trait == 'Cab'){
+    df.rfl.indices$pred_g<- cut(df.rfl.indices[,'pred'],breaks = seq(0,100,0.2))
+    df.mean = aggregate(df.rfl.indices[,c(names(sensor.bands), names_indices, 'pred')],
+                        by = list(TraitClass=df.rfl.indices$pred_g),
+                        FUN=quantile, probs  = 0.5,  na.rm = TRUE)
+    is.na(df.mean) <- sapply(df.mean, is.infinite)
+  } else if (trait == 'LAI'){
+    df.rfl.indices$pred_g<- cut(df.rfl.indices[,'pred'],breaks = seq(0,7,0.1))
+    df.mean = aggregate(df.rfl.indices[,c(names(sensor.bands), names_indices, 'pred')],
+                        by = list(TraitClass=df.rfl.indices$pred_g),
+                        FUN=quantile, probs  = 0.5,  na.rm = TRUE)
+    is.na(df.mean) <- sapply(df.mean, is.infinite)
   }
 
+  r.corr<-list()
+  intercept<-list()
+  slope<-list()
+  p.value<-list()
+  
+  ############################################################
+  ### correlation datast
+  ############################################################
+
+  names.mean<-colnames(df.mean)
+  
+  for (k in 1:length(names.mean)) {
+    k_=names.mean[k]
+    
+    df.sb<-df.mean[c('pred',k_)]
+    names(df.sb)<-c('pred','index')
+   
+    #df.sb<-na.omit(df.sb)
+    
+    if ((k_ == 'pred') | (k_ == 'TraitClass') | (nrow(df.sb) == 0) ){
+      r.corr[[k]]<-NA
+      p.value[[k]] <-NA
+      intercept[[k]]<-NA
+      slope[[k]]<-NA
+    } else {
+          fmla <- as.formula(paste('pred'," ~ ", paste('index', collapse= "")))
+          fit<-lm(fmla, data=df.sb)
+          r.corr[[k]]<-round(cor(df.sb[,'pred'], df.sb[,'index'],use='pairwise.complete.obs')^2,5)
+          p.value[[k]]<-summary(fit)$coefficients[2,4] 
+          intercept[[k]]<-summary(fit)$coefficients[1,1] 
+          slope[[k]]<-summary(fit)$coefficients[2,1]
+          
+    }
+  }
+  ############################################################
+  ## select best index or band
+  df.cor<-data.frame(Indices=names(df.mean),R=unlist(r.corr), R2=c(unlist(r.corr))**2, p.value=unlist(p.value),intercept=unlist(intercept),slope=unlist(slope))
+  
+  #sort by best R2
+  df.cor<-na.omit(df.cor)
+  df.cor <- df.cor[order(-df.cor$R2),] 
+
+  path_corr<-paste(saveFile,'correlations/',sep='')
+  ifelse(!dir.exists(path_corr), dir.create(path_corr), FALSE)
+  
+  write.table(df.cor, file=paste(path_corr,trait,'_',names.files,'_corr.csv',sep=''),
+              sep = ",", append = T)
+  message(df.cor[1,'Indices'])
+  ############################################################
+  ###  get plot using the best correlation
+  ############################################################
+  axis_x<-bquote(bold(.(df.cor[1,'Indices'])[''])) # axis x
+  axis_y<-bquote(bold(.(trait)['predicted']))# axis y
+  index=df.cor[1,'Indices']
+  data.plot<-df.mean[,c('pred', index)]
+  colnames(data.plot)<-c('y','index')
+
+  mylabel.r.test = bquote(bold(r)^2 == .(format(df.cor[1,'R2'], digits = 3)))
+  statsLabel = paste0("r2 = ", round(df.cor[1,'R2'],2))
+  
+  list.plot<-ggplot(data.plot, aes(y=y, x=index)) +
+    geom_point(alpha=0.6) + geom_smooth(method=lm, formula = 'y ~ x') + theme_bw()+
+    geom_abline(intercept = 0, slope = 1,linetype="dashed", size=0.5,color='gray')+
+    xlab(axis_x) + ylab(axis_y) + ggtitle(statsLabel) 
+
+  path_plots<-paste(saveFile,'plots/',sep='')
+  ifelse(!dir.exists(path_plots), dir.create(path_plots), FALSE)
+  print(list.plot)
+  ggsave(paste(path_plots,trait,'_',names.files,'_using_',index,'.png',sep=''),width=6.45, height=7.47)
+  
+  ### Apply a glm Model
+  getR2<-df.cor[1,3]
+  if (getR2 <= 0.45) {
+    
+  }
   
   
+  ############################################################
+  ## get spatial index form Sentinel image
+  ############################################################
+  r.index<-ToolsRTM::getSpatial_index(rasterFiles=files.sensor,Sensor='Sentinel2a',
+                                      SpectraltoCompute= index,
+                              factorR=factorR)
+  r.index<-unlist(r.index)
+
+  ############################################################
+  ### filter spatially outliers from trait map
+  ############################################################
+ 
+  r.trait<-df.cor[1,'slope']* r.index[[index]] +df.cor[1,'intercept']
+  
+  r.trait<-raster::clamp(r.trait, useValues=FALSE)
+  if (trait == 'Cab'){
+    r.trait[r.trait <= 0] = NA
+    r.trait[r.trait >= 90] = NA
+    #raster::values(r.trait)[raster::values(r.trait) <= 0] = NA
+    #raster::values(r.trait)[raster::values(r.trait) >= 90] = NA
+  } else if (trait == 'LAI') {
+    r.trait[r.trait <= 0] = NA
+    r.trait[r.trait >= 7] = NA
+  }
+  
+  ############################################################
+#  r.trait<-raster::crop(r.trait,extent(forest_m))
+  #r.trait<-raster::crop(r.trait,forest_m)
+  forest.resample <- raster::resample(forest_m,
+                                      r.trait,
+                               method='bilinear')
+  ### save in a list the raster
+  list.trait<-raster::mask(r.trait,forest.resample)
+  list.trait<-raster::clamp(list.trait, useValues=FALSE)
+  
+  ############################################################
+  ### write raster only if there is a path
+  ############################################################
+  
+  if (!is.null(saveFile)){
+    writeRaster(list.trait, filename=paste(saveFile,trait,'_',names.files,sep=''), 
+                "GTiff", overwrite=TRUE,bylayer=F)
+    
+  }
+    ############################################################
+    ############################################################  
+  #} end for
+  #close(progress_bar)
+  ############################################################
+  ############################################################
+  to_export = list('raster'=list.trait,'plot'=list.plot)
+  return(to_export)
 }
 
 
-#' remove ouptliers
+#' remove outliers
 #'
-#' @param df  dataframe
+#' @param df  a dataframe with the column to remove outliers
 #' @param input  string, name of the variable
 #'
-#' @return
+#' @return a vector 
 #' @export
 #'
 #' @examples
+#' 
 filter_outliers<-function(df=NULL, input=NULL){
   qnt <- quantile(df[,input], probs=c(.25, .60), na.rm = T)
   outs <- quantile(df[,input], probs=c(.05, .95), na.rm = T)
@@ -166,4 +292,52 @@ filter_outliers<-function(df=NULL, input=NULL){
   vector<-df[,input]
   return(vector)
 }
+
+
+#' Get a Mosaic from TIFFs Tiles from (Forest type 2018 later from COPERNICUS)
+#'
+#' @param ForestLayers  path with the tiles
+#' @param shapeLayer  a shapefile format with the extension of the study region
+#' @param output path to write the forest mask
+#' @param proj projection, by default 3035
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' 
+GetMosaics<-function(ForestLayers=NULL, shapeLayer=NULL,
+                     output=NULL, proj=3035){
+  ############################################################
+  if (is.null(proj)) {
+    message('missing projection')
+    message('EPSG:3035 will be used')
+    proj=3035
+  } 
+  crs_files <- sf::st_crs(proj)
+  crs_to_raster<-crs_files$proj4string
+  
+  files.forest = list.files(ForestLayers,pattern="*.tif$", full.names=TRUE)
+  shape.area<-sf::read_sf(shapeLayer,quiet = TRUE)
+  Split <- strsplit(shapeLayer, "/")
+  names.files = Split[[1]][length(Split[[1]])]#
+  e <- extent(shape.area)
+  template <- raster(e)
+  projection(template) <- crs_to_raster
+  writeRaster(template, file=paste(output,'Forest_mask_',names.files,'.tif',sep=''), format="GTiff", overwrite=T)
+  gdalUtils::mosaic_rasters(gdalfile=files.forest,dst_dataset=paste(output,'Forest_mask_',names.files,'.tif',sep=''),of="GTiff")
+  ## clean memory in raster folder
+  file.remove(list.files(paste(tempdir(),'raster/',sep=''),full.names = T))
+
+  forest_m<-raster::brick(paste(output,'Forest_mask_',names.files,'.tif',sep=''))
+  projection(forest_m) <- crs_to_raster
+  ##### Generate a mask for forest map in fishnet area
+  forest.sb<-raster::crop(forest_m,shape.area)
+  raster::values(forest.sb)[raster::values(forest.sb) < 1] = NA
+  writeRaster(forest.sb, filename=paste(output,'Forest_mask_',names.files,'_crop.tif',sep=''), "GTiff", overwrite=TRUE,bylayer=F)
+  
+  
+  return(message('mosaic processing is done'))
+}
+  
 

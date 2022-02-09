@@ -3,7 +3,7 @@
 #'
 #' @param df a dataframe with reflectance where each rows correspond with an spectrum 
 #' @param wavelengths  wavelent of each reflectance
-#' @param df.data  dataset with IDs that corresponde with each spectrum
+#' @param df.data  dataset with IDs that corresponde with each spectrum, is null is also enable
 #' @param header TRUE organize the indices by caterioas / False only return then name
 #'
 #' @return a dataframe with indices and your dataset
@@ -11,10 +11,19 @@
 #'
 #' @examples
 #' 
-getIndicesSE2a <- function(df, wavelengths,df.data, header = F) {
+getIndicesSE2a <- function(df, wavelengths,df.data=NULL, header = F) {
   
+  if (is.null(wavelengths) | length(wavelengths) == 12) {
+    range2interpo <- c(442.7,492.4,559.8,664.6,704.1,740.5,782.8,832.8,864.7,945.1,1613.7,2202.4)
+  } else if(length(se2.bands) == 13) {
   range2interpo <- c(442.7,492.4,559.8,664.6,704.1,740.5,782.8,832.8,864.7,945.1,1373.5,1613.7,2202.4)
-  
+  } else{
+    message('please check the band form Sentinel-2A')
+    stop('number of bands are incorrect')
+  }
+  ##original conf form J.B Feret for CR_SWIR
+  S2a_Bands <- c('B02'=496.6, 'B03'=560.0, 'B04'=664.5, 'B05'=703.9, 'B06'=740.2,
+               'B07' = 782.5, 'B08' = 835.1, 'B8A' = 864.8, 'B11' = 1613.7, 'B12' = 2202.4)
   indices.list = list()
   for (i in c(1:dim(df)[1])){
   
@@ -94,7 +103,7 @@ getIndicesSE2a <- function(df, wavelengths,df.data, header = F) {
     
     # TCARI/OSAVI TCARI/OSAVI
     # Haboudane et al. (2002)
-    indices['T/O'] <- as.numeric(indices['TCARI']) / as.numeric(indices['OSAVI'])
+    indices['TCARI_OSAVI'] <- as.numeric(indices['TCARI']) / as.numeric(indices['OSAVI'])
     
     # TVI 0.5*[120*(R750-R550)-200*(R670-R550) ]
     # Broge and Leblanc (2000)
@@ -135,9 +144,13 @@ getIndicesSE2a <- function(df, wavelengths,df.data, header = F) {
     #Normalized Difference Water Index
     indices['NDWI'] <- (r['864.7'] - r['1613.7']) / (r['864.7'] + r['1613.7'])
     indices['NDWI2'] <- (r['864.7'] - r['2202.4']) / (r['864.7'] + r['2202.4'])
+    
     #Leaf Water Content Index  (abbrv. LWCI)
-    MIDIR = 0.101
-    indices['LWCI'] <- log(1.0 -( r['832.8'] - MIDIR)) / -log(1-0 * (r['832.8'] - MIDIR))
+    #MIDIR = r['1613.7']
+    #indices['LWCI'] <- log(1.0 -( r['832.8'] - r['1613.7'])) / -log(1-0 * (r['832.8'] - r['1613.7']))
+    #CR_SWIR from J.B.Feret
+    indices['CR_SWIR'] <- r['1613.7']/(r['864.7']+(S2a_Bands['B11']-S2a_Bands['B8A'])*(r['2202.4']-r['864.7'])/(S2a_Bands['B12']-S2a_Bands['B8A']))
+
     #CIre
     indices['CIre'] <- (r['782.8'] / r['704.1'])-1
     indices['CIgreen'] <- (r['832.8'] / r['559.8'])-1
@@ -159,11 +172,11 @@ getIndicesSE2a <- function(df, wavelengths,df.data, header = F) {
     
     # G R550/R670
     # -
-    indices['G'] <- r['559.8'] / r['664.6']
+    indices['Greeness'] <- r['559.8'] / r['664.6']
     
     # R R700/R670
     # Gitelson et al. (2000)
-    indices['R'] <- r['704.1'] / r['664.6']
+    indices['Redness'] <- r['704.1'] / r['664.6']
     
     # RARS R746/R513
     
@@ -181,7 +194,14 @@ getIndicesSE2a <- function(df, wavelengths,df.data, header = F) {
   colnames(df.indices)<-names(indices)
   df.rfl<-as.data.frame(df)
   colnames(df.rfl)<-paste0('RFL.',wavelengths,sep='')
-  df.indices<-cbind(df.data,df.indices)
-  #df<-df[,c(length(indices)+1,1:length(indices))]
-  return(df.indices)
+  
+  if (is.null(df.data)){
+    
+    df.indices_<-df.indices
+  } else{
+    df.indices_<-cbind(df.data,df.indices)
+  }
+
+  
+  return(df.indices_)
 }
