@@ -9,13 +9,16 @@ Install the package prospect with the following command line in R session:
 > devtools::install_gitlab('caminoccg/toolsrtm')
 >
 
+## Manual 
+Manual is available at ReadTheDocs https://toolsrtm-tutorial.readthedocs.io/en/latest/
+
 ## Description
 
 This package integrates the main radiative transfer (RT) models
 in R with remote sensing tools for estimating plant traits.
 
 ## PROSPECT D and PRO
-Authors:Jean-Baptiste FERET (jb.feret@teledetection.fr); Stephane JACQUEMOUD  (jacquemoud@ipgp.fr)
+Authors:Jean-Baptiste FERET (jb.feret@teledetection.fr); Frédéric BARET (baret@avignon.inra.fr); Stephane JACQUEMOUD  (jacquemoud@ipgp.fr)
 
 for more info about PROSPECT-PRO model, see publication:
 
