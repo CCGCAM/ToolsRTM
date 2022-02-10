@@ -18,6 +18,23 @@ Authors:Jean-Baptiste FERET (jb.feret@teledetection.fr); Stephane JACQUEMOUD
 More Info:
 http://teledetection.ipgp.fr/prosail/
 
+for more info about PROSPECT-PRO model, see publication:
+
+Féret, J.B., Berger, K., de Boissieu, F., Malenovský, Z., 2021. PROSPECT-PRO for estimating content of nitrogen-containing leaf proteins and other carbon-based constituents. Remote Sens. Environ. 252. https://doi.org/10.1016/j.rse.2020.112173
+
+for more info about PROSPECT-D model, see publication:
+
+Féret, J.B., Berger, K., de Boissieu, F., Malenovský, Z., 2021. PROSPECT-PRO for estimating content of nitrogen-containing leaf proteins and other carbon-based constituents. Remote Sens. Environ. 252. https://doi.org/10.1016/j.rse.2020.112173
+
+for more info about PROSPECT model, see publication:
+
+Feret, J.B., François, C., Asner, G.P., Gitelson, A.A., Martin, R.E., Bidel, L.P.R., Ustin, S.L., le Maire, G., Jacquemoud, S., 2008. PROSPECT-4 and 5: advances in the leaf optical properties model separating photosynthetic pigments. Remote Sens. Environ. 112, 3030–3043. http://dx.doi.org/10.1016/j.rse.2008.02.012.
+
+Jacquemoud, S., Baret, F., 1990. PROSPECT: a model of leaf optical properties spectra. Remote Sens. Environ. 34, 75–91. https://doi.org/10.1016/0034-4257 (90)90100-Z.
+Jonas
+
+
+
 The PROSPECT model also includes numerical optimizations proosed in the FLUSPECT code
 Authors: Wout Verhoef, Christiaan van der Tol (tol@itc.nl), Joris Timmermans, 
 Date: 2007
@@ -30,20 +47,6 @@ Fluspect-B: A model for leaf fluorescence, reflectance and transmittance
 spectra. Remote Sens. Environ. 186, 596?615. doi:10.1016/j.rse.2016.09.017
 
  for any question or request, please contact:
-#
-# Jean-Baptiste FERET
-# UMR-TETIS, IRSTEA Montpellier
-# Maison de la T?l?d?tection
-# 500 rue Jean-Fracois Breton
-# 34093 Montpellier cedex 5
-# E-mail: jb.feret@teledetection.fr
-#
-# St?phane JACQUEMOUD
-# Universit? Paris Diderot / Institut de Physique du Globe de Paris
-# 35 rue H?l?ne Brion
-# 75013 Paris, France
-# E-mail: jacquemoud@ipgp.fr
-#
 
 
 ## License
