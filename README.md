@@ -48,6 +48,28 @@ Fluspect-B: A model for leaf fluorescence, reflectance and transmittance
 spectra. Remote Sens. Environ. 186, 596?615. doi:10.1016/j.rse.2016.09.017
 
 ## fourSAIL and fourSAIL2 models
+
+the fourSAIL model is based on a version provided by	Wout Verhoef et al. (2007) 
+Authors of the version:Jean-Baptiste FERET
+original version downloadable at http://teledetection.ipgp.jussieu.fr/prosail/
+
+Improved and extended version of SAILH model that avoids numerical singularities
+and works more efficiently if only few parameters change.
+
+References:
+Verhoef et al. (2007) Unified Optical-Thermal Four-Stream Radiative
+Transfer Theory for Homogeneous Vegetation Canopies, IEEE TRANSACTIONS
+ON GEOSCIENCE AND REMOTE SENSING, VOL. 45, NO. 6, JUNE 2007
+
+fourSAIL2
+
+Authors of the version:Jean-Baptiste FERET
+original version downloadable at http://teledetection.ipgp.jussieu.fr/prosail/
+
+# INFORM model 
+
+
+
 ## License
 For open source projects, say how it is licensed.
 
