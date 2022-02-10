@@ -1,6 +1,6 @@
 # ToolsRTM
 
-An R packages with tools for simulating radiative transfer (RT) models
+An R packages with tools for simulating radiative transfer (RT) models at Sentinel-2 scales
 
 ## Getting started
 
@@ -10,13 +10,12 @@ Install the package prospect with the following command line in R session:
 >
 
 ## Description
+
 This package integrates the main radiative transfer (RT) models
 in R with remote sensing tools for estimating plant traits.
 
 ## PROSPECT D and PRO
 Authors:Jean-Baptiste FERET (jb.feret@teledetection.fr); Stephane JACQUEMOUD  (jacquemoud@ipgp.fr)
-More info:
-http://teledetection.ipgp.fr/prosail/
 
 for more info about PROSPECT-PRO model, see publication:
 
@@ -33,6 +32,9 @@ Feret, J.B., François, C., Asner, G.P., Gitelson, A.A., Martin, R.E., Bidel, L.
 Jacquemoud, S., Baret, F., 1990. PROSPECT: a model of leaf optical properties spectra. Remote Sens. Environ. 34, 75–91. https://doi.org/10.1016/0034-4257 (90)90100-Z.
 Jonas
 
+More info:
+http://teledetection.ipgp.fr/prosail/
+
 The PROSPECT model also includes numerical optimizations proosed in the FLUSPECT code
 Authors: Wout Verhoef, Christiaan van der Tol (tol@itc.nl), Joris Timmermans, 
 
@@ -42,7 +44,7 @@ Vilfan, N., van der Tol, C., Muller, O., Rascher, U., Verhoef, W., 2016.
 Fluspect-B: A model for leaf fluorescence, reflectance and transmittance
 spectra. Remote Sens. Environ. 186, 596?615. doi:10.1016/j.rse.2016.09.017
 
-
+## fourSAIL and fourSAIL2 models
 ## License
 For open source projects, say how it is licensed.
 
