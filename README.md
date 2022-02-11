@@ -24,6 +24,8 @@ If you use ToolSRTM, please cite the following references:
 
 ## PROSPECT model
 
+Authors:Jean-Baptiste FERET (jb.feret@teledetection.fr); Frédéric BARET (baret@avignon.inra.fr); Stephane JACQUEMOUD  (jacquemoud@ipgp.fr)
+
 Féret J-B, Gitelson AA, Noble SD & Jacquemoud S, 2017. PROSPECT-D: Towards modeling leaf optical properties through a complete lifecycle. Remote Sensing of Environment, 193, 204–215. https://doi.org/10.1016/j.rse.2017.03.004
 
 Féret, J.B., Berger, K., de Boissieu, F., Malenovský, Z., 2021. PROSPECT-PRO for estimating content of nitrogen-containing leaf proteins and other carbon-based constituents. Remote Sens. Environ. 252. https://doi.org/10.1016/j.rse.2020.112173
@@ -37,7 +39,9 @@ http://teledetection.ipgp.fr/prosail/
 
 Basic version of PROSPECT-D and PROSPECT-PRO: Féret J.-B., 2021
 
-4SAIL & 4SAIL2 models
+# fourSAIL & fourSAIL-2 models
+
+Authors: Verhoef W & Bach H 
 
 Verhoef W & Bach H, 2007. Coupled soil–leaf-canopy and atmosphere radiative transfer modeling to simulate hyperspectral multi-angular surface reflectance and TOA radiance data. Remote Sensing of Environment, 109:166-182. doi:10.1016/j.rse.2006.12.013
 
@@ -55,19 +59,21 @@ Basic version of fourSAIL and fourSAIL2: Verhoef W., Bach. H.
 fourSAILs modifications: Féret J.-B., 2021
 
 
-FLUSPECT model
+#FLUSPECT model
 
 Vilfan, N., van der Tol, C., Muller, O., Rascher, U., Verhoef, W., 2016.
 Fluspect-B: A model for leaf fluorescence, reflectance and transmittance
 spectra. Remote Sens. Environ. 186, 596?615. doi:10.1016/j.rse.2016.09.017
 
-INFORM model
+#Invertible Forest Reflectance  Model
+
+Authors:Atzberger, C.; Schlerf, M.
 
 Atzberger, C., 2000. Development of an Invertible Forest Reflectance Model: The INFOR- model.
 
 Schlerf, M., Atzberger, C., 2006. Inversion of a forest reflectance model to estimate structural canopy variables from hyperspectral remote sensing data. Remote Sens. Environ. 100, 281–294. https://doi.org/10.1016/j.rse.2005.10.006.
 
- Atzberger, C. 2000: Development of an invertible forest reflectance model: The INFOR-Model.In: Buchroithner (Ed.): A decade of trans-european remote sensing cooperation. Proceedings of the 20th EARSeL Symposium Dresden, Germany, 14.-16. June 2000: 39-44.
+Atzberger, C. 2000: Development of an invertible forest reflectance model: The INFOR-Model.In: Buchroithner (Ed.): A decade of trans-european remote sensing cooperation. Proceedings of the 20th EARSeL Symposium Dresden, Germany, 14.-16. June 2000: 39-44.
 
 Rosema, A., Verhoef, W., Noorbergen, H. 1992: A new forest light interaction model in support of forest
 monitoring. Remote Sensing of Environment, 42: 23-41.
@@ -81,7 +87,9 @@ SAIL model. Remote Sensing of Environment, 16: 125-141.
 Basic version of INFORM: Clement Atzberger, 1999
 INFORM modifications and validation: Martin Schlerf, 2004-2007
 
-SCOPE model
+# Soil Canopy Observation, Photochemistry and Energy fluxes model (SCOPE)
+
+Authors:Christiaan van der Tol
 
 G.James Collatz, J.Timothy Ball, Cyril Grivet, and Joseph A Berry. Physiological and environmental regulation of stomatal conductance, photosynthesis and transpiration: a model that includes a laminar boundary layer. Agric. For. Meteorol., 54(2-4):107–136, apr 1991. URL: https://www.sciencedirect.com/science/article/pii/0168192391900028, doi:10.1016/0168-1923(91)90002-8.
 
@@ -110,6 +118,8 @@ C Van der Tol, J A Berry, P K E Campbell, and U Rascher. Models of fluorescence 
 C. Van der Tol, W. Verhoef, J Timmermans, A Verhoef, and Z Su. An integrated model of soil-canopy spectral radiances, photosynthesis, fluorescence, temperature and energy balance. Biogeosciences, 6(12):3109–3129, dec 2009. URL: www.biogeosciences.net/6/3109/2009/, doi:10.5194/bg-6-3109-2009.
 
 
+More info:
+https://scope-model.readthedocs.io/en/latest/
 
 
 
