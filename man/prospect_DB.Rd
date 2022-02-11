@@ -2,7 +2,11 @@
 % Please edit documentation in R/prospect_DB.R
 \name{prospect_DB}
 \alias{prospect_DB}
-\title{PROSPECT-Dynamic with brown pigments}
+\title{PROSPECT-Dynamic with brown pigments
+
+Authors:Jean-Baptiste FERET (jb.feret@teledetection.fr);
+Frédéric BARET (baret@avignon.inra.fr);
+Stephane JACQUEMOUD  (jacquemoud@ipgp.fr)}
 \usage{
 prospect_DB(N, Cab, Car, Anth, Brown, EWT, LMA, alpha)
 }
@@ -27,9 +31,15 @@ prospect_DB(N, Cab, Car, Anth, Brown, EWT, LMA, alpha)
 List of lambda with leaf directional-hemisphrical reflectance and transmittance
 }
 \description{
-PROSPECT-Dynamic with brown pigments
+this function includes numerical optimizations proposed in the FLUSPECT code
+Authors: Wout Verhoef, Christiaan van der Tol (c.vandertol@utwente.nl) & Joris Timmermans
 }
 \examples{
 
 
+}
+\references{
+Féret J-B, Gitelson AA, Noble SD & Jacquemoud S, 2017. PROSPECT-D: Towards modeling leaf optical properties through a complete lifecycle. Remote Sensing of Environment, 193, 204–215. https://doi.org/10.1016/j.rse.2017.03.004
+Jacquemoud S, Baret F, Hanocq J-F, 1992. Modeling spectral and bidirectional soil reflectance. Remote Sensing of Environment, 41, 123–132. https://doi.org/10.1016/0034-4257(92)90072-R
+Jacquemoud, S., Baret, F., 1990. PROSPECT: a model of leaf optical properties spectra. Remote Sens. Environ. 34, 75–91. https://doi.org/10.1016/0034-4257 (90)90100-Z.
 }

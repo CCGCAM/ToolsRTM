@@ -23,10 +23,12 @@ The INvertible FOrest Reflectance Model coupled with PROSPECT
 }
 \examples{
 
-#' @references
+}
+\references{
 INFORM (Atzberger, 2000; Schlerf&Atzberger, 2006) simulates the bi-directional reflectance
-of forest stands between 400 and 2500 nm. INFORM is essentially an innovative combination of
-FLIM (Rosema et al., 1992), SAIL (Verhoef, 1984), and PROSPECT (Jacquemoud et al. 1996)
+of forest stands between 400 and 2500 nm.
+
+INFORM is essentially an innovative combination of FLIM (Rosema et al., 1992), SAIL (Verhoef, 1984), and PROSPECT (Jacquemoud et al. 1996)
 Atzberger, C. 2000: Development of an invertible forest reflectance model: The INFOR-Model.
 In: Buchroithner (Ed.): A decade of trans-european remote sensing cooperation. Proceedings
 of the 20th EARSeL Symposium Dresden, Germany, 14.-16. June 2000: 39-44.

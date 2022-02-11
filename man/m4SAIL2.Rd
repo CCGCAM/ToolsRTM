@@ -2,7 +2,7 @@
 % Please edit documentation in R/m4SAIL2.R
 \name{m4SAIL2}
 \alias{m4SAIL2}
-\title{Performs PRO4SAIL2 simulation based on a set of combinations of input parameters}
+\title{Performs fourSAIL2 + PROSPECT simulation based on a set of combinations of input parameters}
 \usage{
 m4SAIL2(
   LUT_GB = NULL,
@@ -32,5 +32,5 @@ alfast: canopy absorptance for direct solar incident flux
 alfadt: canopy absorptance for hemispherical diffuse incident flux
 }
 \description{
-Performs PRO4SAIL2 simulation based on a set of combinations of input parameters
+Performs fourSAIL2 + PROSPECT simulation based on a set of combinations of input parameters
 }

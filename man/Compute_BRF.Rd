@@ -19,12 +19,16 @@ Compute_BRF(rdot = NULL, rsot = NULL, tts = NULL, data.light = NULL)
 BRF numeric. Bidirectional reflectance factor
 }
 \description{
+Authors of the version:Jean-Baptiste FERET (jb.feret@teledetection.fr)
+Florian de BOISSIEU (fdeboiss@gmail.com)
+Copyright 2019/11 Jean-Baptiste FERET
+}
+\details{
 The direct and diffuse light are taken into account as proposed by:
 Francois et al. (2002) Conversion of 400-1100 nm vegetation albedo
 measurements into total shortwave broadband albedo using a canopy
 radiative transfer model, Agronomie
-}
-\details{
+
 Es = direct
 Ed = diffuse
 }

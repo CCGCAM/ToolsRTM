@@ -5,12 +5,12 @@
 \title{Computation of transmissivity of a dielectric plane surface,
 averaged over all directions of incidence and over all polarizations.}
 \usage{
-calctav(alfa, nr)
+calctav(alpha, nr)
 }
 \arguments{
-\item{nr}{numeric. refractive index (for PROSAIL)}
-
 \item{alpha}{numeric. Maximum incidence angle defining the solid angle of incident light}
+
+\item{nr}{numeric. refractive index (for PROSAIL)}
 }
 \value{
 numeric. Transmissivity of a dielectric plane surface
