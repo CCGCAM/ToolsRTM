@@ -60,6 +60,22 @@
 #' 
 #' Berger K, Atzberger C, Danner M, D’Urso G, Mauser W, Vuolo F & Hank T 2018. Evaluation of the PROSAIL Model Capabilities for Future Hyperspectral Model Environments: A Review Study. Remote Sensing, 10:85. https://doi.org/10.3390/rs10010085
 #' 
+#' Authors: 
+#' 
+#' Verhoef W.
+#' 
+#' Bach H.
+#' 
+#' Authors of the R version:
+#' 
+#' Jean-Baptiste Feret
+#' 
+#' The fourSAIL model is based on a version provided by	Wout Verhoef et al. (2007)
+#' 
+#' original version downloadable at http://teledetection.ipgp.jussieu.fr/prosail/
+#' 
+#' Improved and extended version of SAILH model that avoids numerical singularities
+#' and works more efficiently if only few parameters change.
 
 m4SAIL2 <- function(LUT_GB=NULL, inputLUT,rsoil, PROSPECTversion='PRO',FieldObserv=NULL){
 

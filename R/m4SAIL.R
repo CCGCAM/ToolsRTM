@@ -30,14 +30,6 @@
 
 #' Performs PROSAIL simulation based on a set of combinations of input parameters
 #' 
-#' the fourSAIL model is based on a version provided by	Wout Verhoef et al. (2007)
-#' 
-#' Authors of the version:Jean-Baptiste FERET
-#' 
-#' original version downloadable at http://teledetection.ipgp.jussieu.fr/prosail/
-#' Improved and extended version of SAILH model that avoids numerical singularities
-#' and works more efficiently if only few parameters change.
-
 #' @param rsoil numeric. Soil reflectance
 #' @param inputLUT LUT table with distribution of biophysical parameters used as input parameters in the model
 #' @param PROSPECTversion Version of PROSPECT model. 'PRO' or 'D' is accepted. By default 'PRO' is used.
@@ -60,7 +52,24 @@
 #' 
 #' Berger K, Atzberger C, Danner M, D’Urso G, Mauser W, Vuolo F & Hank T 2018. Evaluation of the PROSAIL Model Capabilities for Future Hyperspectral Model Environments: A Review Study. Remote Sensing, 10:85. https://doi.org/10.3390/rs10010085
 #' 
+#' Authors: 
+#' 
+#' Verhoef W.
+#' 
+#' Bach H. 
+#' 
+#' Authors of the R version:
+#' 
+#' Jean-Baptiste Feret
+#' 
+#' The fourSAIL model is based on a version provided by	Wout Verhoef et al. (2007)
+#' 
+#' original version downloadable at http://teledetection.ipgp.jussieu.fr/prosail/
+#' 
+#' Improved and extended version of SAILH model that avoids numerical singularities
+#' and works more efficiently if only few parameters change.
 
+#' 
 m4SAIL <- function(inputLUT,rsoil, PROSPECTversion='PRO'){
 
 

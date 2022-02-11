@@ -4,8 +4,6 @@
 # PROSPECT version 6.0 (January, 16th 2017)
 # _______________________________________________________________________
 
-## PROSPECT D and PRO
-# Authors:Jean-Baptiste FERET (jb.feret@teledetection.fr); Frédéric BARET (baret@avignon.inra.fr); Stephane JACQUEMOUD  (jacquemoud@ipgp.fr)
 
 # for any question or request, please contact:
 #
@@ -67,14 +65,6 @@
 
 #'  PROSPECT-Dynamic with brown pigments
 #'  
-#' Authors:Jean-Baptiste FERET (jb.feret@teledetection.fr); 
-#' Frédéric BARET (baret@avignon.inra.fr); 
-#' Stephane JACQUEMOUD  (jacquemoud@ipgp.fr)
-#' 
-#' this function includes numerical optimizations proposed in the FLUSPECT code
-#'Authors: Wout Verhoef, Christiaan van der Tol (c.vandertol@utwente.nl) & Joris Timmermans
-
-
 #' @param N numeric. Leaf structure parameter
 #' @param Cab numeric. Chlorophyll content (microg.cm-2)
 #' @param Car numeric. Carotenoid content (microg.cm-2)
@@ -90,14 +80,32 @@
 #' 
 #' 
 #' @references
+#' 
 #' Féret J-B, Gitelson AA, Noble SD & Jacquemoud S, 2017. PROSPECT-D: Towards modeling leaf optical properties through a complete lifecycle. Remote Sensing of Environment, 193, 204–215. https://doi.org/10.1016/j.rse.2017.03.004
 #'
 #' Jacquemoud S, Baret F, Hanocq J-F, 1992. Modeling spectral and bidirectional soil reflectance. Remote Sensing of Environment, 41, 123–132. https://doi.org/10.1016/0034-4257(92)90072-R
 #'
 #' Jacquemoud, S., Baret, F., 1990. PROSPECT: a model of leaf optical properties spectra. Remote Sens. Environ. 34, 75–91. https://doi.org/10.1016/0034-4257 (90)90100-Z.
 #' 
-#' 
-#' 
+#'Authors:
+#'
+#'Jean-Baptiste Feret (jb.feret@teledetection.fr)
+#'
+#'Frédéric Baret (baret@avignon.inra.fr)
+#'
+#'Stephane JAacquemoud  (jacquemoud@ipgp.fr)
+#'
+#'This function includes numerical optimizations proposed in the FLUSPECT code
+#'
+#'Authors: 
+#'
+#'Wout Verhoef
+#'
+#'Christiaan van der Tol (c.vandertol@utwente.nl)
+#'
+#'Joris Timmermans
+#'
+
 
 prospect_DB<-function(N,Cab,Car,Anth,Brown,EWT,LMA,alpha){
 # ***********************************************************************

@@ -42,14 +42,6 @@
 
 #'  PROSPECT-PRO
 #'  
-#' Authors:Jean-Baptiste FERET (jb.feret@teledetection.fr); 
-#' Frédéric BARET (baret@avignon.inra.fr); 
-#' Stephane JACQUEMOUD  (jacquemoud@ipgp.fr)
-#' 
-#' this function includes numerical optimizations proposed in the FLUSPECT code
-#'Authors: Wout Verhoef, Christiaan van der Tol (c.vandertol@utwente.nl) & Joris Timmermans
-
-
 #' @param N numeric. Leaf structure parameter
 #' @param Cab numeric. Chlorophyll content (microg.cm-2)
 #' @param Car numeric. Carotenoid content (microg.cm-2)
@@ -76,8 +68,25 @@
 #'
 #' Jacquemoud, S., Baret, F., 1990. PROSPECT: a model of leaf optical properties spectra. Remote Sens. Environ. 34, 75–91. https://doi.org/10.1016/0034-4257 (90)90100-Z.
 #' 
+#'Authors:
+#'
+#'Jean-Baptiste Feret (jb.feret@teledetection.fr)
+#'
+#'Frédéric Baret (baret@avignon.inra.fr)
+#'
+#'Stephane Jacquemoud  (jacquemoud@ipgp.fr)
+#'
+#'This function includes numerical optimizations proposed in the FLUSPECT code
+#'
+#'Authors: 
+#'
+#'Wout Verhoef
+#'
+#'Christiaan van der Tol (c.vandertol@utwente.nl)
+#'
+#'Joris Timmermans
+#'
 #' 
-
 prospect_PRO<-function(N,Cab,Car,Anth,Cbrown,EWT,LMA,alpha,Prot,CBC){  
 
 data <- ToolsRTM::dataSpec_PRO # read.table('parameters/dataSpec_PRO.csv',header = T, sep=',')
