@@ -1,6 +1,10 @@
 
 #' Computes bidirectional reflectance factor based on outputs from PRO-4SAIL and sun position
 #'
+#' Authors of the version:Jean-Baptiste FERET (jb.feret@teledetection.fr)
+#' Florian de BOISSIEU (fdeboiss@gmail.com)
+#' Copyright 2019/11 Jean-Baptiste FERET
+#' 
 #' The direct and diffuse light are taken into account as proposed by:
 #' Francois et al. (2002) Conversion of 400-1100 nm vegetation albedo
 #' measurements into total shortwave broadband albedo using a canopy
@@ -24,12 +28,12 @@ Compute_BRF  <- function(rdot=NULL,rsot=NULL,tts=NULL,data.light=NULL){
   if (is.null(data.light)){
     Es <- ToolsRTM::dataSpec_PDB[,11]
     Ed <- ToolsRTM::dataSpec_PDB[,12]
-    rd <- pi/180
+    rd <- pi / 180
     
   } else{
     Es <- data.light$direct_light ##
     Ed <- data.light$diffuse_light ##
-    rd <- pi/180
+    rd <- pi / 180
    
   }
 
@@ -41,10 +45,10 @@ Compute_BRF  <- function(rdot=NULL,rsot=NULL,tts=NULL,data.light=NULL){
   #   skyl=inputLUT[,'skyl']
   # }
   
-  skyl <- 0.847- 1.61*sin((90-tts)*rd)+ 1.04*sin((90-tts)*rd)*sin((90-tts)*rd) # diffuse radiation (Francois et al., 2002)
-  PARdiro <- (1-skyl)*Es
-  PARdifo <- skyl*Ed
-  BRF <- (rdot*PARdifo+rsot*PARdiro)/(PARdiro+PARdifo)
+  skyl <- 0.847- 1.61 * sin((90 - tts) * rd)+ 1.04 * sin((90 - tts) * rd)*sin((90 - tts) * rd) # diffuse radiation (Francois et al., 2002)
+  PARdiro <- (1 - skyl) * Es
+  PARdifo <- skyl * Ed
+  BRF <- (rdot * PARdifo + rsot * PARdiro)/(PARdiro + PARdifo)
   
   return(BRF)
 }

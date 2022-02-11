@@ -5,9 +5,12 @@
 ._*
 # exclude everything in folders
 examples/parameters/*
+examples/WheatPlots/*
 examples/SCOPE_v2.1/*
 examples/outputs/*
 examples/codesSE/*
 examples/codes/*
 examples/SEdata/*
 examples/field-dataset/*
+docs
+inst/doc

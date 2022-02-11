@@ -20,7 +20,7 @@ getStacks<-function(rasterFiles=NULL, frequency='Daily', bands=NULL,output=NULL)
   #### create the Stack of images in all files for "
   progress_bar = txtProgressBar(min=0, max=length(dates.unique), style = 3, char="=")
   for (k in c(1:length(dates.unique))){ 
-    
+    setTxtProgressBar(progress_bar, k)
     path_out=paste(rasterFiles,'/day-',dates.unique[k],'',sep='') 
     files = list.files(path_out,pattern="*.tif$", full.names=TRUE)
     #rs <- stack(files) 
@@ -32,7 +32,7 @@ getStacks<-function(rasterFiles=NULL, frequency='Daily', bands=NULL,output=NULL)
     ifelse(!dir.exists(path_out), dir.create(path_out), FALSE)
     raster.file<-paste(path_out,'/SE2A-',dates[k],'',sep="")
     writeRaster(rs, raster.file, "GTiff", overwrite=TRUE,bylayer=F)
-    setTxtProgressBar(progress_bar, k)
+  
     
 }
   close(progress_bar)

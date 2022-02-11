@@ -17,33 +17,35 @@
 #' @return numeric. Transmissivity of a dielectric plane surface
 #' @export
 #' 
-calctav <- function (alfa,nr){
-
-
-    rd  <- pi/180
-    n2  <- nr^2
-    np  <- n2+1
-    nm  <- n2-1
-    a   <- (nr+1)*(nr+1)/2
-    k   <- -(n2-1)*(n2-1)/4
-    sa  <- sin(alfa*rd)
+calctav <- function (alpha,nr){
     
-    if((alfa != 90)) 
-    b1  <- sqrt((sa^2-np/2)*(sa^2-np/2)+k)
-    if((alfa == 90)) b1  <- 0
-    b2  <- sa^2-np/2
-    b   <- b1-b2
-    b3  <- b^3
-    a3  <- a^3
+    rd <- pi / 180
+    n2 <- nr^2
+    np <- n2 + 1
+    nm <- n2 - 1
+    a <- (nr + 1) * (nr + 1) / 2
+    k <- -(n2 - 1) * (n2 - 1) / 4
+    sa <- sin(alpha * rd)
+    b2 <- (sa^2) - (np / 2)
     
-    ts  <- (k^2/(6*b3)+k/b-b/2)-(k^2/(6*a3)+k/a-a/2)
+    if (alpha == 90) {
+      b1 <- 0 * b2
+    } else {
+      b1 <- sqrt((b2^2) + k)
+    }
+    b <- b1 - b2
+    b3 <- b^3
+    a3 <- a^3
+    
+    ts  <- (k^2 / (6 * b3) + k / b - b / 2)-(k^2 / (6 * a3) + (k / a) - (a / 2))
+    
+    tp1 <- -2 * n2 * (b - a) / (np**2)
+    tp2 <- -2 * n2 * np * log(b / a) / (nm**2)
+    tp3 <- n2 * ((1 / b) - (1 / a)) / 2
+    tp4 <- 16 * n2**2 * ((n2**2) + 1) * log(((2 * np * b) - (nm**2)) / ((2 * np * a) - (nm**2))) / ((np**3) * (nm**2))
+    tp5 <- 16 * (n2**3) * (1 / ((2 * np * b) - (nm**2)) - (1 / (2 * np * a - (nm**2)))) / (np**3)
+    tp <- tp1 + tp2 + tp3 + tp4 + tp5
+    tav <- (ts + tp) / (2 * (sa**2))
 
-    tp1 <- -2*n2*(b-a)/(np^2)
-    tp2 <- -2*n2*np*log(b/a)/(nm^2)
-    tp3 <- n2*(1/b-1/a)/2
-    tp4 <- 16*n2^2*(n2^2+1)*log((2*np*b-nm^2)/(2*np*a-nm^2))/(np^3*nm^2)
-    tp5 <- 16*n2^3*(1/(2*np*b-nm^2)-1/(2*np*a-nm^2))/(np^3)
-    tp  <- tp1+tp2+tp3+tp4+tp5
-    tav <- (ts+tp)/(2*sa^2)
     return(tav)
 }

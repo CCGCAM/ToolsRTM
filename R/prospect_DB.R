@@ -2,8 +2,11 @@
 # prospect_DB.m
 # PROSPECT-Dynamic with brown pigments
 # PROSPECT version 6.0 (January, 16th 2017)
-# subroutines required: calctav.m, dataSpec_PDB.m
 # _______________________________________________________________________
+
+## PROSPECT D and PRO
+# Authors:Jean-Baptiste FERET (jb.feret@teledetection.fr); Frédéric BARET (baret@avignon.inra.fr); Stephane JACQUEMOUD  (jacquemoud@ipgp.fr)
+
 # for any question or request, please contact:
 #
 # Jean-Baptiste FERET
@@ -13,7 +16,7 @@
 # 34093 Montpellier cedex 5
 # E-mail: jb.feret@teledetection.fr
 #
-# St?phane JACQUEMOUD
+# Stephane JACQUEMOUD
 # Universit? Paris Diderot / Institut de Physique du Globe de Paris
 # 35 rue H?l?ne Brion
 # 75013 Paris, France
@@ -60,19 +63,18 @@
 # set the Chl / Car ratio between 4 and 5. this is not appropriate for 	 #
 # senescent leaves 														 #
 # _______________________________________________________________________#
-# this code includes numerical optimizations proposed in the FLUSPECT code
-# Authors: Wout Verhoef, Christiaan van der Tol (c.vandertol@utwente.nl) &
-# Joris Timmermans
-# Date: 2007
-# Update from PROSPECT to FLUSPECT: January 2011 (CvdT)
-# for more info about FLUSPECT, see publication:
-# Vilfan, N., van der Tol, C., Muller, O., Rascher, U., Verhoef, W., 2016.
-# Fluspect-B: A model for leaf fluorescence, reflectance and transmittance
-# spectra. Remote Sens. Environ. 186, 596?615. doi:10.1016/j.rse.2016.09.017
 
-#if (!require("expint")) { install.packages("expint"); require("expint") }  
+
 #'  PROSPECT-Dynamic with brown pigments
-#'
+#'  
+#' Authors:Jean-Baptiste FERET (jb.feret@teledetection.fr); 
+#' Frédéric BARET (baret@avignon.inra.fr); 
+#' Stephane JACQUEMOUD  (jacquemoud@ipgp.fr)
+#' 
+#' this function includes numerical optimizations proposed in the FLUSPECT code
+#'Authors: Wout Verhoef, Christiaan van der Tol (c.vandertol@utwente.nl) & Joris Timmermans
+
+
 #' @param N numeric. Leaf structure parameter
 #' @param Cab numeric. Chlorophyll content (microg.cm-2)
 #' @param Car numeric. Carotenoid content (microg.cm-2)
@@ -87,6 +89,16 @@
 #' @examples
 #' 
 #' 
+#' @references
+#' Féret J-B, Gitelson AA, Noble SD & Jacquemoud S, 2017. PROSPECT-D: Towards modeling leaf optical properties through a complete lifecycle. Remote Sensing of Environment, 193, 204–215. https://doi.org/10.1016/j.rse.2017.03.004
+
+#' Jacquemoud S, Baret F, Hanocq J-F, 1992. Modeling spectral and bidirectional soil reflectance. Remote Sensing of Environment, 41, 123–132. https://doi.org/10.1016/0034-4257(92)90072-R
+
+#' Jacquemoud, S., Baret, F., 1990. PROSPECT: a model of leaf optical properties spectra. Remote Sens. Environ. 34, 75–91. https://doi.org/10.1016/0034-4257 (90)90100-Z.
+#' 
+#' 
+#' 
+
 prospect_DB<-function(N,Cab,Car,Anth,Brown,EWT,LMA,alpha){
 # ***********************************************************************
 # Jacquemoud S., Baret F. (1990), PROSPECT: a model of leaf optical
@@ -100,8 +112,7 @@ prospect_DB<-function(N,Cab,Car,Anth,Brown,EWT,LMA,alpha){
 # provided by Frederic Baret (EMMAH, INRA Avignon, baret@avignon.inra.fr)
 # and used with his autorization.
 # ***********************************************************************
-data <- ToolsRTM::dataSpec_PDB # dataread.table('parameters/dataSpec_PDB.csv',header = T, sep=',')
-lambda  <- data[,1]
+data <- ToolsRTM::dataSpec_PDB
 nr      <- data[,2]
 Kab     <- data[,3]    
 Kcar    <- data[,4]
@@ -109,13 +120,15 @@ Kant    <- data[,5]
 KBrown  <- data[,6]
 Kw      <- data[,7]
 Km      <- data[,8]
-Kall    <- (Cab*Kab+Car*Kcar+Anth*Kant+Brown*KBrown+EWT*Kw+LMA*Km)/N
-j       <- which(Kall>0)# Non-conservative scattering (normal case)
-t1      <- (1-Kall)*exp(-Kall)
-t2      <- Kall^2*expint::expint(Kall)
+Kall    <- (Cab * Kab + Car * Kcar + Anth * Kant + Brown * KBrown + EWT * Kw + LMA * Km ) / N
+
+
+j       <- which(Kall > 0)# Non-conservative scattering (normal case)
+t1      <- (1 - Kall) * exp(-Kall)
+t2      <- (Kall^2) * expint::expint(Kall)
 #t2      <- Kall^2*expint(Kall)
 tau     <- rep(1, length(t1))
-tau[j]  <- t1[j]+t2[j]
+tau[j]  <- t1[j] + t2[j]
 
 # ***********************************************************************
 # reflectance and transmittance of one layer
@@ -128,27 +141,23 @@ tau[j]  <- t1[j]+t2[j]
 #-------------------------------------------------
 #talf    <- calctav(40,nr) ##default alpha=40
 talf    <- calctav(alpha,nr)
-ralf    <- 1-talf
+ralf    <- 1 - talf
 t12     <- calctav(90,nr)
-r12     <- 1-t12
-t21     <- t12/(nr^2)
-r21     <- 1-t21
+r12     <- 1 - t12
+t21     <- t12 / (nr^2)
+r21     <- 1 - t21
 
 # top surface side
 
-denom   <- 1-(r21*r21*(tau^2))
-Ta      <- (talf*tau*t21)/denom
-Ra      <- ralf+(r21*tau*Ta)
+denom   <- 1 - (r21 * r21 * (tau^2))
+Ta      <- (talf * tau * t21) / denom
+Ra      <- ralf + (r21 * tau * Ta)
 
 
 
 # bottom surface side
-t       <- t12*tau*t21/denom
-r       <- r12+(r21*tau*t)
-
-# bottom surface side
-t       <- t12*tau*t21/denom
-r       <- r12+r21*tau*t
+t       <- t12 * tau * t21 / denom
+r       <- r12 + (r21 * tau * t)
 
 # ***********************************************************************
 # reflectance and transmittance of N layers
@@ -159,28 +168,28 @@ r       <- r12+r21*tau*t
 # or transmitted through a pile of plates, Proc. Roy. Soc. Lond.,
 # 11:545-556.
 # ***********************************************************************
-D       <- sqrt((1+r+t)*(1+r-t)*(1-r+t)*(1-r-t))
+D       <- sqrt((1 + r + t) * (1 + r - t) * (1 - r + t) * (1 - r - t))
 rq      <- r^2
 tq      <- t^2
-a       <- (1+rq-tq+D)/(2*r)
-b       <- (1-rq+tq+D)/(2*t)
+a       <- (1 + rq - tq + D)/(2 * r)
+b       <- (1-rq + tq + D)/(2 * t)
 
-bNm1    <- b^(N-1)#
+bNm1    <- b^(N - 1)#
 bN2     <- bNm1^2
 a2      <- a^2
-denom   <- a2*bN2-1
-Rsub    <- a*(bN2-1)/denom
-Tsub    <- bNm1*(a2-1)/denom
+denom   <- a2 * bN2 - 1
+Rsub    <- a * (bN2 - 1) / denom
+Tsub    <- bNm1 * (a2 - 1) / denom
 
 # Case of zero absorption
-j       <- which(r+t >= 1)
-Tsub[j] <- t[j]/(t[j]+(1-t[j])*(N-1))
-Rsub[j]	 <-  1-Tsub[j]
+j       <- which(r + t >= 1)
+Tsub[j] <- t[j] / (t[j] + (1 - t[j]) * (N - 1))
+Rsub[j]	 <-  1 - Tsub[j]
 
 # Reflectance and transmittance of the leaf: combine top layer with next N-1 layers
-denom   <- 1-Rsub*r
-tran    <- Ta*Tsub/denom
-refl    <- Ra+(Ta*Rsub*t)/denom
+denom   <- 1 - Rsub * r
+tran    <- Ta * Tsub / denom
+refl    <- Ra + (Ta * Rsub * t) / denom
 
 LRT<- list(lambda,refl, tran)
 return(LRT)

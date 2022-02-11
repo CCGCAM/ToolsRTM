@@ -1,7 +1,4 @@
-#' Performs PRO4SAIL2 simulation based on a set of combinations of input parameters
-# ============================================================================= =
-# This Library includes functions dedicated to PROSAIL simulation
-# SAIL versions available are 4SAIL and 4SAIL2
+#' Performs fourSAIL2 + PROSPECT simulation based on a set of combinations of input parameters
 # ============================================================================= =
 #' @param LUT_GB dataframe Includes distribution of biophysical parameters used as green vegetation  (first column).
 #' Includes distribution of biophysical parameters used  (second column)
@@ -39,7 +36,7 @@
 #       - diss  = Layer dissociation factor
 #       - Cv = vertical crown cover percentage = % ground area covered with crowns as seen from nadir direction
 #       - Zeta = Tree shape factor =  = ratio of crown diameter to crown height
-#l      - Leafgreen  includes reflectance and transmittance for green vegetation
+#       - Leafgreen  includes reflectance and transmittance for green vegetation
 #       - Leafbrown  includes reflectance and transmittance for brown vegetation
 ############################################################################################################
 ############################################################################################################
@@ -128,57 +125,57 @@ rddsoil <- rdosoil <- rsdsoil <- rsosoil <- rsoil
 rd <- pi/180
 
 #	Generate leaf angle distribution from average leaf angle (ellipsoidal) or (a,b) parameters
-if (TypeLidf==1){
+if (TypeLidf == 1){
   LeafDistribution <- dladgen(LIDFa,LIDFb)
   lidf <- LeafDistribution$lidf
   litab <- LeafDistribution$litab
   
-} else if (TypeLidf==2){
+} else if (TypeLidf == 2){
   LeafDistribution <- campbell(LIDFa)
   lidf <- LeafDistribution$lidf
   litab <- LeafDistribution$litab
 }
 
-if (lai<0){
+if (lai < 0){
   message('Please define positive LAI value')
   rddt <- rsdt <- rdot <- rsost <- rsot <- rsoil
-  alfast <- alfadt <- 0*rsoil
-} else if (lai==0){
+  alfast <- alfadt <- 0 * rsoil
+} else if (lai == 0){
   tss <- too <- tsstoo <- tdd <- 1.0
   rdd <- rsd <- tsd <- rdo <- tdo <- 0.0
   rso <- rsos <- rsod <- rsodt <- 0.0
   rddt <- rsdt <- rdot <- rsost <- rsot <- rsoil
-  alfast <- alfadt <- 0*rsoil
-} else if (lai>0){
-  cts <- cos(rd*tts)
-  cto <- cos(rd*tto)
-  ctscto <- cts*cto
-  tAnths <- tan(rd*tts)
-  tAntho <- tan(rd*tto)
-  cospsi <- cos(rd*psi)
-  dso <- sqrt(tAnths*tAnths+tAntho*tAntho-2.0*tAnths*tAntho*cospsi)
+  alfast <- alfadt <- 0 * rsoil
+} else if (lai > 0){
+  cts <- cos(rd * tts)
+  cto <- cos(rd * tto)
+  ctscto <- cts * cto
+  tAnths <- tan(rd * tts)
+  tAntho <- tan(rd * tto)
+  cospsi <- cos(rd * psi)
+  dso <- sqrt(tAnths * tAnths + tAntho * tAntho - 2.0 * tAnths * tAntho * cospsi)
   ### ### ### ### ### ### ### ### ### ### ### ### ###
   ## Crown and vegatation clumping effects
   ## similar to flim implementation
   # Clumping effects
   ### ### ### ### ### ### ### ### ### ### ### ### ###
   Cs <- Co <- 1.0
-  if (Cv<=1.0){
-    Cs <- 1.0-(1.0-Cv)^(1.0/cts)
-    Co <- 1.0-(1.0-Cv)^(1.0/cto)
+  if (Cv <= 1.0){
+    Cs <- 1.0 -(1.0 - Cv)^(1.0 / cts)
+    Co <- 1.0 -(1.0 - Cv)^(1.0 / cto)
   }
 
   Overlap <- 0.0
-  if (Zeta>0.0){
-    Overlap <- min(Cs*(1.0-Co),Co*(1.0-Cs))*exp(-dso/Zeta)
+  if (Zeta > 0.0){
+    Overlap <- min(Cs * (1.0 - Co),Co * (1.0 - Cs)) * exp(-dso / Zeta)
   }
 
   
-  Fcd <- Cs*Co+Overlap
-  Fcs <- (1.0-Cs)*Co-Overlap
-  Fod <- Cs*(1.0-Co)-Overlap
-  Fos <- (1.0-Cs)*(1.0-Co)+Overlap
-  Fcdc <- 1.0-(1.0-Fcd)^(0.5/cts+0.5/cto)
+  Fcd <- Cs * Co + Overlap
+  Fcs <- (1.0 - Cs) *Co - Overlap
+  Fod <- Cs*(1.0 - Co) - Overlap
+  Fos <- (1.0 - Cs)*(1.0 - Co) + Overlap
+  Fcdc <- 1.0 - (1.0 - Fcd)^(0.5 / cts + 0.5 / cto)
   
   #	Part depending on diss, fraction_brown, and leaf optical properties
   #	First save the input fraction_brown as the old fraction_brown, as the following change is only artificial
@@ -186,12 +183,12 @@ if (lai<0){
   
   fb <- fraction_brown
   # if only green leaves
-  if (fraction_brown==0.0){
+  if (fraction_brown == 0.0){
     fb <- 0.5
     leafbrown$Reflectance <- leafgreen$Reflectance
     leafbrown$Transmittance <- leafgreen$Transmittance
   }
-  if (fraction_brown==1.0){
+  if (fraction_brown == 1.0){
     fb <- 0.5
     leafgreen$Reflectance <- leafbrown$Reflectance
     leafgreen$Transmittance <- leafbrown$Transmittance
@@ -322,32 +319,34 @@ if (lai<0){
   m2 <- (att+sigb)*(att-sigb)
   m2[m2<0] <- 0
   m <- sqrt(m2)
-  Which_NCS <- which(m>0.01)
-  Which_CS <- which(m<=0.01)
+  ### Non Conservative scattering
+  f_Non_ConS <- which(m>0.01)
+  ## Conservative scattering
+  f_ConS <- which(m<=0.01)
   
   tdd <- rdd <- tsd <- rsd <- tdo <- rdo <- 0*m
   rsod <- 0*m
-  if (length(Which_NCS)>0){
-    resNCS <- ToolsRTM::NonConservativeScattering(m[Which_NCS],lai2,att[Which_NCS],sigb[Which_NCS],
-                                        ks,ko,sf[Which_NCS],sb[Which_NCS],vf[Which_NCS],vb[Which_NCS],tss,too)
-    tdd[Which_NCS] <- resNCS$tdd
-    rdd[Which_NCS] <- resNCS$rdd
-    tsd[Which_NCS] <- resNCS$tsd
-    rsd[Which_NCS] <- resNCS$rsd
-    tdo[Which_NCS] <- resNCS$tdo
-    rdo[Which_NCS] <- resNCS$rdo
-    rsod[Which_NCS] <- resNCS$rsod
+  if (length(f_Non_ConS)>0){
+    resNCS <- ToolsRTM::NonConservativeScattering(m[f_Non_ConS],lai2,att[f_Non_ConS],sigb[f_Non_ConS],
+                                        ks,ko,sf[f_Non_ConS],sb[f_Non_ConS],vf[f_Non_ConS],vb[f_Non_ConS],tss,too)
+    tdd[f_Non_ConS] <- resNCS$tdd
+    rdd[f_Non_ConS] <- resNCS$rdd
+    tsd[f_Non_ConS] <- resNCS$tsd
+    rsd[f_Non_ConS] <- resNCS$rsd
+    tdo[f_Non_ConS] <- resNCS$tdo
+    rdo[f_Non_ConS] <- resNCS$rdo
+    rsod[f_Non_ConS] <- resNCS$rsod
   }
-  if (length(Which_CS)>0){
-    resCS <- ToolsRTM::ConservativeScattering(m[Which_CS],lai2,att[Which_CS],sigb[Which_CS],
-                                    ks,ko,sf[Which_CS],sb[Which_CS],vf[Which_CS],vb[Which_CS],tss,too)
-    tdd[Which_CS] <- resCS$tdd
-    rdd[Which_CS] <- resCS$rdd
-    tsd[Which_CS] <- resCS$tsd
-    rsd[Which_CS] <- resCS$rsd
-    tdo[Which_CS] <- resCS$tdo
-    rdo[Which_CS] <- resCS$rdo
-    rsod[Which_CS] <- resCS$rsod
+  if (length(f_ConS)>0){
+    resCS <- ToolsRTM::ConservativeScattering(m[f_ConS],lai2,att[f_ConS],sigb[f_ConS],
+                                    ks,ko,sf[f_ConS],sb[f_ConS],vf[f_ConS],vb[f_ConS],tss,too)
+    tdd[f_ConS] <- resCS$tdd
+    rdd[f_ConS] <- resCS$rdd
+    tsd[f_ConS] <- resCS$tsd
+    rsd[f_ConS] <- resCS$rsd
+    tdo[f_ConS] <- resCS$tdo
+    rdo[f_ConS] <- resCS$rdo
+    rsod[f_ConS] <- resCS$rsod
   }
   
   # Set background properties equal to those of the bottom layer on a black soil
@@ -379,32 +378,32 @@ if (lai<0){
   m2 <- (att+sigb)*(att-sigb)
   m2[m2<0] <- 0
   m <- sqrt(m2)
-  Which_NCS <- which(m>0.01)
-  Which_CS <- which(m<=0.01)
+  f_Non_ConS <- which(m>0.01)
+  f_ConS <- which(m<=0.01)
   
-  tdd <- rdd <- tsd <- rsd <- tdo <- rdo <- 0*m
-  rsod <- 0*m
-  if (length(Which_NCS)>0){
-    resNCS <- ToolsRTM::NonConservativeScattering(m[Which_NCS],lai1,att[Which_NCS],sigb[Which_NCS],
-                                        ks,ko,sf[Which_NCS],sb[Which_NCS],vf[Which_NCS],vb[Which_NCS],tss,too)
-    tdd[Which_NCS] <- resNCS$tdd
-    rdd[Which_NCS] <- resNCS$rdd
-    tsd[Which_NCS] <- resNCS$tsd
-    rsd[Which_NCS] <- resNCS$rsd
-    tdo[Which_NCS] <- resNCS$tdo
-    rdo[Which_NCS] <- resNCS$rdo
-    rsod[Which_NCS] <- resNCS$rsod
+  tdd <- rdd <- tsd <- rsd <- tdo <- rdo <- 0 * m
+  rsod <- 0 * m
+  if (length(f_Non_ConS)>0){
+    resNCS <- ToolsRTM::NonConservativeScattering(m[f_Non_ConS],lai1,att[f_Non_ConS],sigb[f_Non_ConS],
+                                        ks,ko,sf[f_Non_ConS],sb[f_Non_ConS],vf[f_Non_ConS],vb[f_Non_ConS],tss,too)
+    tdd[f_Non_ConS] <- resNCS$tdd
+    rdd[f_Non_ConS] <- resNCS$rdd
+    tsd[f_Non_ConS] <- resNCS$tsd
+    rsd[f_Non_ConS] <- resNCS$rsd
+    tdo[f_Non_ConS] <- resNCS$tdo
+    rdo[f_Non_ConS] <- resNCS$rdo
+    rsod[f_Non_ConS] <- resNCS$rsod
   }
-  if (length(Which_CS)>0){
-    resCS <- ToolsRTM::ConservativeScattering(m[Which_CS],lai1,att[Which_CS],sigb[Which_CS],
-                                    ks,ko,sf[Which_CS],sb[Which_CS],vf[Which_CS],vb[Which_CS],tss,too)
-    tdd[Which_CS] <- resCS$tdd
-    rdd[Which_CS] <- resCS$rdd
-    tsd[Which_CS] <- resCS$tsd
-    rsd[Which_CS] <- resCS$rsd
-    tdo[Which_CS] <- resCS$tdo
-    rdo[Which_CS] <- resCS$rdo
-    rsod[Which_CS] <- resCS$rsod
+  if (length(f_ConS)>0){
+    resCS <- ToolsRTM::ConservativeScattering(m[f_ConS],lai1,att[f_ConS],sigb[f_ConS],
+                                    ks,ko,sf[f_ConS],sb[f_ConS],vf[f_ConS],vb[f_ConS],tss,too)
+    tdd[f_ConS] <- resCS$tdd
+    rdd[f_ConS] <- resCS$rdd
+    tsd[f_ConS] <- resCS$tsd
+    rsd[f_ConS] <- resCS$rsd
+    tdo[f_ConS] <- resCS$tdo
+    rdo[f_ConS] <- resCS$rdo
+    rsod[f_ConS] <- resCS$rsod
   }
   
   # Combine with bottom layer reflectances and transmittances (adding method)

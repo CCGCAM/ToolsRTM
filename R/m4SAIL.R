@@ -1,17 +1,5 @@
-#' Performs PROSAIL simulation based on a set of combinations of input parameters
-# 'This version has been implemented by Jean-Baptiste F?ret
-#' Jean-Baptiste F?ret takes the entire responsibility for this version
-#' All comments, changes or questions should be sent to:
 
-#'this model PRO4SAIL is based on a version provided by	Wout Verhoef et al. (2007) 
-#	'original version downloadable at http://teledetection.ipgp.jussieu.fr/prosail/
 
-#	'Improved and extended version of SAILH model that avoids numerical singularities
-#	'and works more efficiently if only few parameters change.
-# 'References:
-# '	Verhoef et al. (2007) Unified Optical-Thermal Four-Stream Radiative
-# '	Transfer Theory for Homogeneous Vegetation Canopies, IEEE TRANSACTIONS
-# '	ON GEOSCIENCE AND REMOTE SENSING, VOL. 45, NO. 6, JUNE 2007
 ############################################################################################################
 ############################################################################################################
 #       - TypeLidf  = Type of leaf inclination distribution function
@@ -39,7 +27,17 @@
 #       - rsoil = Soil reflectance
 ############################################################################################################
 ############################################################################################################
-#'
+
+#' Performs PROSAIL simulation based on a set of combinations of input parameters
+#' 
+#' the fourSAIL model is based on a version provided by	Wout Verhoef et al. (2007)
+#' 
+#' Authors of the version:Jean-Baptiste FERET
+#' 
+#' original version downloadable at http://teledetection.ipgp.jussieu.fr/prosail/
+#' Improved and extended version of SAILH model that avoids numerical singularities
+#' and works more efficiently if only few parameters change.
+
 #' @param rsoil numeric. Soil reflectance
 #' @param inputLUT LUT table with distribution of biophysical parameters used as input parameters in the model
 #' @param PROSPECTversion Version of PROSPECT model. 'PRO' or 'D' is accepted. By default 'PRO' is used.
@@ -51,17 +49,23 @@
 #' rsdt: directional-hemispherical reflectance factor for solar incident flux
 #' rddt: bi-hemispherical reflectance factor
 #' @export
+#' 
+#' @references
+#' 
+#' Verhoef W & Bach H, 2007. Coupled soil–leaf-canopy and atmosphere radiative transfer modeling to simulate hyperspectral multi-angular surface reflectance and TOA radiance data. Remote Sensing of Environment, 109:166-182. doi:10.1016/j.rse.2006.12.013
+#' 
+#' Verhoef W, Jia L, Xiao Q & Su Z, 2007. Unified optical-thermal four-stream radiative transfer theory for homogeneous vegetation canopies. IEEE Transactions in Geosciences and Remote Sensing, 45:1808–1822. https://doi.org/10.1109/TGRS.2007.895844
 
+#' Jacquemoud S, Verhoef W, Baret F, Bacour C, Zarco-Tejada PJ, Asner GP, François C & Ustin SL, 2009. PROSPECT+ SAIL models: A review of use for vegetation characterization. Remote Sensing of Environment, 113:S56–S66. https://doi.org/doi:10.1016/j.rse.2008.01.026
+#' 
+#' Berger K, Atzberger C, Danner M, D’Urso G, Mauser W, Vuolo F & Hank T 2018. Evaluation of the PROSAIL Model Capabilities for Future Hyperspectral Model Environments: A Review Study. Remote Sensing, 10:85. https://doi.org/10.3390/rs10010085
+#' 
 
 m4SAIL <- function(inputLUT,rsoil, PROSPECTversion='PRO'){
 
-  #define alll inputs in the models. retreived from LUT tables
-  ## Prospect-D
-  N=inputLUT[,'N']; Cab=inputLUT[,'Cab']; Car=inputLUT[,'Car']; Anth=inputLUT[,'Anth']; Cbrown=inputLUT[,'Cbrown']
-  EWT=inputLUT[,'EWT']; LMA=inputLUT[,'LMA'];alpha=inputLUT[,'alpha']
-  ## Prospect-PRO
-  ### fixed Cm=0.000 in LUTs 
-  Prot=inputLUT[,'Prot'];CBC=inputLUT[,'CBC']
+
+
+
   ## fourSAIL
   LIDFa=inputLUT[,'LIDFa']; LIDFb=inputLUT[,'LIDFb']; TypeLidf=inputLUT[,'TypeLidf']; lai=inputLUT[,'LAI']
   q=inputLUT[,'hspot']; tts=inputLUT[,'tts']; tto=inputLUT[,'tto']; psi=inputLUT[,'psi']
@@ -71,11 +75,20 @@ m4SAIL <- function(inputLUT,rsoil, PROSPECTversion='PRO'){
 #	1.1 Leaf optical properties
 #########################################
 if (PROSPECTversion == 'PRO') {
-  #PROSPECTversion = 'PRO'
+
+  #define alll inputs in the models. retreived from LUT tables
+  N=inputLUT[,'N']; Cab=inputLUT[,'Cab']; Car=inputLUT[,'Car']; Anth=inputLUT[,'Anth']; Cbrown=inputLUT[,'Cbrown']
+  EWT=inputLUT[,'EWT']; LMA=inputLUT[,'LMA']; alpha=inputLUT[,'alpha']
+  Prot=inputLUT[,'Prot'];CBC=inputLUT[,'CBC']
+  # run PROSPECTversion ='PRO'
   LRT <- prospect_PRO(N,Cab,Car,Anth,Cbrown,EWT,LMA,alpha,Prot,CBC)
   print(message('SAIL with PROSPECT-PRO is processing'))
 }  else{
-  #PROSPECTversion ='D'
+  
+  #define alll inputs in the models. retreived from LUT tables
+  N=inputLUT[,'N']; Cab=inputLUT[,'Cab']; Car=inputLUT[,'Car']; Anth=inputLUT[,'Anth']; Cbrown=inputLUT[,'Cbrown']
+  EWT=inputLUT[,'EWT']; LMA=inputLUT[,'LMA']; alpha=inputLUT[,'alpha']
+  # run PROSPECTversion ='D'
   LRT <- prospect_DB(N,Cab,Car,Anth,Cbrown,EWT,LMA,alpha)
   print(message('SAIL with PROSPECT-D is processing'))
 }
@@ -88,14 +101,14 @@ tau	 <- 	LRT[[3]]
 #	1.2 Geometric quAnthities
 #########################################
 
-rd <- pi/180
-cts		 <-  cos(rd*tts)
-cto		 <-  cos(rd*tto)
-ctscto	 <-  cts*cto
-tAnths	 <-  tan(rd*tts)
-tAntho	 <-  tan(rd*tto)
-cospsi	 <-  cos(rd*psi)
-dso		 <-  sqrt(tAnths*tAnths+tAntho*tAntho-2*tAnths*tAntho*cospsi)
+rd <- pi / 180
+cts		 <-  cos(rd * tts)
+cto		 <-  cos(rd * tto)
+ctscto	 <-  cts * cto
+tAnths	 <-  tan(rd * tts)
+tAntho	 <-  tan(rd * tto)
+cospsi	 <-  cos(rd * psi)
+dso		 <-  sqrt(tAnths * tAnths + tAntho * tAntho - 2 * tAnths * tAntho * cospsi)
 
 
 
@@ -130,7 +143,7 @@ litab <- LeafDistribution$litab
 	for (i in 1:na){
 	  
 		ttl <- litab[i]# leaf inclination discrete values
-		ctl <- cos(rd*ttl)
+		ctl <- cos(rd * ttl)
 		#	SAIL volume scattering phase function gives interception and portions to be
 		#	multiplied by rho and tau
 
@@ -156,19 +169,19 @@ litab <- LeafDistribution$litab
 		#********************************************************************************
 
 		#	Extinction coefficientsksli
-		ksli <- chi_s/cts
-		koli <- chi_o/cto
+		ksli <- chi_s / cts
+		koli <- chi_o / cto
 
 		#	Area scattering coefficient fractions
-		sobli	 <-  frho*pi/ctscto
-		sofli	 <-  ftau*pi/ctscto
-		bfli	 <-  ctl*ctl
-		ks	 <-  ks+ksli*lidf[i]
+		sobli	 <-  frho * pi / ctscto
+		sofli	 <-  ftau * pi / ctscto
+		bfli	 <-  ctl * ctl
+		ks	 <-  ks + ksli * lidf[i]
 	
-		ko	 <-  ko+koli*lidf[i]
-		bf	 <-  bf+bfli*lidf[i]
-		sob	 <-  sob+sobli*lidf[i]
-		sof	 <-  sof+sofli*lidf[i]
+		ko	 <-  ko + koli * lidf[i]
+		bf	 <-  bf + bfli * lidf[i]
+		sob	 <-  sob + sobli * lidf[i]
+		sof	 <-  sof + sofli * lidf[i]
 		######
 		
 	}
@@ -177,29 +190,27 @@ litab <- LeafDistribution$litab
 	#	Geometric factors to be used later with rho and tau
   #####################################################
     
-	sdb	 <-  0.5*(ks+bf)
-	sdf	 <-  0.5*(ks-bf)
-	dob	 <-  0.5*(ko+bf)
-	dof	 <-  0.5*(ko-bf)
-	ddb	 <-  0.5*(1.+bf)
-	ddf	 <-  0.5*(1.-bf)
-
-
+	sdb	 <-  0.5 * (ks + bf)
+	sdf	 <-  0.5 * (ks - bf)
+	dob	 <-  0.5 * (ko + bf)
+	dof	 <-  0.5 * (ko - bf)
+	ddb	 <-  0.5 * (1.+ bf)
+	ddf	 <-  0.5 * (1.- bf)
 
 	#	Here rho and tau come in
-	sigb <-  ddb*rho+ddf*tau
-	sigf <-  ddf*rho+ddb*tau
-	att	 <-  1-sigf
-	m2  <- (att+sigb)*(att-sigb)
-	m2[which(m2<= 0)]<-0
+	sigb <-  ddb * rho + ddf * tau
+	sigf <-  ddf * rho + ddb * tau
+	att	 <-  1 - sigf
+	m2  <- (att + sigb) * (att - sigb)
+	m2[which(m2 <= 0)] <- 0
 	
 	m    <- sqrt(m2)
 
-	sb  <- sdb*rho+sdf*tau
-	sf	 <-  sdf*rho+sdb*tau
-	vb	 <-  dob*rho+dof*tau
-	vf	 <-  dof*rho+dob*tau
-	w	 <-  sob*rho+sof*tau
+	sb  <- sdb * rho + sdf *tau
+	sf	 <-  sdf * rho + sdb * tau
+	vb	 <-  dob * rho + dof * tau
+	vf	 <-  dof * rho + dob * tau
+	w	 <-  sob * rho + sof * tau
 
 	
 	######################################################
@@ -234,51 +245,19 @@ litab <- LeafDistribution$litab
 	######################################################
 	#	Other cases (LAI > 0)
 	######################################################
-	
-	e1		 <-  exp(-m*lai)
-	e2		 <-  e1*e1
-	rinf	 <-  (att-m)/sigb
-	rinf2	 <-  rinf*rinf
-	re		 <-  rinf*e1
-	denom	 <-  1-rinf2*e2
+  ###########
+  tss	 <-  exp( -ks * lai)
+  too	 <-  exp( -ko * lai)
+  
+  NonConScatt <- ToolsRTM::NonConservativeScattering(m,lai,att,sigb,ks,ko,sf,sb,vf,vb,tss,too)
+  tdd=unlist(NonConScatt[[1]]) #tdd
+  rdd=unlist(NonConScatt[[2]]) #rdd
+  tsd=unlist(NonConScatt[[3]]) #tsd
+  rsd=unlist(NonConScatt[[4]]) #rsd
+  tdo=unlist(NonConScatt[[5]]) #tdo
+  rdo=unlist(NonConScatt[[6]]) #rdo
+  rsod=unlist(NonConScatt[[7]]) #rsod
 
-	############### 
-	
-	J1ks    <- Jfunc1(ks,m,lai)
-	J2ks    <- Jfunc2(ks,m,lai)
-	J1ko    <- Jfunc1(ko,m,lai)
-	J2ko    <- Jfunc2(ko,m,lai)
-
-  Ps  <- (sf+sb*rinf)*J1ks
-	Qs  <- (sf*rinf+sb)*J2ks
-	Pv  <- (vf+vb*rinf)*J1ko
-	Qv  <- (vf*rinf+vb)*J2ko
-
-	rdd	 <-  rinf*(1-e2)/denom
-	tdd	 <-  (1-rinf2)*e1/denom
-	tsd	 <-  (Ps-re*Qs)/denom
-	rsd	 <-  (Qs-re*Ps)/denom
-	tdo	 <-  (Pv-re*Qv)/denom
-	rdo	 <-  (Qv-re*Pv)/denom
-
-	tss	 <-  exp(-ks*lai)
-	too	 <-  exp(-ko*lai)
-	z	 <-  Jfunc3(ks,ko,lai)
-	g1	 <-  (z-J1ks*too)/(ko+m)
-	g2	 <-  (z-J1ko*tss)/(ks+m)
-
-	Tv1 <- (vf*rinf+vb)*g1
-	Tv2 <- (vf+vb*rinf)*g2
-	T1	 <-  Tv1*(sf+sb*rinf)
-	T2	 <-  Tv2*(sf*rinf+sb)
-	T3	 <-  (rdo*Qs+tdo*Ps)*rinf
-	
-	#############################################################################
-	#	Multiple scattering contribution to bidirectional canopy reflectance
-	rsod <- (T1+T2-T3)/(1-rinf2)
-	#############################################################################
-	
-	
 	#############################################################################
 	#	Treatment of the hotspot-effect
 	#############################################################################
@@ -287,51 +266,51 @@ litab <- LeafDistribution$litab
 
 	######################################################################
 	#	Apply correction 2/(K+k) suggested by F-M Br?on
-	if (q >0 ){
-		alf <- (dso/q)*2/(ks+ko)
+	if (q > 0 ){
+		alf <- (dso / q) * 2 / (ks + ko)
 	}
 	######################################################################
 	
 	
 	######################################################################
-	if (alf>200){# inserted H Bach 1/3/04
+	if (alf > 200){# inserted H Bach 1/3/04
 		alf <- 200
 	}
 	######################################################################
 	
 	######################################################################
-	if (alf==0) {
+	if (alf == 0) {
   		#	The pure hotspot - no shadow
   		tsstoo <- tss
-  		sumint <- (1-tss)/(ks*lai)
+  		sumint <- (1 - tss) / (ks * lai)
   		
       } else {
       
       ######################################################################
   		#	Outside the hotspot
       ######################################################################  
-  		fhot <- lai*sqrt(ko*ks)
+  		fhot <- lai * sqrt(ko * ks)
   		#	Integrate by exponential Simpson method in 20 steps
   		#	the steps are arranged according to equal partitioning
   		#	of the slope of the joint probability function
   		x1 <- 0
   		y1 <- 0
       f1 <- 1
-      fint <- (1.-exp(-alf))*0.05
+      fint <- (1. - exp(-alf)) * 0.05
   		sumint <- 0
 
     		for (i in 1:20){
-    		  if (i<20){ 
-    		  x2 <- -log(1-i*fint)/alf 
+    		  if (i < 20){ 
+    		  x2 <- -log(1 - i * fint) / alf 
     		  } else {
     		  x2 <- 1 }
     			
-    		  y2 <- -(ko+ks)*lai*x2+fhot*(1-exp(-alf*x2))/alf
+    		  y2 <- -(ko + ks) * lai * x2 + fhot *(1 - exp(-alf * x2)) / alf
     		  #print(y2)
     			f2 <- exp(y2)
     			#print(sumint)
     			
-    	    sumint <- sumint+(f2-f1)*(x2-x1)/(y2-y1)
+    	    sumint <- sumint + (f2 - f1) * (x2 - x1) / (y2 - y1)
     		
     			x1 <- x2
     			y1 <- y2
@@ -346,22 +325,22 @@ litab <- LeafDistribution$litab
 	
 #	Bidirectional reflectance
 #	Single scattering contribution
-	rsos <- w*lai*sumint
+	rsos <- w * lai * sumint
 #	Total canopy contribution
-	rso <- rsos+rsod
+	rso <- rsos + rsod
 
   #	Interaction with the soil
-  dn <- 1-rsoil*rdd
+  dn <- 1- rsoil * rdd
   # rddt: bi-hemispherical reflectance factor
-  rddt <- rdd+tdd*rsoil*tdd/dn
+  rddt <- rdd + tdd * rsoil * tdd / dn
   # rsdt: directional-hemispherical reflectance factor for solar incident flux
-  rsdt <- rsd+(tsd+tss)*rsoil*tdd/dn
+  rsdt <- rsd + (tsd + tss) * rsoil * tdd / dn
   # rdot: hemispherical-directional reflectance factor in viewing direction
-  rdot <- rdo+tdd*rsoil*(tdo+too)/dn
+  rdot <- rdo + tdd * rsoil * (tdo + too) / dn
   # rsot: bi-directional reflectance factor
-  rsodt <- rsod+((tss+tsd)*tdo+(tsd+tss*rsoil*rdd)*too)*rsoil/dn
-  rsost <- rsos+tsstoo*rsoil
-  rsot <- rsost+rsodt
+  rsodt <- rsod + ((tss + tsd) * tdo + (tsd + tss * rsoil * rdd) * too) * rsoil / dn
+  rsost <- rsos + tsstoo * rsoil
+  rsot <- rsost + rsodt
 }
 LSTa<- list(rdot,rsot,rddt,rsdt)
 return(LSTa)
