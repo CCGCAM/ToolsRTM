@@ -12,6 +12,7 @@ Install the package prospect with the following command line in R session:
 
 ## Manual 
 Manual is available at ReadTheDocs https://toolsrtm-tutorial.readthedocs.io/en/latest/
+Manual is available at ReadTheDocs https://toolsrtm-tutorial.readthedocs.io/en/latest/
 
 ## Description
 
@@ -39,7 +40,7 @@ http://teledetection.ipgp.fr/prosail/
 
 Basic version of PROSPECT-D and PROSPECT-PRO: Féret J.-B., 2021
 
-# fourSAIL & fourSAIL-2 models
+## fourSAIL & fourSAIL-2 models
 
 Authors: Verhoef W & Bach H 
 
@@ -116,24 +117,6 @@ Xinyou Yin and Paul C. Struik. Crop systems biology as an avenue to bridge appli
 C Van der Tol, J A Berry, P K E Campbell, and U Rascher. Models of fluorescence and photosynthesis for interpreting measurements of solar-induced chlorophyll fluorescence. J. Geophys. Res. Biogeosciences, 119(12):2312–2327, 2014.
 
 C. Van der Tol, W. Verhoef, J Timmermans, A Verhoef, and Z Su. An integrated model of soil-canopy spectral radiances, photosynthesis, fluorescence, temperature and energy balance. Biogeosciences, 6(12):3109–3129, dec 2009. URL: www.biogeosciences.net/6/3109/2009/, doi:10.5194/bg-6-3109-2009.
-
-
-More info:
-https://scope-model.readthedocs.io/en/latest/
-
-
-
-## fourSAIL and fourSAIL2 models
-
-
-fourSAIL2
-
-Authors of the version:Jean-Baptiste FERET
-original version downloadable at http://teledetection.ipgp.jussieu.fr/prosail/
-
-# INFORM model 
-
-
 
 ## License
 For open source projects, say how it is licensed.
