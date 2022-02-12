@@ -83,14 +83,14 @@ if (PROSPECTversion == 'PRO') {
 ########################################
 #	1.2 Geometric quAnthities
 #########################################
-rd <- pi/180
-cts		 <-  cos(rd*tts)
-cto		 <-  cos(rd*tto)
-ctscto	 <-  cts*cto
-tAnths	 <-  tan(rd*tts)
-tAntho	 <-  tan(rd*tto)
-cospsi	 <-  cos(rd*psi)
-dso		 <-  sqrt(tAnths*tAnths+tAntho*tAntho-2*tAnths*tAntho*cospsi)
+rd <- pi / 180
+cts		 <-  cos(rd * tts)
+cto		 <-  cos(rd * tto)
+ctscto	 <-  cts * cto
+tAnths	 <-  tan(rd * tts)
+tAntho	 <-  tan(rd * tto)
+cospsi	 <-  cos(rd * psi)
+dso		 <-  sqrt(tAnths * tAnths + tAntho * tAntho - 2 * tAnths * tAntho * cospsi)
 
 
 ###########################################################################################################################
@@ -149,11 +149,11 @@ for (i in 1:na){
   #********************************************************************************
   
   #	Extinction coefficientsksli
-  ksli <- chi_s/cts
-  koli <- chi_o/cto
+  ksli <- chi_s / cts
+  koli <- chi_o / cto
   
   #	Area scattering coefficient fractions
-  sobli	 <-  frho*pi/ctscto
+  sobli	 <-  frho *pi/ ctscto
   sofli	 <-  ftau*pi/ctscto
   bfli	 <-  ctl*ctl
   ks	 <-  ks+ksli*lidf[i]
@@ -359,7 +359,7 @@ rsot <- rsost+rsodt
 #sin_90tts = sin(pi / 2 -tts_)
 
 #Computes bidirectional reflectance factor based on outputs from PROSAIL and sun position
-r_BRF<-ToolsRTM::Compute_BRF(rdot=rdot,rsot=rsot,tts=tts,SpecATM_Sensor=ToolsRTM::dataSpec_PDB)
+r_BRF<-ToolsRTM::Compute_BRF(rdot=rdot,rsot=rsot,tts=tts,data.light=ToolsRTM::dataSpec_PDB)
 
 return(r_BRF)
 }
