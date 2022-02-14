@@ -98,17 +98,11 @@ if (is.null(LUT_GB)){
   LUT_GB<-data.frame(N=c(1.5, 2), Cab=c(40,5),Car=c(8,5),Anth=c(0,1),Cbrown=c(0,1),
                      EWT=c(0.01, 0.005), LMA=c(0.009,0.008), alpha=c(40,40),
                      Prot=c(0 , 0),CBC=c(0 , 0))
-  #stop()
-  } else {
-  #message('4SAIL2 needs two sets of optical properties for green and brown vegetation')
-}
+} 
 
-########################################
-#	1.1 Leaf optical properties
-#########################################
 if (PROSPECTversion == 'PRO') {
   #PROSPECTversion = 'PRO'
-
+  
   LRT <- prospect_PRO(N,Cab,Car,Anth,Cbrown,EWT,LMA,alpha,Prot,CBC)
   GreenVegetation<-prospect_PRO(LUT_GB[1,'N'],LUT_GB[1,'Cab'],LUT_GB[2,'Car'],LUT_GB[2,'Anth'],
                                 LUT_GB[1,'Cbrown'],LUT_GB[1,'EWT'],LUT_GB[2,'LMA'],LUT_GB[2,'alpha'],
@@ -120,13 +114,14 @@ if (PROSPECTversion == 'PRO') {
   print(message('SAIL with PROSPECT-PRO is processing'))
 }  else {
   #PROSPECTversion ='D'
-  LRT <- LRT <- prospect_DB(N,Cab,Car,Anth,Cbrown,EWT,LMA,alpha)
+  LRT <- prospect_DB(N,Cab,Car,Anth,Cbrown,EWT,LMA,alpha)
   GreenVegetation<-prospect_DB(LUT_GB[1,'N'],LUT_GB[1,'Cab'],LUT_GB[2,'Car'],LUT_GB[2,'Anth'],
-                                LUT_GB[1,'Cbrown'],LUT_GB[1,'EWT'],LUT_GB[2,'LMA'],LUT_GB[2,'alpha'])
+                               LUT_GB[1,'Cbrown'],LUT_GB[1,'EWT'],LUT_GB[2,'LMA'],LUT_GB[2,'alpha'])
   BrownVegetation<-prospect_DB(LUT_GB[2,'N'],LUT_GB[2,'Cab'],LUT_GB[2,'Car'],LUT_GB[1,'Anth'],
-                                LUT_GB[2,'Cbrown'],LUT_GB[2,'EWT'],LUT_GB[2,'LMA'],LUT_GB[2,'alpha'])
+                               LUT_GB[2,'Cbrown'],LUT_GB[2,'EWT'],LUT_GB[2,'LMA'],LUT_GB[2,'alpha'])
   print(message('SAIL with PROSPECT-D is processing'))
 }
+
 
 ###force to use different Green vegetation
 if (is.null(FieldObserv)){
@@ -162,7 +157,7 @@ if (TypeLidf == 1){
   litab <- LeafDistribution$litab
   
 } else if (TypeLidf == 2){
-  LeafDistribution <- campbell(LIDFa)
+  LeafDistribution <- campbell(ala = LIDFa)
   lidf <- LeafDistribution$lidf
   litab <- LeafDistribution$litab
 }
