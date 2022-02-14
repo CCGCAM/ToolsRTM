@@ -10,7 +10,7 @@
 #' @param skyl diffuse radiation component
 #' @param rsoil reflectance soil (reference)
 #' @param tts solar zenith angle
-#' @param phi  Azimuth angle 
+#' @param psi  Azimuth angle 
 #' @param refl leaf reflectance tran 
 #' @param tran leaf reflectance tran 
 #' @return

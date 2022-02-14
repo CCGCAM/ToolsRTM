@@ -223,9 +223,9 @@ Fos <- (1-co)*(1-cs)+p*(co*(1-co)*cs*(1-cs))^(0.5)
 # Crown transmittance (SAIL model)
 
 # Angles (radian) to angles (degree)
-tts_ <- tts*180/pi
-tto_ <- tto*180/pi
-psi_ <- psi*180/pi
+tts_ <- tts * 180/pi
+tto_ <- tto * 180/pi
+psi_ <- psi * 180/pi
 # Crown transmittance in sun direction (t_s)
 t_s <- ToolsRTM::sail_t_s(lai,ala,hot=0,tts_,skyl,rsoil=r_understorey,tto,psi,TypeLidf=2,refl=r_leaf,tran=t_leaf)
 # Crown transmittance in observation direction (t_o)
@@ -237,16 +237,15 @@ t_o <- ToolsRTM::sail_t_o(lai,ala,hot=0,tto_,skyl,rsoil=r_understorey,tts,psi,Ty
 # Forest reflectance (FLIM model)
 
 # Ground factor (G), that is ground contribution to scene reflectance
-G <- Fcd*t_s*t_o+Fcs*t_o+Fod*t_s+Fos
+G <- Fcd * t_s * t_o + Fcs * t_o + Fod * t_s + Fos
 # Crown factor (C), that is crown contribution to scene reflectance
 # C=(1-t_s.*t_o)*cs*co;  # Original formula
-C <- Fcd*(1-t_s*t_o)# Similar to original formula
+C <- Fcd*(1 - t_s * t_o) # Similar to original formula
 # C=Fcd*(1-t_s.*t_o)+Fcs*(1-t_o); # Modification, rejected by W. Verhoef
 # Der Faktor 'Fcs*(1-t_o)' wurde erg??????nzt. Er beschreibt den Beitrag, der von
 # beleuchteten Kronen (sunlit crowns, Fcs) erfolgt abz??????glich des Beitrags
 # des darunterliegenden Untergrundes (Fcs*t_o), der schon in G enthalten
 # ist.
-
 
 # Forest reflectance
 r_forest= (r_sail_inf * C) + (r_understorey * G) #*10

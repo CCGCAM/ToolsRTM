@@ -23,7 +23,7 @@ msail_inf<-function(inputLUT,rsoil=r_understorey, rleaf, tleaf){
     N=1.5; Cab=inputLUT[,'Cab']; Car=inputLUT[,'Car']; Anth=inputLUT[,'Anth']; Cbrown=inputLUT[,'Cbrown']
     EWT=inputLUT[,'EWT']; LMA=inputLUT[,'LMA'];alpha=inputLUT[,'alpha']
     LIDFa=45; LIDFb=inputLUT[,'LIDFb']; TypeLidf=inputLUT[,'TypeLidf']; lai= 15
-    hot=0.04; tts=inputLUT[,'tts']; tto=inputLUT[,'tto']; psi=inputLUT[,'psi']
+    hotspot=0.04; tts=inputLUT[,'tts']; tto=inputLUT[,'tto']; psi=inputLUT[,'psi']
     Prot=0;CBC=0
     ala=LIDFa
     skyl=inputLUT[,'skyl']
@@ -226,8 +226,8 @@ msail_inf<-function(inputLUT,rsoil=r_understorey, rleaf, tleaf){
     
     ######################################################################
     #	Apply correction 2/(K+k) suggested by F-M Br?on
-    if (hot >0 ){
-      alf <- (dso/hot)*2/(ks+ko)
+    if (hotspot >0 ){
+      alf <- (dso/hotspot)*2/(ks+ko)
     }
     ######################################################################
     

@@ -10,7 +10,7 @@
 #' @param skyl diffuse radiation component
 #' @param rsoil reflectance soil (reference)
 #' @param tto zenith angle of obsevation
-#' @param phi  Azimuth angle 
+#' @param psi  Azimuth angle 
 #' @param refl leaf reflectance tran 
 #' @param tran leaf transmittance
 #'

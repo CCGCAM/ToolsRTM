@@ -23,7 +23,7 @@ msail_background<-function(inputLUT,rsoil,PROSPECTversion= 'PRO', typeLAI = 'und
     N=2; Cab=30; Car=0; Anth=0; Cbrown=0
     EWT=0.025;LMA=0.025;alpha=inputLUT[,'alpha']
     LIDFa=45; LIDFb=inputLUT[,'LIDFb']; TypeLidf=inputLUT[,'TypeLidf']; lai= inputLUT[,'LAIu']
-    hot=inputLUT[,'hspot']; tts=inputLUT[,'tts']; tto=inputLUT[,'tto']; psi=inputLUT[,'psi']
+    hotspot=inputLUT[,'hspot']; tts=inputLUT[,'tts']; tto=inputLUT[,'tto']; psi=inputLUT[,'psi']
     Prot=0;CBC=0
     ala=LIDFa
     skyl=inputLUT[,'skyl']
@@ -33,7 +33,7 @@ msail_background<-function(inputLUT,rsoil,PROSPECTversion= 'PRO', typeLAI = 'und
     N=1.5; Cab=inputLUT[,'Cab']; Car=inputLUT[,'Car']; Anth=inputLUT[,'Anth']; Cbrown=inputLUT[,'Cbrown']
     EWT=inputLUT[,'EWT']; LMA=inputLUT[,'LMA'];alpha=inputLUT[,'alpha']
     LIDFa=45; LIDFb=inputLUT[,'LIDFb']; TypeLidf=inputLUT[,'TypeLidf']; lai= 15
-    hot=0.04; tts=inputLUT[,'tts']; tto=inputLUT[,'tto']; psi=inputLUT[,'psi']
+    hotspot=0.04; tts=inputLUT[,'tts']; tto=inputLUT[,'tto']; psi=inputLUT[,'psi']
     Prot=0;CBC=0
     ala=LIDFa
     skyl=inputLUT[,'skyl']
@@ -48,7 +48,7 @@ msail_background<-function(inputLUT,rsoil,PROSPECTversion= 'PRO', typeLAI = 'und
     Prot=inputLUT[,'Prot'];CBC=inputLUT[,'CBC']
     ## fourSAIL
     LIDFa=inputLUT[,'LIDFa']; LIDFb=inputLUT[,'LIDFb']; TypeLidf=inputLUT[,'TypeLidf']; lai=inputLUT[,'LAI']
-    hot=inputLUT[,'hspot']; tts=inputLUT[,'tts']; tto=inputLUT[,'tto']; psi=inputLUT[,'psi']
+    hotspot=inputLUT[,'hspot']; tts=inputLUT[,'tts']; tto=inputLUT[,'tto']; psi=inputLUT[,'psi']
     ala=LIDFa
     skyl=inputLUT[,'skyl']
     
@@ -273,8 +273,8 @@ alf <- 1e6
 
 ######################################################################
 #	Apply correction 2/(K+k) suggested by F-M Br?on
-if (hot >0 ){
-  alf <- (dso/hot)*2/(ks+ko)
+if (hotspot >0 ){
+  alf <- (dso/hotspot)*2/(ks+ko)
 }
 ######################################################################
 
