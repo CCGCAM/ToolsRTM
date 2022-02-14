@@ -94,6 +94,10 @@ fraction_brown = inputLUT[,'fraction_brown']; diss = inputLUT[,'diss']; Cv = inp
 
 if (is.null(LUT_GB)){
   message('Please define same spectral domain for GreenVegetation and BrownVegetation and SpecPROSPECT')
+  #message('Please define same spectral domain for GreenVegetation and BrownVegetation and SpecPROSPECT')
+  LUT_GB<-data.frame(N=c(1.5, 2), Cab=c(40,5),Car=c(8,5),Anth=c(0,1),Cbrown=c(0,1),
+                     EWT=c(0.01, 0.005), LMA=c(0.009,0.008), alpha=c(40,40),
+                     Prot=c(0 , 0),CBC=c(0 , 0))
   #stop()
   } else {
   #message('4SAIL2 needs two sets of optical properties for green and brown vegetation')
