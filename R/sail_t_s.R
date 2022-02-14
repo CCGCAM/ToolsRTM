@@ -4,8 +4,8 @@
 #' SAIL-PROSPECT-SOIL to compute crown transmittance for sun direction
 #'
 #' @param lai  LAI 
-#' @param ala average angle of leaf inclination (degrees LIDFa when TypeLIDF ==2)
-#' @param hot arametre hotspot: rapport entre diametre feuille et hauteur strate
+#' @param LIDFa average angle of leaf inclination (degrees LIDFa when TypeLIDF ==2)
+#' @param hotspot arametre hotspot: rapport entre diametre feuille et hauteur strate
 #' @param tts solar zenith angle
 #' @param skyl diffuse radiation component
 #' @param rsoil reflectance soil (reference)
@@ -19,11 +19,11 @@
 #'
 #' @examples
 #' 
-sail_t_s<-function(lai,ala,hot,tts,skyl,rsoil,tto,psi,TypeLidf=2,refl,tran){
+sail_t_s<-function(lai,LIDFa,hotspot,tts,skyl,rsoil,tto,psi,TypeLidf=2,refl,tran){
   # rosoil is undertorey
   rho	 <- refl
   tau	 <- 	tran
-  LIDFa <- ala
+
   # ------ Begin SAIL-Modells       ------------ #
   ########################################
   #	1.2 Geometric quAnthities
@@ -48,7 +48,7 @@ sail_t_s<-function(lai,ala,hot,tts,skyl,rsoil,tto,psi,TypeLidf=2,refl,tran){
     litab <- LeafDistribution$litab
     
   } else if (TypeLidf==2){
-    LeafDistribution <- campbell(LIDFa)
+    LeafDistribution <- campbell(ala=LIDFa)
     lidf <- LeafDistribution$lidf
     litab <- LeafDistribution$litab
   }
@@ -218,8 +218,8 @@ sail_t_s<-function(lai,ala,hot,tts,skyl,rsoil,tto,psi,TypeLidf=2,refl,tran){
   
   ######################################################################
   #	Apply correction 2/(K+k) suggested by F-M Br?on
-  if (hot >0 ){
-    alf <- (dso/hot)*2/(ks+ko)
+  if (hotspot >0 ){
+    alf <- (dso/hotspot)*2/(ks+ko)
   }
   ######################################################################
   

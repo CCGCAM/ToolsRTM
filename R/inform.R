@@ -74,7 +74,7 @@
 # Stem density                          sd              ha-1        650
 # Tree height                           h               m           20
 # Crown diameter                        cd              m           4.5
-# Average leaf angle of tree canopy	    ala	            deg	        55
+# Average leaf angle of tree canopy	    LIDFa	            deg	        55
 
 
 # External Input Parameters
@@ -110,19 +110,18 @@ inform<- function(inputLUT,psoil,rsoil, PROSPECTversion='PRO'){
   
 ## fourSAIL
 LIDFa=inputLUT[,'LIDFa']; LIDFb=inputLUT[,'LIDFb']; TypeLidf=inputLUT[,'TypeLidf']; lai=inputLUT[,'LAI']
-hot=inputLUT[,'hspot']; tts=inputLUT[,'tts']; tto=inputLUT[,'tto']; psi=inputLUT[,'psi']
-ala=LIDFa
+hotspot=inputLUT[,'hspot']; tts=inputLUT[,'tts']; tto=inputLUT[,'tto']; psi=inputLUT[,'psi']
+
 
 
 ## INform model
 LIDFa=inputLUT[,'LIDFa']; LIDFb=inputLUT[,'LIDFb']; TypeLidf=inputLUT[,'TypeLidf']; lai=inputLUT[,'LAI']
-hot=inputLUT[,'hspot']; tts=inputLUT[,'tts']; tto=inputLUT[,'tto']; phi=inputLUT[,'phi']
-ala=LIDFa
+hotspot=inputLUT[,'hspot']; tts=inputLUT[,'tts']; tto=inputLUT[,'tto']; psi=inputLUT[,'psi']
+
 ## INform model
-scale=psoil[1] #inputLUT[,'psoil']
+
 lai=inputLUT[,'LAI']; laiu=inputLUT[,'LAIu']
 sd=inputLUT[,'sd']; cd=inputLUT[,'cd']; h=inputLUT[,'h']; psi=inputLUT[,'psi']
-ala=LIDFa
 skyl=inputLUT[,'skyl']
 
 
@@ -180,42 +179,42 @@ r_sail_inf <- ToolsRTM::msail_inf(inputLUT=inputLUT,rsoil=r_understorey,rleaf=r_
 # adapt=0.6;
 
 adapt <- 1
-k <- adapt*(pi*(cd/2)^2)/10000
+k <- adapt * (pi * (cd / 2)^2) / 10000
 
 # angles (degree) to angles (radian)
 #tto <- tto*pi/180 #teta_o
 #tts <- tts*pi/180 #teta_s
-#phi <- phi*pi/180
+#psi <- psi*pi/180
 
 
 
 ## Coverage and Shadowing 
 # Observed ground coverage  by crowns (co) under observation zenith angle teta_o
 
-co <- 1-exp(-k*sd/cos(tto)) # eq 1 from Rosema et al 1992
+co <- 1 - exp(-k * sd / cos(tto) ) # eq 1 from Rosema et al 1992
 # Ground coverage by shadow (cs) under a solar zenith angle teta_s
-cs <- 1-exp(-k*sd/cos(tts))
+cs <- 1-exp(-k * sd / cos(tts) )
 # Geometrical factor (g) depending on the illumination and viewing geometry
-g <- ((tan(tto))^2+(tan(tts))^2-2*tan(tto)*tan(tts)*cos(phi))^(0.5)
+g <- ( ( tan( tto ) )^2 + ( tan( tts ) )^2 - 2 * tan(tto) * tan(tts) * cos(psi) )^(0.5)
 # Correlation coefficient (p)
 
-p <- exp(-g*h/cd)
+p <- exp(-g * h / cd)
 
 # _____________________________________________________________________________________________________________
 
 # Ground surface fractions (FLIM model)
 
 # Tree crowns with shadowed background (Fcd)
-Fcd <- co*cs+p*(co*(1-co)*cs*(1-cs))^(0.5)
+Fcd <- co * cs + p *(co * (1 - co) * cs * (1 - cs) )^(0.5)
 
 # Tree crowns with sunlit background (Fcs)
-Fcs <- co*(1-cs)-p*(co*(1-co)*cs*(1-cs))^(0.5)
+Fcs <- co * (1 - cs) - p * (co * (1 - co)* cs * (1 - cs) ) ^(0.5)
 
 # Shadowed open space (Fod)
-Fod <- (1-co)*cs-p*(co*(1-co)*cs*(1-cs))^(0.5)
+Fod <- (1 - co ) * cs - p * (co * (1 - co) * cs * (1 - cs) )^(0.5)
 
 # Sunlit open space (Fos)
-Fos <- (1-co)*(1-cs)+p*(co*(1-co)*cs*(1-cs))^(0.5)
+Fos <- (1 - co) * (1 - cs) + p * (co * (1 - co) * cs * (1 - cs) )^(0.5)
 
 
 # _____________________________________________________________________________________________________________
@@ -223,13 +222,13 @@ Fos <- (1-co)*(1-cs)+p*(co*(1-co)*cs*(1-cs))^(0.5)
 # Crown transmittance (SAIL model)
 
 # Angles (radian) to angles (degree)
-tts_ <- tts * 180/pi
-tto_ <- tto * 180/pi
-psi_ <- psi * 180/pi
+#tts_ <- tts * 180/pi
+#tto_ <- tto * 180/pi
+#psi_ <- psi * 180/pi
 # Crown transmittance in sun direction (t_s)
-t_s <- ToolsRTM::sail_t_s(lai,ala,hot=0,tts_,skyl,rsoil=r_understorey,tto,psi,TypeLidf=2,refl=r_leaf,tran=t_leaf)
+t_s <- ToolsRTM::sail_t_s(lai,LIDFa,hotspot=0,tts,skyl,rsoil=r_understorey,tto,psi,TypeLidf=2,refl=r_leaf,tran=t_leaf)
 # Crown transmittance in observation direction (t_o)
-t_o <- ToolsRTM::sail_t_o(lai,ala,hot=0,tto_,skyl,rsoil=r_understorey,tts,psi,TypeLidf=2,r_leaf,t_leaf)
+t_o <- ToolsRTM::sail_t_o(lai,LIDFa,hotspot=0,tto,skyl,rsoil=r_understorey,tts,psi,TypeLidf=2,r_leaf,t_leaf)
 
 
 # _____________________________________________________________________________________________________________
@@ -238,9 +237,12 @@ t_o <- ToolsRTM::sail_t_o(lai,ala,hot=0,tto_,skyl,rsoil=r_understorey,tts,psi,Ty
 
 # Ground factor (G), that is ground contribution to scene reflectance
 G <- Fcd * t_s * t_o + Fcs * t_o + Fod * t_s + Fos
+
 # Crown factor (C), that is crown contribution to scene reflectance
 # C=(1-t_s.*t_o)*cs*co;  # Original formula
+
 C <- Fcd*(1 - t_s * t_o) # Similar to original formula
+
 # C=Fcd*(1-t_s.*t_o)+Fcs*(1-t_o); # Modification, rejected by W. Verhoef
 # Der Faktor 'Fcs*(1-t_o)' wurde erg??????nzt. Er beschreibt den Beitrag, der von
 # beleuchteten Kronen (sunlit crowns, Fcs) erfolgt abz??????glich des Beitrags

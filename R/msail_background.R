@@ -25,7 +25,7 @@ msail_background<-function(inputLUT,rsoil,PROSPECTversion= 'PRO', typeLAI = 'und
     LIDFa=45; LIDFb=inputLUT[,'LIDFb']; TypeLidf=inputLUT[,'TypeLidf']; lai= inputLUT[,'LAIu']
     hotspot=inputLUT[,'hspot']; tts=inputLUT[,'tts']; tto=inputLUT[,'tto']; psi=inputLUT[,'psi']
     Prot=0;CBC=0
-    ala=LIDFa
+
     skyl=inputLUT[,'skyl']
     
   } else if (typeLAI == 'Inf-crownTree') { #Infinitive crown reflectance
@@ -35,7 +35,7 @@ msail_background<-function(inputLUT,rsoil,PROSPECTversion= 'PRO', typeLAI = 'und
     LIDFa=45; LIDFb=inputLUT[,'LIDFb']; TypeLidf=inputLUT[,'TypeLidf']; lai= 15
     hotspot=0.04; tts=inputLUT[,'tts']; tto=inputLUT[,'tto']; psi=inputLUT[,'psi']
     Prot=0;CBC=0
-    ala=LIDFa
+
     skyl=inputLUT[,'skyl']
     
   } else {
@@ -49,7 +49,6 @@ msail_background<-function(inputLUT,rsoil,PROSPECTversion= 'PRO', typeLAI = 'und
     ## fourSAIL
     LIDFa=inputLUT[,'LIDFa']; LIDFb=inputLUT[,'LIDFb']; TypeLidf=inputLUT[,'TypeLidf']; lai=inputLUT[,'LAI']
     hotspot=inputLUT[,'hspot']; tts=inputLUT[,'tts']; tto=inputLUT[,'tto']; psi=inputLUT[,'psi']
-    ala=LIDFa
     skyl=inputLUT[,'skyl']
     
   }
@@ -103,7 +102,7 @@ if (TypeLidf==1){
   litab <- LeafDistribution$litab
   
 } else if (TypeLidf==2){
-  LeafDistribution <- campbell(LIDFa)
+  LeafDistribution <- campbell(ala=LIDFa)
   lidf <- LeafDistribution$lidf
   litab <- LeafDistribution$litab
 }

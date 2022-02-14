@@ -25,7 +25,6 @@ msail_inf<-function(inputLUT,rsoil=r_understorey, rleaf, tleaf){
     LIDFa=45; LIDFb=inputLUT[,'LIDFb']; TypeLidf=inputLUT[,'TypeLidf']; lai= 15
     hotspot=0.04; tts=inputLUT[,'tts']; tto=inputLUT[,'tto']; psi=inputLUT[,'psi']
     Prot=0;CBC=0
-    ala=LIDFa
     skyl=inputLUT[,'skyl']
     
     
@@ -56,7 +55,7 @@ msail_inf<-function(inputLUT,rsoil=r_understorey, rleaf, tleaf){
       litab <- LeafDistribution$litab
       
     } else if (TypeLidf==2){
-      LeafDistribution <- campbell(LIDFa)
+      LeafDistribution <- campbell(ala=LIDFa)
       lidf <- LeafDistribution$lidf
       litab <- LeafDistribution$litab
     }
@@ -312,7 +311,7 @@ msail_inf<-function(inputLUT,rsoil=r_understorey, rleaf, tleaf){
     #sin_90tts = sin(pi / 2 -tts_)
     
     #Computes bidirectional reflectance factor based on outputs from PROSAIL and sun position
-    r_BRF<-ToolsRTM::Compute_BRF(rdot=rdot,rsot=rsot,tts=tts,SpecATM_Sensor=ToolsRTM::dataSpec_PDB)
+    r_BRF<-ToolsRTM::Compute_BRF(rdot=rdot,rsot=rsot,tts=tts,data.light=ToolsRTM::dataSpec_PDB)
     
 return(r_BRF)
 }

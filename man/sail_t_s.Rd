@@ -4,14 +4,26 @@
 \alias{sail_t_s}
 \title{SAIL-PROSPECT-SOIL to compute crown transmittance for sun direction}
 \usage{
-sail_t_s(lai, ala, hot, tts, skyl, rsoil, tto, psi, TypeLidf = 2, refl, tran)
+sail_t_s(
+  lai,
+  LIDFa,
+  hotspot,
+  tts,
+  skyl,
+  rsoil,
+  tto,
+  psi,
+  TypeLidf = 2,
+  refl,
+  tran
+)
 }
 \arguments{
 \item{lai}{LAI}
 
-\item{ala}{average angle of leaf inclination (degrees LIDFa when TypeLIDF ==2)}
+\item{LIDFa}{average angle of leaf inclination (degrees LIDFa when TypeLIDF ==2)}
 
-\item{hot}{arametre hotspot: rapport entre diametre feuille et hauteur strate}
+\item{hotspot}{arametre hotspot: rapport entre diametre feuille et hauteur strate}
 
 \item{tts}{solar zenith angle}
 
@@ -21,11 +33,11 @@ sail_t_s(lai, ala, hot, tts, skyl, rsoil, tto, psi, TypeLidf = 2, refl, tran)
 
 \item{tto}{zenith angle of obsevation}
 
+\item{psi}{Azimuth angle}
+
 \item{refl}{leaf reflectance tran}
 
 \item{tran}{leaf transmittance}
-
-\item{phi}{Azimuth angle}
 }
 \value{
 
