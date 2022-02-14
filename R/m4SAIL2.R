@@ -88,7 +88,7 @@ EWT=inputLUT[,'EWT']; LMA=inputLUT[,'LMA'];alpha=inputLUT[,'alpha']
 Prot=inputLUT[,'Prot'];CBC=inputLUT[,'CBC']
 ## fourSAIL
 LIDFa=inputLUT[,'LIDFa']; LIDFb=inputLUT[,'LIDFb']; TypeLidf=inputLUT[,'TypeLidf']; lai=inputLUT[,'LAI']
-hot=inputLUT[,'hspot']; tts=inputLUT[,'tts']; tto=inputLUT[,'tto']; psi=inputLUT[,'psi']
+hotspot=inputLUT[,'hspot']; tts=inputLUT[,'tts']; tto=inputLUT[,'tto']; psi=inputLUT[,'psi']
 fraction_brown = inputLUT[,'fraction_brown']; diss = inputLUT[,'diss']; Cv = inputLUT[,'Cv'];Zeta = inputLUT[,'Zeta']
 
 
@@ -193,7 +193,7 @@ if (lai < 0){
 
   Overlap <- 0.0
   if (Zeta > 0.0){
-    Overlap <- min(Cs * (1.0 - Co),Co * (1.0 - Cs)) * exp(-dso / Zeta)
+    Overlap <- min(Cs * (1.0 - Co), Co * (1.0 - Cs)) * exp(-dso / Zeta)
   }
 
   
@@ -219,13 +219,13 @@ if (lai < 0){
     leafgreen$Reflectance <- leafbrown$Reflectance
     leafgreen$Transmittance <- leafbrown$Transmittance
   }
-  s <- (1.0-diss)*fb*(1.0-fb)
+  s <- (1.0 - diss) * fb * (1.0 - fb)
   # rho1 & tau1 : green foliage
   # rho2 & tau2 : brown foliage (bottom layer)
-  rho1 <- ((1-fb-s)*leafgreen$Reflectance+s*leafbrown$Reflectance)/(1-fb)
-  tau1 <- ((1-fb-s)*leafgreen$Transmittance+s*leafbrown$Transmittance)/(1-fb)
-  rho2 <- (s*leafgreen$Reflectance+(fb-s)*leafbrown$Reflectance)/fb
-  tau2 <- (s*leafgreen$Transmittance+(fb-s)*leafbrown$Transmittance)/fb
+  rho1 <- ((1 - fb - s) * leafgreen$Reflectance + s * leafbrown$Reflectance) / (1 - fb)
+  tau1 <- ((1 - fb - s) * leafgreen$Transmittance + s * leafbrown$Transmittance) / (1 - fb)
+  rho2 <- (s * leafgreen$Reflectance + (fb - s) * leafbrown$Reflectance) / fb
+  tau2 <- (s * leafgreen$Transmittance +(fb - s)* leafbrown$Transmittance) / fb
   
   # angular distance, compensation of shadow length
   #	Calculate geometric factors associated with extinction and scattering
@@ -236,7 +236,7 @@ if (lai < 0){
   
   for (i in 1:length(litab)){
     ttl <- litab[i]
-    ctl <- cos(rd*ttl)
+    ctl <- cos(rd * ttl)
     # SAIL volscatt function gives interception coefficients
     # and two portions of the volume scattering phase function to be
     # multiplied by rho and tau, respectively
@@ -268,14 +268,14 @@ if (lai < 0){
   ddf <- 0.5*(1.-bf)
   
   # LAIs in two layers
-  lai1 <- (1-fb)*lai
-  lai2 <- fb*lai
+  lai1 <- (1 - fb) * lai
+  lai2 <- fb * lai
   
-  tss <- exp(-ks*lai)
-  ck <- exp(-ks*lai1)
+  tss <- exp(-ks * lai)
+  ck <- exp(-ks * lai1)
   alf <- 1e6
-  if (hot > 0.0){
-    alf <- (dso/hot)*2.0/(ks+ko)
+  if (hotspot > 0.0){
+    alf <- (dso/hotspot)*2.0/(ks+ko)
   }
   if (alf > 200.0){
     alf <- 200.0     # inserted H. Bach 1/3/04
@@ -350,8 +350,8 @@ if (lai < 0){
   ## Conservative scattering
   f_ConS <- which(m<=0.01)
   
-  tdd <- rdd <- tsd <- rsd <- tdo <- rdo <- 0*m
-  rsod <- 0*m
+  tdd <- rdd <- tsd <- rsd <- tdo <- rdo <- 0 * m
+  rsod <- 0 * m
   if (length(f_Non_ConS)>0){
     resNCS <- ToolsRTM::NonConservativeScattering(m[f_Non_ConS],lai2,att[f_Non_ConS],sigb[f_Non_ConS],
                                         ks,ko,sf[f_Non_ConS],sb[f_Non_ConS],vf[f_Non_ConS],vb[f_Non_ConS],tss,too)

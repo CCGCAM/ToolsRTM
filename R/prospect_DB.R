@@ -121,6 +121,7 @@ prospect_DB<-function(N,Cab,Car,Anth,Brown,EWT,LMA,alpha){
 # and used with his autorization.
 # ***********************************************************************
 data <- ToolsRTM::dataSpec_PDB
+lambda  <- data[,1] ##wavelenght
 nr      <- data[,2]
 Kab     <- data[,3]    
 Kcar    <- data[,4]

@@ -79,7 +79,6 @@ m4SAIL <- function(inputLUT,rsoil, PROSPECTversion='PRO'){
   LIDFa=inputLUT[,'LIDFa']; LIDFb=inputLUT[,'LIDFb']; TypeLidf=inputLUT[,'TypeLidf']; lai=inputLUT[,'LAI']
   q=inputLUT[,'hspot']; tts=inputLUT[,'tts']; tto=inputLUT[,'tto']; psi=inputLUT[,'psi']
   
-  PROSPECTversion='PRO'
 ########################################
 #	1.1 Leaf optical properties
 #########################################
