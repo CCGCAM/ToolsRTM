@@ -104,7 +104,7 @@ Knonprot<- data[,10] ## specific absorption coefficient of non proteic dry matte
 if (LMA > 0 & (Prot > 0 | CBC > 0)) {
   message('With LMA=0 proteins and CBC should be set to 0')
   message('LMA = PROT + CBC')
-  message("We run prospect-pro model with LMA=0")
+  message("The  prospect-pro model is processing with LMA=0")
   LMA <- 0
 }
 
