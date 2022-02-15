@@ -79,13 +79,9 @@
 
 m4SAIL2 <- function(LUT_GB=NULL, inputLUT,rsoil, PROSPECTversion='PRO',FieldObserv=NULL){
 
-#define alll inputs in the models. retreived from LUT tables
-## Prospect-D
-N=inputLUT[,'N']; Cab=inputLUT[,'Cab']; Car=inputLUT[,'Car']; Anth=inputLUT[,'Anth']; Cbrown=inputLUT[,'Cbrown']
-EWT=inputLUT[,'EWT']; LMA=inputLUT[,'LMA'];alpha=inputLUT[,'alpha']
-## Prospect-PRO
-### fixed Cm=0.000 in LUTs 
-Prot=inputLUT[,'Prot'];CBC=inputLUT[,'CBC']
+
+#define alll inputs in the models. Retrieved from LUT tables
+  
 ## fourSAIL
 LIDFa=inputLUT[,'LIDFa']; LIDFb=inputLUT[,'LIDFb']; TypeLidf=inputLUT[,'TypeLidf']; lai=inputLUT[,'LAI']
 hotspot=inputLUT[,'hspot']; tts=inputLUT[,'tts']; tto=inputLUT[,'tto']; psi=inputLUT[,'psi']
@@ -95,29 +91,41 @@ fraction_brown = inputLUT[,'fraction_brown']; diss = inputLUT[,'diss']; Cv = inp
 if (is.null(LUT_GB)){
   message('Please define same spectral domain for GreenVegetation and BrownVegetation and SpecPROSPECT')
   #message('Please define same spectral domain for GreenVegetation and BrownVegetation and SpecPROSPECT')
-  LUT_GB<-data.frame(N=c(1.5, 2), Cab=c(40,5),Car=c(8,5),Anth=c(0,1),Cbrown=c(0,1),
+  LUT_GB<-data.frame(N=c(1.5, 2), Cab=c(40,5),Car=c(8,5),Anth=c(0,0),Cbrown=c(0,0),
                      EWT=c(0.01, 0.005), LMA=c(0.009,0.008), alpha=c(40,40),
-                     Prot=c(0 , 0),CBC=c(0 , 0))
+                     Prot=c(0 , 0),CBC=c(0,0))
 } 
 
 if (PROSPECTversion == 'PRO') {
   #PROSPECTversion = 'PRO'
+  ## Prospect-D
+  N=inputLUT[,'N']; Cab=inputLUT[,'Cab']; Car=inputLUT[,'Car']; Anth=inputLUT[,'Anth']; Cbrown=inputLUT[,'Cbrown']
+  EWT=inputLUT[,'EWT']; LMA=inputLUT[,'LMA'];alpha=inputLUT[,'alpha']
+  ## Prospect-PRO
+  ### fixed Cm=0.000 in LUTs 
+  Prot=inputLUT[,'Prot'];CBC=inputLUT[,'CBC']
   
   LRT <- prospect_PRO(N,Cab,Car,Anth,Cbrown,EWT,LMA,alpha,Prot,CBC)
   GreenVegetation<-prospect_PRO(LUT_GB[1,'N'],LUT_GB[1,'Cab'],LUT_GB[2,'Car'],LUT_GB[2,'Anth'],
                                 LUT_GB[1,'Cbrown'],LUT_GB[1,'EWT'],LUT_GB[2,'LMA'],LUT_GB[2,'alpha'],
                                 LUT_GB[1,'Prot'],LUT_GB[1,'CBC'])
-  BrownVegetation<-prospect_PRO(LUT_GB[2,'N'],LUT_GB[2,'Cab'],LUT_GB[2,'Car'],LUT_GB[1,'Anth'],
+  
+  BrownVegetation<-prospect_PRO(LUT_GB[2,'N'],LUT_GB[2,'Cab'],LUT_GB[2,'Car'],LUT_GB[2,'Anth'],
                                 LUT_GB[2,'Cbrown'],LUT_GB[2,'EWT'],LUT_GB[2,'LMA'],LUT_GB[2,'alpha'],
                                 LUT_GB[2,'Prot'],LUT_GB[2,'CBC'])
   
   print(message('SAIL with PROSPECT-PRO is processing'))
 }  else {
   #PROSPECTversion ='D'
+  ## Prospect-D
+  N=inputLUT[,'N']; Cab=inputLUT[,'Cab']; Car=inputLUT[,'Car']; Anth=inputLUT[,'Anth']; Cbrown=inputLUT[,'Cbrown']
+  EWT=inputLUT[,'EWT']; LMA=inputLUT[,'LMA'];alpha=inputLUT[,'alpha']
+
   LRT <- prospect_DB(N,Cab,Car,Anth,Cbrown,EWT,LMA,alpha)
-  GreenVegetation<-prospect_DB(LUT_GB[1,'N'],LUT_GB[1,'Cab'],LUT_GB[2,'Car'],LUT_GB[2,'Anth'],
-                               LUT_GB[1,'Cbrown'],LUT_GB[1,'EWT'],LUT_GB[2,'LMA'],LUT_GB[2,'alpha'])
-  BrownVegetation<-prospect_DB(LUT_GB[2,'N'],LUT_GB[2,'Cab'],LUT_GB[2,'Car'],LUT_GB[1,'Anth'],
+  GreenVegetation<-prospect_DB(LUT_GB[1,'N'],LUT_GB[1,'Cab'],LUT_GB[1,'Car'],LUT_GB[1,'Anth'],
+                               LUT_GB[1,'Cbrown'],LUT_GB[1,'EWT'],LUT_GB[1,'LMA'],LUT_GB[1,'alpha'])
+  
+  BrownVegetation<-prospect_DB(LUT_GB[2,'N'],LUT_GB[2,'Cab'],LUT_GB[2,'Car'],LUT_GB[2,'Anth'],
                                LUT_GB[2,'Cbrown'],LUT_GB[2,'EWT'],LUT_GB[2,'LMA'],LUT_GB[2,'alpha'])
   print(message('SAIL with PROSPECT-D is processing'))
 }
@@ -126,7 +134,7 @@ if (PROSPECTversion == 'PRO') {
 ###force to use different Green vegetation
 if (is.null(FieldObserv)){
   GreenVegetation<-LRT
-  BrownVegetation<-LRT
+  BrownVegetation<-BrownVegetation
 }
   
   ### Asign in a list the two references spectrum for Green Vegetation and Brown Vegetation
@@ -148,7 +156,7 @@ leafbrown$Transmittance<-BrownVegetation[[3]]
 rddsoil <- rdosoil <- rsdsoil <- rsosoil <- rsoil
 
 #	Geometric quAnthities
-rd <- pi/180
+rd <- pi / 180
 
 #	Generate leaf angle distribution from average leaf angle (ellipsoidal) or (a,b) parameters
 if (TypeLidf == 1){
@@ -187,7 +195,7 @@ if (lai < 0){
   ### ### ### ### ### ### ### ### ### ### ### ### ###
   Cs <- Co <- 1.0
   if (Cv <= 1.0){
-    Cs <- 1.0 -(1.0 - Cv)^(1.0 / cts)
+    Cs <- 1.0 - (1.0 - Cv)^(1.0 / cts)
     Co <- 1.0 -(1.0 - Cv)^(1.0 / cto)
   }
 
@@ -247,25 +255,25 @@ if (lai < 0){
     frho <- resVolscatt[[3]] ##frho
     ftau <- resVolscatt[[4]] ##ftau
     # Extinction coefficients
-    ksli <- chi_s/cts
-    koli <- chi_o/cto
+    ksli <- chi_s / cts
+    koli <- chi_o / cto
     # Area scattering coefficient fractions
-    sobli <- frho*pi/ctscto
-    sofli <- ftau*pi/ctscto
-    bfli <- ctl*ctl
-    ks <- ks+ksli*lidf[i]
-    ko <- ko+koli*lidf[i]
-    bf <- bf+bfli*lidf[i]
-    sob <- sob+sobli*lidf[i]
-    sof <- sof+sofli*lidf[i]
+    sobli <- frho * pi / ctscto
+    sofli <- ftau *pi / ctscto
+    bfli <- ctl * ctl
+    ks <- ks + ksli * lidf[i]
+    ko <- ko + koli * lidf[i]
+    bf <- bf + bfli * lidf[i]
+    sob <- sob + sobli * lidf[i]
+    sof <- sof + sofli * lidf[i]
   }
   # Geometric factors to be used later in combination with rho and tau
-  sdb <- 0.5*(ks+bf)
-  sdf <- 0.5*(ks-bf)
-  dob <- 0.5*(ko+bf)
-  dof <- 0.5*(ko-bf)
-  ddb <- 0.5*(1.+bf)
-  ddf <- 0.5*(1.-bf)
+  sdb <- 0.5 * (ks + bf)
+  sdf <- 0.5 * (ks - bf)
+  dob <- 0.5 * (ko + bf)
+  dof <- 0.5 * (ko - bf)
+  ddb <- 0.5 * (1. + bf)
+  ddf <- 0.5 * (1.- bf)
   
   # LAIs in two layers
   lai1 <- (1 - fb) * lai
@@ -275,51 +283,51 @@ if (lai < 0){
   ck <- exp(-ks * lai1)
   alf <- 1e6
   if (hotspot > 0.0){
-    alf <- (dso/hotspot)*2.0/(ks+ko)
+    alf <- (dso / hotspot) *2.0 / (ks + ko)
   }
   if (alf > 200.0){
     alf <- 200.0     # inserted H. Bach 1/3/04
   }
-  if (alf==0.0){
+  if (alf == 0.0){
     # The pure hotspot
     tsstoo <- tss
-    s1 <- (1-ck)/(ks*lai)
-    s2 <- (ck-tss)/(ks*lai)
+    s1 <- (1 - ck) / (ks * lai)
+    s2 <- (ck - tss)/(ks * lai)
   } else {
     # Outside the hotspot
-    fhot <- lai*sqrt(ko*ks)
+    fhot <- lai * sqrt(ko * ks)
     # Integrate 2 layers by exponential simpson method in 20 steps
     # the steps are arranged according to equal partitioning
     # of the derivative of the joint probability function
     x1 <- y1 <- 0.0
     f1 <- 1.0
-    ca <- exp(alf*(fb-1.0))
-    fint <- (1.0-ca)*0.05
+    ca <- exp( alf * ( fb - 1.0) )
+    fint <- (1.0 - ca) * 0.05
     s1 <- 0.0
     for (istep in 1:20){
-      if (istep<20){
-        x2 <- -log(1.-istep*fint)/alf
+      if (istep < 20){
+        x2 <- -log(1. - istep * fint) / alf
       } else {
-        x2 <- 1.-fb
+        x2 <- 1. - fb
       }
-      y2 <- -(ko+ks)*lai*x2+fhot*(1.0-exp(-alf*x2))/alf
+      y2 <- -(ko + ks) * lai * x2 + fhot * (1.0 - exp(-alf * x2)) / alf
       f2 <- exp(y2)
-      s1 <- s1+(f2-f1)*(x2-x1)/(y2-y1)
+      s1 <- s1 + (f2 - f1) * (x2 - x1) / (y2 - y1)
       x1 <- x2
       y1 <- y2
       f1 <- f2
     }
-    fint <- (ca-exp(-alf))*0.05
+    fint <- (ca - exp(-alf)) * 0.05
     s2 <- 0.0
     for (istep in 1:20){
-      if (istep<20){
-        x2 <- -log(ca-istep*fint)/alf
+      if (istep < 20){
+        x2 <- -log(ca - istep * fint) / alf
       } else {
         x2 <- 1.0
       }
-      y2 <- -(ko+ks)*lai*x2+fhot*(1.0-exp(-alf*x2))/alf
+      y2 <- -(ko + ks) * lai * x2 + fhot * (1.0 - exp(-alf * x2)) / alf
       f2 <- exp(y2)
-      s2 <- s2+(f2-f1)*(x2-x1)/(y2-y1)
+      s2 <- s2 + (f2 - f1) * (x2 - x1) / (y2 - y1)
       x1 <- x2
       y1 <- y2
       f1 <- f2
@@ -329,30 +337,30 @@ if (lai < 0){
   
   # Calculate reflectances and transmittances
   # Bottom layer
-  tss <- exp(-ks*lai2)
-  too <- exp(-ko*lai2)
-  sb <- sdb*rho2+sdf*tau2
-  sf <- sdf*rho2+sdb*tau2
+  tss <- exp(-ks * lai2)
+  too <- exp(-ko * lai2)
+  sb <- sdb * rho2 + sdf * tau2
+  sf <- sdf * rho2 + sdb * tau2
   
-  vb <- dob*rho2+dof*tau2
-  vf <- dof*rho2+dob*tau2
+  vb <- dob * rho2 + dof * tau2
+  vf <- dof * rho2 + dob * tau2
   
-  w2 <- sob*rho2+sof*tau2
+  w2 <- sob * rho2 + sof * tau2
   
-  sigb <- ddb*rho2+ddf*tau2
-  sigf <- ddf*rho2+ddb*tau2
-  att <- 1.0-sigf
-  m2 <- (att+sigb)*(att-sigb)
+  sigb <- ddb * rho2 + ddf * tau2
+  sigf <- ddf * rho2 + ddb * tau2
+  att <- 1.0 - sigf
+  m2 <- (att + sigb) * (att - sigb)
   m2[m2<0] <- 0
   m <- sqrt(m2)
   ### Non Conservative scattering
-  f_Non_ConS <- which(m>0.01)
+  f_Non_ConS <- which(m > 0.01)
   ## Conservative scattering
-  f_ConS <- which(m<=0.01)
+  f_ConS <- which(m <= 0.01)
   
   tdd <- rdd <- tsd <- rsd <- tdo <- rdo <- 0 * m
   rsod <- 0 * m
-  if (length(f_Non_ConS)>0){
+  if (length(f_Non_ConS) > 0){
     resNCS <- ToolsRTM::NonConservativeScattering(m[f_Non_ConS],lai2,att[f_Non_ConS],sigb[f_Non_ConS],
                                         ks,ko,sf[f_Non_ConS],sb[f_Non_ConS],vf[f_Non_ConS],vb[f_Non_ConS],tss,too)
     tdd[f_Non_ConS] <- resNCS$tdd
@@ -363,7 +371,7 @@ if (lai < 0){
     rdo[f_Non_ConS] <- resNCS$rdo
     rsod[f_Non_ConS] <- resNCS$rsod
   }
-  if (length(f_ConS)>0){
+  if (length(f_ConS) > 0){
     resCS <- ToolsRTM::ConservativeScattering(m[f_ConS],lai2,att[f_ConS],sigb[f_ConS],
                                     ks,ko,sf[f_ConS],sb[f_ConS],vf[f_ConS],vb[f_ConS],tss,too)
     tdd[f_ConS] <- resCS$tdd
@@ -386,30 +394,30 @@ if (lai < 0){
   toob <- too
   tssb <- tss
   # Top layer
-  tss <- exp(-ks*lai1)
-  too <- exp(-ko*lai1)
+  tss <- exp(-ks * lai1)
+  too <- exp(-ko * lai1)
   
-  sb <- sdb*rho1+sdf*tau1
-  sf <- sdf*rho1+sdb*tau1
+  sb <- sdb * rho1 + sdf * tau1
+  sf <- sdf * rho1 + sdb * tau1
   
-  vb <- dob*rho1+dof*tau1
-  vf <- dof*rho1+dob*tau1
+  vb <- dob * rho1 + dof * tau1
+  vf <- dof * rho1 + dob * tau1
   
-  w1 <- sob*rho1+sof*tau1
+  w1 <- sob * rho1 + sof * tau1
   
-  sigb <- ddb*rho1+ddf*tau1
-  sigf <- ddf*rho1+ddb*tau1
-  att <- 1.0-sigf
+  sigb <- ddb * rho1 + ddf * tau1
+  sigf <- ddf * rho1 + ddb * tau1
+  att <- 1.0 - sigf
   
-  m2 <- (att+sigb)*(att-sigb)
+  m2 <- (att + sigb) * (att - sigb)
   m2[m2<0] <- 0
   m <- sqrt(m2)
-  f_Non_ConS <- which(m>0.01)
-  f_ConS <- which(m<=0.01)
+  f_Non_ConS <- which(m > 0.01)
+  f_ConS <- which(m <= 0.01)
   
   tdd <- rdd <- tsd <- rsd <- tdo <- rdo <- 0 * m
   rsod <- 0 * m
-  if (length(f_Non_ConS)>0){
+  if (length(f_Non_ConS) > 0){
     resNCS <- ToolsRTM::NonConservativeScattering(m[f_Non_ConS],lai1,att[f_Non_ConS],sigb[f_Non_ConS],
                                         ks,ko,sf[f_Non_ConS],sb[f_Non_ConS],vf[f_Non_ConS],vb[f_Non_ConS],tss,too)
     tdd[f_Non_ConS] <- resNCS$tdd
@@ -420,7 +428,7 @@ if (lai < 0){
     rdo[f_Non_ConS] <- resNCS$rdo
     rsod[f_Non_ConS] <- resNCS$rsod
   }
-  if (length(f_ConS)>0){
+  if (length(f_ConS) > 0){
     resCS <- ToolsRTM::ConservativeScattering(m[f_ConS],lai1,att[f_ConS],sigb[f_ConS],
                                     ks,ko,sf[f_ConS],sb[f_ConS],vf[f_ConS],vb[f_ConS],tss,too)
     tdd[f_ConS] <- resCS$tdd
@@ -433,58 +441,58 @@ if (lai < 0){
   }
   
   # Combine with bottom layer reflectances and transmittances (adding method)
-  rn <- 1.0-rdd*rddb
-  tup <- (tss*rsdb+tsd*rddb)/rn
-  tdn <- (tsd+tss*rsdb*rdd)/rn
-  rsdt <- rsd+tup*tdd
-  rdot <- rdo+tdd*(rddb*tdo+rdob*too)/rn
-  rsodt <- rsod+(tss*rsodb+tdn*rdob)*too+tup*tdo
+  rn <- 1.0 - rdd * rddb
+  tup <- (tss * rsdb + tsd * rddb) / rn
+  tdn <- (tsd + tss * rsdb * rdd) / rn
+  rsdt <- rsd + tup * tdd
+  rdot <- rdo + tdd * (rddb * tdo + rdob * too) / rn
+  rsodt <- rsod + (tss * rsodb + tdn * rdob) * too + tup * tdo
   
-  rsost <- (w1*s1+w2*s2)*lai
+  rsost <- (w1 * s1 + w2 * s2) * lai
   
-  rsot <- rsost+rsodt
+  rsot <- rsost + rsodt
   
   # Diffuse reflectances at the top and the bottom are now different
-  rddt_t <- rdd+tdd*rddb*tdd/rn
-  rddt_b <- rddb+tddb*rdd*tddb/rn
+  rddt_t <- rdd + tdd * rddb * tdd / rn
+  rddt_b <- rddb + tddb * rdd * tddb / rn
   
   # Transmittances of the combined canopy layers
-  tsst <- tss*tssb
-  toot <- too*toob
-  tsdt <- tss*tsdb+tdn*tddb
-  tdot <- tdob*too+tddb*(tdo+rdd*rdob*too)/rn
-  tddt <- tdd*tddb/rn
+  tsst <- tss * tssb
+  toot <- too * toob
+  tsdt <- tss * tsdb + tdn * tddb
+  tdot <- tdob * too + tddb *(tdo + rdd * rdob * too) / rn
+  tddt <- tdd * tddb / rn
   
   # Apply clumping effects to vegetation layer
-  rddcb <- Cv*rddt_b
-  rddct <- Cv*rddt_t
-  tddc <- 1-Cv+Cv*tddt
-  rsdc <- Cs*rsdt
-  tsdc <- Cs*tsdt
-  rdoc <- Co*rdot
-  tdoc <- Co*tdot
-  tssc <- 1-Cs+Cs*tsst
-  tooc <- 1-Co+Co*toot
+  rddcb <- Cv * rddt_b
+  rddct <- Cv * rddt_t
+  tddc <- 1 - Cv + Cv * tddt
+  rsdc <- Cs * rsdt
+  tsdc <- Cs * tsdt
+  rdoc <- Co * rdot
+  tdoc <- Co * tdot
+  tssc <- 1 - Cs + Cs * tsst
+  tooc <- 1 - Co + Co * toot
   
   # New weight function Fcdc for crown contribution (W. Verhoef, 22-05-08)
-  rsoc <- Fcdc*rsot
-  tssooc <- Fcd*tsstoo+Fcs*toot+Fod*tsst+Fos
+  rsoc <- Fcdc * rsot
+  tssooc <- Fcd * tsstoo + Fcs * toot + Fod * tsst + Fos
   # Canopy absorptance for black background (W. Verhoef, 02-03-04)
-  alfas <- 1.-tssc-tsdc-rsdc
-  alfad <- 1.-tddc-rddct
+  alfas <- 1. - tssc - tsdc - rsdc
+  alfad <- 1. - tddc - rddct
   # Add the soil background
-  rn <- 1-rddcb*rddsoil
-  tup <- (tssc*rsdsoil+tsdc*rddsoil)/rn
-  tdn <- (tsdc+tssc*rsdsoil*rddcb)/rn
+  rn <- 1 - rddcb * rddsoil
+  tup <- (tssc * rsdsoil + tsdc * rddsoil) / rn
+  tdn <- (tsdc + tssc * rsdsoil * rddcb) / rn
   
-  rddt <- rddct+tddc*rddsoil*tddc/rn
-  rsdt <- rsdc+tup*tddc
-  rdot <- rdoc+tddc*(rddsoil*tdoc+rdosoil*tooc)/rn
-  rsot <- rsoc+tssooc*rsosoil+tdn*rdosoil*tooc+tup*tdoc
+  rddt <- rddct + tddc * rddsoil * tddc / rn
+  rsdt <- rsdc + tup * tddc
+  rdot <- rdoc + tddc * (rddsoil * tdoc + rdosoil * tooc) / rn
+  rsot <- rsoc + tssooc * rsosoil + tdn * rdosoil * tooc + tup * tdoc
   
   # Effect of soil background on canopy absorptances (W. Verhoef, 02-03-04)
-  alfast <- alfas+tup*alfad
-  alfadt <- alfad*(1.+tddc*rddsoil/rn)
+  alfast <- alfas + tup * alfad
+  alfadt <- alfad * (1. + tddc * rddsoil / rn)
 }
 
 LSTa<- list("rdot" = rdot,"rsot" =rsot,"rddt" =rddt,"rsdt" =rsdt,

@@ -23,7 +23,7 @@ NonConservativeScattering <- function(m,lai,att,sigb,ks,ko,sf,sb,vf,vb,tss,too){
   rinf <- (att - m) / sigb
   rinf2 <- rinf * rinf
   re <- rinf * e1
-  denom <- 1. - rinf2 * e2
+  denom <- 1 - rinf2 * e2
   
   J1ks <- Jfunc1(ks,m,lai)
   J2ks <- Jfunc2(ks,m,lai)
@@ -35,8 +35,8 @@ NonConservativeScattering <- function(m,lai,att,sigb,ks,ko,sf,sb,vf,vb,tss,too){
   Pv <- (vf + vb * rinf) * J1ko
   Qv <- (vf * rinf + vb) * J2ko
   
-  tdd <- (1.- rinf2) * e1 / denom
-  rdd <- rinf * (1.- e2) / denom
+  tdd <- (1 - rinf2) * e1 / denom
+  rdd <- rinf * (1 - e2) / denom
   tsd <- (Ps - re * Qs) / denom
   rsd <- (Qs - re *Ps) / denom
   tdo <- (Pv - re * Qv) / denom
@@ -55,7 +55,7 @@ NonConservativeScattering <- function(m,lai,att,sigb,ks,ko,sf,sb,vf,vb,tss,too){
   T3 <- (rdo * Qs + tdo * Ps) * rinf
   
   # Multiple scattering contribution to bidirectional canopy reflectance
-  rsod <- (T1 + T2 - T3)/(1.- rinf2)
+  rsod <- (T1 + T2 - T3) / (1 - rinf2)
   scat_contrib <- list("tdd" = tdd, "rdd" = rdd, "tsd" = tsd,
                   "rsd" = rsd, "tdo" = tdo, "rdo" = rdo,
                   "rsod" = rsod)

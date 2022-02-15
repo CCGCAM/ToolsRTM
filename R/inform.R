@@ -112,25 +112,11 @@ inform<- function(inputLUT,psoil,rsoil, PROSPECTversion='PRO'){
 LIDFa=inputLUT[,'LIDFa']; LIDFb=inputLUT[,'LIDFb']; TypeLidf=inputLUT[,'TypeLidf']; lai=inputLUT[,'LAI']
 hotspot=inputLUT[,'hspot']; tts=inputLUT[,'tts']; tto=inputLUT[,'tto']; psi=inputLUT[,'psi']
 
-
-
-## INform model
-LIDFa=inputLUT[,'LIDFa']; LIDFb=inputLUT[,'LIDFb']; TypeLidf=inputLUT[,'TypeLidf']; lai=inputLUT[,'LAI']
-hotspot=inputLUT[,'hspot']; tts=inputLUT[,'tts']; tto=inputLUT[,'tto']; psi=inputLUT[,'psi']
-
 ## INform model
 
-lai=inputLUT[,'LAI']; laiu=inputLUT[,'LAIu']
+laiu=inputLUT[,'LAIu']
 sd=inputLUT[,'sd']; cd=inputLUT[,'cd']; h=inputLUT[,'h']; psi=inputLUT[,'psi']
 skyl=inputLUT[,'skyl']
-
-
-## Prospect-D
-N=inputLUT[,'N']; Cab=inputLUT[,'Cab']; Car=inputLUT[,'Car']; Anth=inputLUT[,'Anth']; Cbrown=inputLUT[,'Cbrown']
-EWT=inputLUT[,'EWT']; LMA=inputLUT[,'LMA'];alpha=inputLUT[,'alpha']
-## Prospect-PRO
-### fixed Cm=0000 in LUTs 
-Prot=inputLUT[,'Prot'];CBC=inputLUT[,'CBC']
 
 # _____________________________________________________________________________________________________________
 
@@ -141,10 +127,15 @@ Prot=inputLUT[,'Prot'];CBC=inputLUT[,'CBC']
 refl_soil<-rsoil  ### we give refl_soil based on scale factor and rsoil
 
 # Computing of understorey reflectance for dicotyledoneae (ala=45,hotspot=0, N=2, Cab=30, Cw=0.05 CM=0,05)
-                          #msail_background(lai,ala,hotspot,N,Cab,Cw,Cm,to,ts,psi,skyl,r_soil)
-r_understorey <- ToolsRTM::msail_background(inputLUT=inputLUT,rsoil=refl_soil,PROSPECTversion= PROSPECTversion, typeLAI = 'understorey') 
+#r_understorey <- ToolsRTM::msail_background(inputLUT=inputLUT,rsoil=refl_soil,PROSPECTversion= PROSPECTversion, typeLAI = 'understorey') 
+r_understorey <- ToolsRTM::m4SAIL_inform(inputLUT=inputLUT,rsoil=refl_soil, typeLAI = 'understorey') 
 
 if (PROSPECTversion == 'PRO') {
+  ## Prospect inputs
+  N=inputLUT[,'N']; Cab=inputLUT[,'Cab']; Car=inputLUT[,'Car']; Anth=inputLUT[,'Anth']; Cbrown=inputLUT[,'Cbrown']
+  EWT=inputLUT[,'EWT']; LMA=inputLUT[,'LMA'];alpha=inputLUT[,'alpha']
+  Prot=inputLUT[,'Prot'];CBC=inputLUT[,'CBC']
+  
   #PROSPECTversion = 'PRO'
   LRT<- ToolsRTM::prospect_PRO(N,Cab,Car,Anth,Cbrown,EWT,LMA,alpha,Prot,CBC)
   # Computing of leaf reflecance and transmittance
@@ -152,6 +143,9 @@ if (PROSPECTversion == 'PRO') {
   t_leaf <- LRT[[3]] #tau Transmittance
 } else {
   #PROSPECTversion ='D'
+  N=inputLUT[,'N']; Cab=inputLUT[,'Cab']; Car=inputLUT[,'Car']; Anth=inputLUT[,'Anth']; Cbrown=inputLUT[,'Cbrown']
+  EWT=inputLUT[,'EWT']; LMA=inputLUT[,'LMA'];alpha=inputLUT[,'alpha']
+  
   LRT <- LRT <- ToolsRTM::prospect_DB(N,Cab,Car,Anth,Cbrown,EWT,LMA,alpha)
   # Computing of leaf reflecance and transmittance
   r_leaf <- LRT[[2]] #rho Reflectance
@@ -159,11 +153,9 @@ if (PROSPECTversion == 'PRO') {
 }
 
 # Computing of infinitive crown reflectance for a very dense forest canopy (LAI=15, hot=0.04, N=1.5)
-#msail_inf(LAI,ala,hotspot,tto,tts,psi,skyl,rsoil=r_understorey,r_leaf,t_leaf
 
-#r_c_inf <- ToolsRTM::msail_inf(inputLUT,refl_soil=r_understorey,r_leaf,t_leaf)
-#r_sail_inf <- ToolsRTM::msail_inf(inputLUT=inputLUT,rsoil=r_understorey,rleaf=r_leaf,tleaf=t_leaf, typeLAI = 'Inf-crownTree')
-r_sail_inf <- ToolsRTM::msail_inf(inputLUT=inputLUT,rsoil=r_understorey,rleaf=r_leaf,tleaf=t_leaf)
+#r_sail_inf <- ToolsRTM::msail_inf(inputLUT=inputLUT,rsoil=r_understorey,rleaf=r_leaf,tleaf=t_leaf)
+r_sail_inf <- ToolsRTM::m4SAIL_inf(inputLUT=inputLUT,rsoil=r_understorey,rleaf=r_leaf,tleaf=t_leaf)
 # _____________________________________________________________________________________________________________
 
 # Ground coverage (FLIM model)
@@ -226,9 +218,11 @@ Fos <- (1 - co) * (1 - cs) + p * (co * (1 - co) * cs * (1 - cs) )^(0.5)
 #tto_ <- tto * 180/pi
 #psi_ <- psi * 180/pi
 # Crown transmittance in sun direction (t_s)
-t_s <- ToolsRTM::sail_t_s(lai,LIDFa,hotspot=0,tts,skyl,rsoil=r_understorey,tto,psi,TypeLidf=2,refl=r_leaf,tran=t_leaf)
+t_s <- ToolsRTM::m4SAIL_t_s(inputLUT=inputLUT,rsoil=r_understorey,rleaf=r_leaf,tleaf=t_leaf)
+
+
 # Crown transmittance in observation direction (t_o)
-t_o <- ToolsRTM::sail_t_o(lai,LIDFa,hotspot=0,tto,skyl,rsoil=r_understorey,tts,psi,TypeLidf=2,r_leaf,t_leaf)
+t_o <- ToolsRTM::m4SAIL_t_o(inputLUT=inputLUT,rsoil=r_understorey,rleaf=r_leaf,tleaf=t_leaf)
 
 
 # _____________________________________________________________________________________________________________
@@ -250,7 +244,7 @@ C <- Fcd*(1 - t_s * t_o) # Similar to original formula
 # ist.
 
 # Forest reflectance
-r_forest= (r_sail_inf * C) + (r_understorey * G) #*10
+r_forest = (r_sail_inf * C) + (r_understorey * G) #*10
 LST_INFORM<-list(r_forest)
 return(LST_INFORM)
 }
