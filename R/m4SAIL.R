@@ -77,7 +77,7 @@ m4SAIL <- function(inputLUT,rsoil, PROSPECTversion='PRO'){
 
   ## fourSAIL
   LIDFa=inputLUT[,'LIDFa']; LIDFb=inputLUT[,'LIDFb']; TypeLidf=inputLUT[,'TypeLidf']; lai=inputLUT[,'LAI']
-  q=inputLUT[,'hspot']; tts=inputLUT[,'tts']; tto=inputLUT[,'tto']; psi=inputLUT[,'psi']
+  hotspot=inputLUT[,'hspot']; tts=inputLUT[,'tts']; tto=inputLUT[,'tto']; psi=inputLUT[,'psi']
   
 ########################################
 #	1.1 Leaf optical properties
@@ -274,8 +274,8 @@ litab <- LeafDistribution$litab
 
 	######################################################################
 	#	Apply correction 2/(K+k) suggested by F-M Br?on
-	if (q > 0 ){
-		alf <- (dso / q) * 2 / (ks + ko)
+	if (hotspot > 0 ){
+		alf <- (dso / hotspot) * 2 / (ks + ko)
 	}
 	######################################################################
 	
