@@ -75,7 +75,7 @@ m4SAIL <- function(inputLUT,rsoil, PROSPECTversion='PRO'){
 
 
 
-  ## fourSAIL
+  ## parameters for fourSAIL
   LIDFa=inputLUT[,'LIDFa']; LIDFb=inputLUT[,'LIDFb']; TypeLidf=inputLUT[,'TypeLidf']; lai=inputLUT[,'LAI']
   hotspot=inputLUT[,'hspot']; tts=inputLUT[,'tts']; tto=inputLUT[,'tto']; psi=inputLUT[,'psi']
   
