@@ -20,7 +20,7 @@ getSCOPE_outputs<-function(pathin=NULL,nsamples=100, resampling='Sentinel2a',
     stop('please give a path to find the SCOPE tables ...')
   } else{
     ## get files
-    pathin = 'examples/SCOPE/OHP_2022-02-25-1826/'
+    #pathin = 'examples/SCOPE/OHP_2022-02-25-1826/'
     list.outs<-list.files(pathin,full.names =T)
    
   }
