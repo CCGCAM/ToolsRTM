@@ -60,13 +60,13 @@ Basic version of fourSAIL and fourSAIL2: Verhoef W., Bach. H.
 fourSAILs modifications: Féret J.-B., 2021
 
 
-#FLUSPECT model
+## FLUSPECT model
 
 Vilfan, N., van der Tol, C., Muller, O., Rascher, U., Verhoef, W., 2016.
 Fluspect-B: A model for leaf fluorescence, reflectance and transmittance
 spectra. Remote Sens. Environ. 186, 596?615. doi:10.1016/j.rse.2016.09.017
 
-#Invertible Forest Reflectance  Model
+## Invertible Forest Reflectance  Model
 
 Authors:Atzberger, C.; Schlerf, M.
 
