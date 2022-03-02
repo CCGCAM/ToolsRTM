@@ -10,6 +10,7 @@ hybrid_inversion(
   split = 0.8,
   setseed = NULL,
   method = "SVM",
+  collinearity = "VIF",
   Field.data = NULL,
   acron = NULL
 )
@@ -23,10 +24,11 @@ hybrid_inversion(
 
 \item{setseed}{set random number}
 
-\item{method}{Machine learning approach for estimating each plant traits, the options are 'SVM', 'RF' and 'LDA'}
+\item{method}{collinearity-and-stepwise-vif-selection or CARS method implemmented, options='VIF' and 'CARS'}
 
-\item{Field.data}{dataframe with observations
-#' @param acron acronynm for the observation measure: e.g., Cab_obsrv, where acron='_observ' and Cab has same name as input}
+\item{Field.data}{dataframe with observations}
+
+\item{acron}{acronynm for the observation measure: e.g., Cab_obsrv, where acron='_observ' and Cab has same name as input}
 }
 \description{
 Title

@@ -4,12 +4,10 @@
 \alias{inform}
 \title{The INvertible FOrest Reflectance Model coupled with PROSPECT}
 \usage{
-inform(inputLUT, psoil, rsoil, PROSPECTversion = "PRO")
+inform(inputLUT = NULL, rsoil = rsoil, PROSPECTversion = "PRO")
 }
 \arguments{
 \item{inputLUT}{LUT table with distribution of biophysical parameters used as input parameters in the model}
-
-\item{psoil}{factor soil}
 
 \item{rsoil}{numeric. Soil reflectance}
 
