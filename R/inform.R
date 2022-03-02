@@ -2,8 +2,6 @@
 #'
 #' @param inputLUT LUT table with distribution of biophysical parameters used as input parameters in the model
 #' @param rsoil numeric. Soil reflectance
-#' @param psoil factor soil
-#' @param rsoil numeric. Soil reflectance
 #' @param PROSPECTversion Version of PROSPECT model. 'PRO' or 'D' is accepted. By default 'PRO' is used.
 #'
 #'
@@ -104,10 +102,13 @@
 # Crown transmittance for teta_o        t_o
 # _____________________________________________________________________________________________________________
 
-inform<- function(inputLUT,psoil,rsoil, PROSPECTversion='PRO'){
- # inputLUT = LUT[i,]; psoil =LUT[i,'psoil'];rsoil=rsoil0[[i]];PROSPECTversion = 'PRO'
-  #define alll inputs in the models retreived from LUT tables
-  
+inform<- function(inputLUT=NULL,rsoil=rsoil, PROSPECTversion='PRO'){
+
+if ((is.null(inputLUT)) | (is.null(rsoil)) ){
+  message('Please add the missing parameters')
+  stop()
+}
+
 ## fourSAIL
 LIDFa=inputLUT[,'LIDFa']; LIDFb=inputLUT[,'LIDFb']; TypeLidf=inputLUT[,'TypeLidf']; lai=inputLUT[,'LAI']
 hotspot=inputLUT[,'hspot']; tts=inputLUT[,'tts']; tto=inputLUT[,'tto']; psi=inputLUT[,'psi']
@@ -124,7 +125,7 @@ skyl=inputLUT[,'skyl']
 
 # Scaling of soil spectrum (to account for effects due to shadow and soil moisture)
 #refl_soil <- scale*rsoil ## individual 
-refl_soil<-rsoil  ### we give refl_soil based on scale factor and rsoil
+refl_soil = rsoil  ### we give refl_soil based on scale factor and rsoil
 
 # Computing of understorey reflectance for dicotyledoneae (ala=45,hotspot=0, N=2, Cab=30, Cw=0.05 CM=0,05)
 #r_understorey <- ToolsRTM::msail_background(inputLUT=inputLUT,rsoil=refl_soil,PROSPECTversion= PROSPECTversion, typeLAI = 'understorey') 
@@ -245,6 +246,5 @@ C <- Fcd*(1 - t_s * t_o) # Similar to original formula
 
 # Forest reflectance
 r_forest = (r_sail_inf * C) + (r_understorey * G) #*10
-LST_INFORM<-list(r_forest)
-return(LST_INFORM)
+return(r_forest)
 }
