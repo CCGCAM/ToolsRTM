@@ -13,6 +13,7 @@
 volscatt <- function(tts,tto,psi,ttl) #,chi_s,chi_o,frho,ftau
   {
  
+  
 #********************************************************************************
 #*	tts		= solar zenith
 #*	tto		= viewing zenith
