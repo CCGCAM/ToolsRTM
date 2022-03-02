@@ -130,27 +130,24 @@ getSCOPE_outputs<-function(pathin=NULL,nsamples=100, resampling='Sentinel2a',
    }
    
    LUT<-cbind(inputs,outputs)
-   if( SIF == T) {
-     outputs$SIF_1nm<-SIF_1nm
-     outputs$SIF_SE<-SIF_SE
-   }
+ 
    if (resampling == 'Sentinel2a'){
   
-      rfl.sim<-as.data.frame(SpecRefl.SE)
+      rfl.sim<- raster::as.data.frame(SpecRefl.SE)
       colnames(rfl.sim)<-paste('R.',SpecRefl.SE@wavelength,sep='')
       LUT_rfl<-cbind(LUT,rfl.sim)
      if (radiance == T){
-       rad.sim<-as.data.frame(SpecLoF.SE)
+       rad.sim<-raster::as.data.frame(SpecLoF.SE)
        colnames(rad.sim)<-paste('L.',SpecLoF.SE@wavelength,sep='')
        LUT_rfl<-cbind(LUT_rfl,rad.sim)
      }
     } else{
       
-        rfl.sim<-as.data.frame(SpecRefl)
+        rfl.sim<-raster::as.data.frame(SpecRefl)
         colnames(rfl.sim)<-paste('R.',SpecRefl@wavelength,sep='')
         LUT_rfl<-cbind(LUT,rfl.sim)
           if (radiance == T){
-            rad.sim<-as.data.frame(SpecLoF)
+            rad.sim<-raster::as.data.frame(SpecLoF)
             colnames(rad.sim)<-paste('L.',SpecLoF@wavelength,sep='')
             LUT_rfl<-cbind(LUT_rfl,rad.sim)
           }
