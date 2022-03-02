@@ -175,9 +175,9 @@ adapt <- 1
 k <- adapt * (pi * (cd / 2)^2) / 10000
 
 # angles (degree) to angles (radian)
-#tto <- tto*pi/180 #teta_o
-#tts <- tts*pi/180 #teta_s
-#psi <- psi*pi/180
+tto <- tto*pi/180 #teta_o
+tts <- tts*pi/180 #teta_s
+psi <- psi*pi/180
 
 
 
@@ -186,9 +186,10 @@ k <- adapt * (pi * (cd / 2)^2) / 10000
 
 co <- 1 - exp(-k * sd / cos(tto) ) # eq 1 from Rosema et al 1992
 # Ground coverage by shadow (cs) under a solar zenith angle teta_s
-cs <- 1-exp(-k * sd / cos(tts) )
+cs <- 1 - exp(-k * sd / cos(tts) )
 # Geometrical factor (g) depending on the illumination and viewing geometry
-g <- ( ( tan( tto ) )^2 + ( tan( tts ) )^2 - 2 * tan(tto) * tan(tts) * cos(psi) )^(0.5)
+g <- ( tan(tto)^2 + tan(tts)^2 - (2 * tan(tto) * tan(tts) * cos(psi) ))^(0.5)
+
 # Correlation coefficient (p)
 
 p <- exp(-g * h / cd)
@@ -198,10 +199,10 @@ p <- exp(-g * h / cd)
 # Ground surface fractions (FLIM model)
 
 # Tree crowns with shadowed background (Fcd)
-Fcd <- co * cs + p *(co * (1 - co) * cs * (1 - cs) )^(0.5)
+Fcd <- co * cs + p* (co * (1 - co) * cs * (1 - cs))^0.5
 
 # Tree crowns with sunlit background (Fcs)
-Fcs <- co * (1 - cs) - p * (co * (1 - co)* cs * (1 - cs) ) ^(0.5)
+Fcs <- co * (1 - cs) - p * (co * (1 - co)* cs * (1 - cs) )^(0.5)
 
 # Shadowed open space (Fod)
 Fod <- (1 - co ) * cs - p * (co * (1 - co) * cs * (1 - cs) )^(0.5)
@@ -215,9 +216,9 @@ Fos <- (1 - co) * (1 - cs) + p * (co * (1 - co) * cs * (1 - cs) )^(0.5)
 # Crown transmittance (SAIL model)
 
 # Angles (radian) to angles (degree)
-#tts_ <- tts * 180/pi
-#tto_ <- tto * 180/pi
-#psi_ <- psi * 180/pi
+#tts <- tts * 180/pi
+#tto <- tto * 180/pi
+#psi <- psi * 180/pi
 # Crown transmittance in sun direction (t_s)
 t_s <- ToolsRTM::m4SAIL_t_s(inputLUT=inputLUT,rsoil=r_understorey,rleaf=r_leaf,tleaf=t_leaf)
 
