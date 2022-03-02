@@ -152,7 +152,7 @@ litab <- LeafDistribution$litab
 		#	SAIL volume scattering phase function gives interception and portions to be
 		#	multiplied by rho and tau
 
-		chi_s_chi_o_frho_ftau <- volscatt(tts,tto,psi,ttl)
+		chi_s_chi_o_frho_ftau <- ToolsRTM::volscatt(tts,tto,psi,ttl)
 		chi_s<-chi_s_chi_o_frho_ftau[[1]]
 		chi_o<-chi_s_chi_o_frho_ftau[[2]]
 		frho<-chi_s_chi_o_frho_ftau[[3]]
