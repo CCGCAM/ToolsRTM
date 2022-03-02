@@ -16,7 +16,7 @@ getVIF<-function(in_frame,thresh=10,trace=T,...){
     regressors <- var_names[-which(var_names == val)]
     form <- paste(regressors, collapse = '+')
     form_in <- formula(paste(val, '~', form))
-    vif_init<-rbind(vif_init, c(val, VIF(lm(form_in, data = in_frame, ...))))
+    vif_init<-rbind(vif_init, c(val, fmsb::VIF(lm(form_in, data = in_frame, ...))))
   }
   vif_max<-max(as.numeric(vif_init[,2]))
   

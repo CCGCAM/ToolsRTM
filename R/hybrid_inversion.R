@@ -5,6 +5,7 @@
 #' @param input variable to estimate
 #' @param split  ratio between 0 and 1 for splitting the dataset in training and testing
 #' @param setseed  set random number
+#' @param pattern  Please indicate the number of bands with same pattern'B'. 
 #' @param method  Machine learning approach for estimating each plant traits, the options are 'SVM', 'RF' and 'LDA'
 #' @param method  collinearity-and-stepwise-vif-selection or CARS method implemmented, options='VIF' and 'CARS'
 #' @param Field.data  dataframe with observations
@@ -13,13 +14,14 @@
 #'
 #' @examples
 #' 
-hybrid_inversion<-function(LUT=NULL,input=NULL,split=0.8,setseed=NULL,method='SVM',
-                           collinearity='VIF',
+hybrid_inversion<-function(LUT=NULL,input=NULL,split=0.8,setseed=NULL,method=NULL,
+                           collinearity=NULL, pattern=NULL,
                            Field.data=NULL, acron=NULL){
   
   if (is.null(acron)){
     message('please add the acronym for the ground data')
-    stop()
+
+    #stop()
   }
   options(warn=-1) ###avoid warnings
   dataset=LUT
@@ -29,22 +31,27 @@ hybrid_inversion<-function(LUT=NULL,input=NULL,split=0.8,setseed=NULL,method='SV
   
   data.train<-dataset[index,]
   data.test<-dataset[-index,]
-  
+  if (is.null(pattern)){
+    keep.variables<-names(dataset)
+    input_order = grep(colnames(dataset),pattern=input,fixed = TRUE)
+    keep.variables[-input_order]
+    fmla <- as.formula(paste(input," ~ ", paste(keep.variables, collapse= "+")))
+    
+  }
   if (is.null(collinearity)) {
     
-    keep.variables<-names(dataset[,grep(colnames(dataset),pattern="R.",fixed = TRUE)])
+    keep.variables<-names(dataset[,grep(colnames(dataset),pattern=pattern,fixed = TRUE)])
     fmla <- as.formula(paste(input," ~ ", paste(keep.variables, collapse= "+")))
     
   } else if(collinearity == 'VIF') {
       ## require fmsb package
-      inputs_names<-names(dataset[,grep(colnames(dataset),pattern="R.",fixed = TRUE)])
+      inputs_names<-names(dataset[,grep(colnames(dataset),pattern=pattern,fixed = TRUE)])
       keep.variables<-getVIF(dataset[,inputs_names],thresh=10,trace=T)  
-      keep.variables<-getVIF(dataset[,keep.variables.10],thresh=10,trace=T)  
       fmla <- as.formula(paste(input," ~ ", paste(keep.variables, collapse= "+")))
  
   } else if(collinearity == 'CARS') {
   ## require pracma and pls packages
-    inputs_names<-names(dataset[,grep(colnames(dataset),pattern="R.",fixed = TRUE)])
+    inputs_names<-names(dataset[,grep(colnames(dataset),pattern=pattern,fixed = TRUE)])
     carspls_selection<-carspls(data.train[,inputs_names],y=data.train[,input],nLV=5,fold=10,scale.pretreat=1,iteration=100,PartitionType="interleaved")
     keep.variables<-colnames(data.train[,inputs_names])[c(carspls_selection$SelectedVariables)]
     fmla <- as.formula(paste(input," ~ ", paste(keep.variables, collapse= "+")))

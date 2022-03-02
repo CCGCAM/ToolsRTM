@@ -49,13 +49,13 @@ for (iter in 1:iteration){
      ncomp=nLV
      ncomp
      if (scale.pretreat==1) { 
-       plsr.fit<- mvr(response~.,ncomp,data = data.CARS.cal,method = "simpls",scale=TRUE)
+       plsr.fit<- pls::mvr(response~.,ncomp,data = data.CARS.cal,method = "simpls",scale=TRUE)
      } else{
-         plsr.fit<- mvr(response~.,ncomp,data = data.CARS.cal,method = "simpls",scale=FALSE)
+         plsr.fit<- pls::mvr(response~.,ncomp,data = data.CARS.cal,method = "simpls",scale=FALSE)
       }
      #+++ Model selection by cross validation
      #+
-     CV<-crossval(plsr.fit, segments =fold,data=data.CARS.cal,segment.type=PartitionType)
+     CV<-pls::crossval(plsr.fit, segments =fold,data=data.CARS.cal,segment.type=PartitionType)
 
      validation<-CV$validation
      PRESS<-validation$PRESS
