@@ -6,13 +6,16 @@
 #' @param split  ratio between 0 and 1 for splitting the dataset in training and testing
 #' @param setseed  set random number
 #' @param method  Machine learning approach for estimating each plant traits, the options are 'SVM', 'RF' and 'LDA'
+#' @param method  collinearity-and-stepwise-vif-selection or CARS method implemmented, options='VIF' and 'CARS'
 #' @param Field.data  dataframe with observations
-#' #' @param acron acronynm for the observation measure: e.g., Cab_obsrv, where acron='_observ' and Cab has same name as input
+#' @param acron acronynm for the observation measure: e.g., Cab_obsrv, where acron='_observ' and Cab has same name as input
 #' @export
 #'
 #' @examples
 #' 
-hybrid_inversion<-function(LUT=NULL,input=NULL,split=0.8,setseed=NULL,method='SVM',Field.data=NULL, acron=NULL){
+hybrid_inversion<-function(LUT=NULL,input=NULL,split=0.8,setseed=NULL,method='SVM',
+                           collinearity='VIF',
+                           Field.data=NULL, acron=NULL){
   
   if (is.null(acron)){
     message('please add the acronym for the ground data')
@@ -27,8 +30,27 @@ hybrid_inversion<-function(LUT=NULL,input=NULL,split=0.8,setseed=NULL,method='SV
   data.train<-dataset[index,]
   data.test<-dataset[-index,]
   
-  keep.variables<-names(dataset[,grep(colnames(dataset),pattern="R.",fixed = TRUE)])
-  fmla <- as.formula(paste(input," ~ ", paste(keep.variables, collapse= "+")))
+  if (is.null(collinearity)) {
+    
+    keep.variables<-names(dataset[,grep(colnames(dataset),pattern="R.",fixed = TRUE)])
+    fmla <- as.formula(paste(input," ~ ", paste(keep.variables, collapse= "+")))
+    
+  } else if(collinearity == 'VIF') {
+      ## require fmsb package
+      inputs_names<-names(dataset[,grep(colnames(dataset),pattern="R.",fixed = TRUE)])
+      keep.variables<-getVIF(dataset[,inputs_names],thresh=10,trace=T)  
+      keep.variables<-getVIF(dataset[,keep.variables.10],thresh=10,trace=T)  
+      fmla <- as.formula(paste(input," ~ ", paste(keep.variables, collapse= "+")))
+ 
+  } else if(collinearity == 'CARS') {
+  ## require pracma and pls packages
+    inputs_names<-names(dataset[,grep(colnames(dataset),pattern="R.",fixed = TRUE)])
+    carspls_selection<-carspls(data.train[,inputs_names],y=data.train[,input],nLV=5,fold=10,scale.pretreat=1,iteration=100,PartitionType="interleaved")
+    keep.variables<-colnames(data.train[,inputs_names])[c(carspls_selection$SelectedVariables)]
+    fmla <- as.formula(paste(input," ~ ", paste(keep.variables, collapse= "+")))
+  
+  }
+  
   set.seed(setseed)
   if (method == 'SVM' | is.null(method)){
     message('processing hybrid inversion using SVM model ....')
