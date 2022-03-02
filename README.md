@@ -11,8 +11,8 @@ Install the package prospect with the following command line in R session:
 >
 
 ## Manual 
-Manual is available at ReadTheDocs https://toolsrtm-tutorial.readthedocs.io/en/latest/
-Manual is available at ReadTheDocs https://toolsrtm-tutorial.readthedocs.io/en/latest/
+
+Manual is available at ReadTheDocs https://toolsrtm-tutorial.readthedocs.io/en/latest/ (in progress)
 
 ## Description
 
