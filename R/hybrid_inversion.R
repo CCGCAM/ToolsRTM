@@ -1,11 +1,13 @@
 
-#' Title
+#' Inversion of  plant traits using ML models
 #'
 #' @param LUT  Dataset with inputs and Bands
 #' @param input variable to estimate
 #' @param split  ratio between 0 and 1 for splitting the dataset in training and testing
 #' @param setseed  set random number
 #' @param pattern  Please indicate the number of bands with same pattern'B'. 
+#' @param trans  Please indicate is want a logarithm transformation to y variable . Default is T
+
 #' @param method  Machine learning approach for estimating each plant traits, the options are 'SVM', 'RF' and 'LDA'
 #' @param method  collinearity-and-stepwise-vif-selection or CARS method implemmented, options='VIF' and 'CARS'
 #' @param Field.data  dataframe with observations
@@ -15,17 +17,28 @@
 #' @examples
 #' 
 hybrid_inversion<-function(LUT=NULL,input=NULL,split=0.8,setseed=NULL,method=NULL,
-                           collinearity=NULL, pattern=NULL,
+                           collinearity=NULL, pattern=NULL, trans=NULL,
                            Field.data=NULL, acron=NULL){
+  if (!require("parallel")) { install.packages("parallel"); require("parallel") }  ### Paralell
   
-  if (is.null(acron)){
-    message('please add the acronym for the ground data')
-
-    #stop()
+  
+  if   (!is.null(Field.data)){
+    if (is.null(acron)){
+      message('please add the acronym for the ground data')
+      stop()
+    }
   }
+  
   options(warn=-1) ###avoid warnings
   dataset=LUT
   xi_y1=split
+  
+  if (is.null(trans) | trans == TRUE){
+    dataset[input] <- log(dataset[input])
+  } else {
+    dataset[input] <- dataset[input]
+  }
+
   ### partition datasets
   index <- as.vector(caret::createDataPartition(dataset[,input], p = xi_y1, list = F))
   
@@ -140,8 +153,7 @@ hybrid_inversion<-function(LUT=NULL,input=NULL,split=0.8,setseed=NULL,method=NUL
 
 
     stopCluster(cl)
-  }
-  else if (method == 'nnet'){
+  } else if (method == 'nnet'){
     message('processing hybrid approach using a nnet')
     clusters <- detectCores()-1
     cl <- makePSOCKcluster(clusters)
@@ -154,43 +166,43 @@ hybrid_inversion<-function(LUT=NULL,input=NULL,split=0.8,setseed=NULL,method=NUL
                                        savePredictions = "all")
 
 
-    nnet.grid <- expand.grid(.decay = seq(0,0.1,by=0.01), .size = seq(1,10,by=1))
-    nnet.fit <- caret::train(fmla, data = data.train,method = "nnet",  trControl = fit.control,
-                     #   preProc = c("center", "scale"),
-                        cross=10,
-                        threshold = 0.3,
-                        metric='Rsquared',maxit = 100, tuneGrid = nnet.grid,linout=TRUE,
+    nnet.grid <- expand.grid(.decay = seq(0,0.1,by=0.01), 
+                             .size = seq(1,10,by=1))#, .bag=F) for vNNet
+    nnet.fit <- caret::train(fmla, data = data.train,
+                        method = "nnet", repeats = 1, trControl = fit.control,
+                        preProc = c("center", "scale",'BoxCox', 'YeoJohnson'),
+                        cross=10,trace=F, ##remove message with Trace=False
+                        threshold = 0.3, 
+                        maxit = 1000, linout = 1,
+                        metric='Rsquared', tuneGrid = nnet.grid,
                              verbose = FALSE) 
     size<-getElement(nnet.fit,"bestTune")$size
     decay<-getElement(nnet.fit,"bestTune")$decay
-    
-    #nne model with the best tune parameters for 500 iterations
-    model <- nnet::nnet(fmla,data=data.train,size=size,decay=decay,trace=F,linout=TRUE,skip=T,
-                        maxit=200)
-    best.value <- model$value
-    value <- NULL
-    progress_bar = txtProgressBar(min=0, max=1000, style = 3, char="=")
-    for(i in 1:1000)
-    {
-      aux.nnet <- nnet::nnet(fmla,data=data.train,size=size,decay=decay,trace=F,linout=TRUE,skip=F,
-                             maxit=200)
-      value[i] <- aux.nnet$value
-      if(aux.nnet$value < best.value)
-      {
-        model <- aux.nnet
-        best.value <- model$value
-      }
-      setTxtProgressBar(progress_bar, value = i)
-    }
-    close(progress_bar)
+    model = nnet.fit
+        #nne model with the best tune parameters for 500 iterations
+        #model <- nnet::nnet(fmla,data=data.train,size=size,decay=decay,trace=F,linout=TRUE,skip=T,
+         #                   maxit=200)
+        #best.value <- model$value
+        #value <- NULL
+        #progress_bar = txtProgressBar(min=0, max=1000, style = 3, char="=")
+        #for(i in 1:1000)
+        #{
+        # aux.nnet <- nnet::nnet(fmla,data=data.train,size=size,decay=decay,trace=F,linout=TRUE,skip=F,
+                      #           maxit=200)
+    # value[i] <- aux.nnet$value
+    #     if(aux.nnet$value < best.value)
+    #     {
+    #       model <- aux.nnet
+    #       best.value <- model$value
+    #     }
+    #     setTxtProgressBar(progress_bar, value = i)
+    #   }
+    #   close(progress_bar)
     stopCluster(cl)
-  }
-  
-  
-  else if (method == 'Ensemble') {
+  } else if (method == 'Ensemble') {
     message('processing hybrid approach using Ensemble by stacking approach ....')
     message('list of models: SVM,Gradient Boosting and Neural Network ')
-    message('list of models: SVM,Gradient Boosting and Neural Network ')
+
     clusters <- detectCores()-1
     cl <- makePSOCKcluster(clusters)
     set.seed(setseed)
@@ -216,20 +228,19 @@ hybrid_inversion<-function(LUT=NULL,input=NULL,split=0.8,setseed=NULL,method=NUL
     #nnImpute, bagImpute, medianImpute, pca, ica, spatialSign, ignore, keep, 
     #remove, zv, nzv, conditionalX, corr
     models.ensemble=list(gbm=caretModelSpec(method="gbm",  #metric='MAE', 
-                                #   preProc = c("center", "scale"),
-                                     tuneGrid=tune.grid.gbm),
+                          preProc = c("center", "scale",'BoxCox', 'YeoJohnson'),
+                          tuneGrid=tune.grid.gbm),
                   svmRadial=caretModelSpec(method="svmRadial", # metric='MAE',
-                             # preProc = c("center","scale"),
+                              preProc = c("center", "scale",'BoxCox', 'YeoJohnson'),
                               tuneGrid=tuneGrid.svm,#tuneLength=10,
-                               threshold = 0.3),
+                              threshold = 0.3),
                                #tuneGrid=tuneGrid.svm),
                   nnet=caretModelSpec(method="nnet", #metric='MAE',
-                                   #   preProc = c("center", "scale"),
+                                      preProc = c("center", "scale",'BoxCox', 'YeoJohnson'),
                                       threshold = 0.3,
                                       tuneGrid=tune.grid.nne,
-                                      #tuneGrid = tune.grid.nne,
-                                      linout=TRUE,
-                                      trace=FALSE))
+                                      maxit = 1000, linout = 1, trace=F))
+    
     fit.control<- trainControl(method="repeatedcv", 
                               number=10, 
                               savePredictions=TRUE,
@@ -258,8 +269,16 @@ hybrid_inversion<-function(LUT=NULL,input=NULL,split=0.8,setseed=NULL,method=NUL
   }
 
 ## Predictions on train and test
-pred.train<-c(predict(object = model,data.train))
-pred.test<-c(predict(object = model,data.test))
+  if (is.null(trans) | trans == T){
+    pred.train<-c(exp(predict(object = model,data.train)))
+    data.train[input] <-  exp(data.train[input])
+    pred.test<-c(exp(predict(object = model,data.test)))
+    data.test[input] <-  exp(data.test[input])
+  } else {
+    pred.train<-c(predict(object = model,data.train))
+    pred.test<-c(predict(object = model,data.test))
+  }
+
 
 #### Skill scores for training data
 r2.train<-round(cor(pred.train,data.train[input],use='pairwise.complete.obs')^2,2)
@@ -307,7 +326,16 @@ if (is.null(Field.data)) {
   
 } else {
  
-  predict.obs<-c(predict(object = model,Field.data[,keep.variables]))
+
+  
+  if (is.null(trans) | trans == T){
+    
+    predict.obs<-c(exp(predict(object = model,Field.data[,keep.variables])))
+  } else {
+
+    predict.obs<-c(predict(object = model,Field.data[,keep.variables]))
+  }
+  
   Field.data$pred<-predict.obs
   names_f<-names(Field.data)
   colnames(Field.data)<-c(names(Field.data)[1:(length(names_f)-1)],paste(input,'_pred',sep=''))
