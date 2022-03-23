@@ -88,41 +88,41 @@ getLUT_time<-function(inputs=NULL, dataICOS= NULL, timeStart='2018-01-01', timeE
       ## For those time[i] where ICOS site has value of Rin, Rli, Ta and p and Wind and RH
        df.icos <- subset(data.ICOS.t, Date == time[i])
        df.inputs <-as.data.frame(list.time[[i]])
-       if (is_empty(df.icos)) {
+       if (rlang::is_empty(df.icos)) {
          list.time[[i]] <- list.time[[i]]
        } else{
          #broadband incoming shortwave radiation (0.4-2.5 um)
-         if (is_empty(df.icos$SW_in)){
+         if (rlang::is_empty(df.icos$SW_in)){
            df.inputs$Rin <- df.inputs$Rin
          } else {
            df.inputs$Rin <- rep(df.icos$SW_in,nLUT)
          }
          #broadband incoming longwave radiation (2.5-50 um)
-         if (is_empty(df.icos$LW_in)){
+         if (rlang::is_empty(df.icos$LW_in)){
            df.inputs$Rli <- df.inputs$Rli
          } else {
            df.inputs$Rli <- rep(df.icos$LW_in,nLUT)
          }
          # Wind velocity
-         if (is_empty(df.icos$u)){
+         if (rlang::is_empty(df.icos$u)){
            df.inputs$u <- df.inputs$u
          } else {
            df.inputs$u <- rep(df.icos$windS,nLUT)
          }
          # Pressure
-         if (is_empty(df.icos$pressure)){
+         if (rlang::is_empty(df.icos$pressure)){
            df.inputs$p <- df.inputs$p
          } else {
            df.inputs$p <- rep(df.icos$pressure*10,nLUT)
          }
          ## Air temperature
-         if (is_empty(df.icos$Tair)){
+         if (rlang::is_empty(df.icos$Tair)){
            df.inputs$Ta <- df.inputs$Ta
          } else {
            df.inputs$Ta <- rep(df.icos$Tair,nLUT)
          }
          ## Relative humidity
-         if (is_empty(df.icos$RH)){
+         if (rlang::is_empty(df.icos$RH)){
            df.inputs$RH <- df.inputs$RH
          } else {
            df.inputs$RH <- rep(df.icos$RH/ 100,nLUT)

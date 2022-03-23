@@ -31,8 +31,13 @@ getSCOPE_outputs<-function(pathin=NULL,nsamples=100, resampling='Sentinel2a',
   
   wave<-c(data.wlS$wavelS)
   inputs<-data.table::fread(paste(pathin,'pars_and_input_short.csv',sep=''),header=F,skip=2,nrows=nsamples,sep=',')
-  colnames(inputs)<-c('n_pars','Cab','Cca','Cdm','Cw','N','Cant','Vcmax25','BallBerrySlope','LAI','LIDFa','Rin','Ta','Rli','u','Ca','tts','tto')
-  
+  if (length(colnames(inputs)) == 18){
+    colnames(inputs)<-c('n_pars','Cab','Cca','Cdm','Cw','N','Cant','Vcmax25','BallBerrySlope','LAI','LIDFa','Rin','Ta','Rli','u','Ca','tts','tto')
+    
+  } else if (length(colnames(inputs)) == 20) {
+    colnames(inputs)<-c('n_pars','Cab','Cca','Cdm','Cw','N','Cant','Vcmax25','BallBerrySlope','LAI','LIDFa','Rin','Ta','Rli','p','ea','u','Ca','tts','tto')
+    
+  }
  
   
    # ######################################################################################
