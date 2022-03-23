@@ -32,7 +32,7 @@ LUt_time<-getLUT_time(inputs = inputs, dataICOS = data.ICOS,timeStart = '2018-01
 head(LUt_time)
 
 
-write.table(LUt_time, file = 'examples/outputs/LUT_time.csv',sep=',',row.names = F)
+#write.table(LUt_time, file = 'examples/outputs/LUT_time.csv',sep=',',row.names = F)
 
 inputs = ToolsRTM::inputsINF
 LUT<-getLUT(inputs = inputs, nLUT=20000, setseed = 1234)
