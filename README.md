@@ -16,8 +16,7 @@ Manual is available at ReadTheDocs https://toolsrtm-tutorial.readthedocs.io/en/l
 
 ## Description
 
-This package integrates the main radiative transfer (RT) models for simulating canopy reflectance
-with remote sensing tools for estimating plant traits at Sentinel-2 scales.
+This package integrates the main radiative transfer (RT) models for simulating canopy reflectance at  hyperspectral and Sentinel-2 scales. This package uses several functions for estimating plant traits, spectral indices and useful functions for generating time series, validation of the predictions with field observations ....
 
 ## Citation
 
