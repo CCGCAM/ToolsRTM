@@ -3,8 +3,8 @@
 #'
 #' @param trait The specif input ...
 #' @param nmin the min value for the input
-#' @param nmax the min value for the input
-#' @param Interval the min value for the input
+#' @param nmax the max value for the input
+#' @param Interval the interval
 #' @param psoil the factor for the soil
 #' @param model the model for making the simulations (PROSAIL, INFORM or PROSPECT)
 #' @model a dataframe with all parameters
