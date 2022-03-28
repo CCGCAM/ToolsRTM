@@ -18,6 +18,8 @@ getSim_fromLUT<-function(trait='Cab',nmin=0, nmax=100, Interval=10, psoil=0.5,mo
   if (!require("photobiologyWavebands")) { install.packages("photobiologyWavebands"); require("photobiologyWavebands") }  ### hsdar for PROSAIL
   if (!require("ggspectra")) { install.packages("ggspectra"); require("ggspectra") }  ### hsdar for PROSAIL
   
+  # to rm
+  #trait='EWT';nmin=0.02; nmax=0.25; Interval=0.05; psoil=0.5;model='PROSAIL'
   
   data <- ToolsRTM::dataSpec_PDB
   Rsoil1  <- data[,11]  # rsoil1 = dry soil
@@ -78,7 +80,7 @@ getSim_fromLUT<-function(trait='Cab',nmin=0, nmax=100, Interval=10, psoil=0.5,mo
     Cbrown=input
   } else if (trait == 'EWT'){
     input<-seq(nmin,nmax, by=Interval)
-    EWR=input
+    EWT=input
   }  else if (trait == 'LMA'){
     input<- seq(nmin,nmax, by=Interval)
     LMA=input

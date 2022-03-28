@@ -15,10 +15,12 @@ if (!require("ToolsRTM")) { install.packages("ToolsRTM"); require("ToolsRTM") } 
 
 
 ##############################################################################################################################
-#	o. Get simulations for understanding spectral ----   
+#	0. Get simulations for understanding spectral ----   
 ##############################################################################################################################
 
-LUT_to<-ToolsRTM::getSim_fromLUT(trait = 'Cab',nmin = 10,nmax=90,Interval = 5,model = 'PROSAIL')
+LUT_cab<-ToolsRTM::getSim_fromLUT(trait = 'Cab',nmin = 10,nmax=90,Interval = 5,model = 'PROSAIL')
+LUT_ewt<-ToolsRTM::getSim_fromLUT(trait = 'EWT',nmin = 0.001,nmax=0.35,Interval = 0.05,model = 'INFORM')
+LUT_lma<-ToolsRTM::getSim_fromLUT(trait = 'LMA',nmin = 0.001,nmax=0.35,Interval = 0.05,model = 'PROSAIL')
 
 ##############################################################################################################################
 #	1. Get spectra from GetLUT ----   
