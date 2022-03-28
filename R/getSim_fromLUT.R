@@ -1,0 +1,302 @@
+
+#' Get LUT with fixed inputs and vary only one
+#'
+#' @param trait The specif input ...
+#' @param nmin the min value for the input
+#' @param nmax the min value for the input
+#' @param Interval the min value for the input
+#' @param psoil the factor for the soil
+#' @param model the model for making the simulations (PROSAIL, INFORM or PROSPECT)
+#' @model a dataframe with all parameters
+#' @export
+#'
+#' @examples
+#' 
+getSim_fromLUT<-function(trait='Cab',nmin=0, nmax=100, Interval=10, psoil=0.5,model='PROSAIL'){
+  if (!require("foreach")) { install.packages("foreach"); require("foreach") }  ### hsdar for PROSAIL
+  if (!require("photobiology")) { install.packages("photobiology"); require("photobiology") }  ### hsdar for PROSAIL
+  if (!require("photobiologyWavebands")) { install.packages("photobiologyWavebands"); require("photobiologyWavebands") }  ### hsdar for PROSAIL
+  if (!require("ggspectra")) { install.packages("ggspectra"); require("ggspectra") }  ### hsdar for PROSAIL
+  
+  
+  data <- ToolsRTM::dataSpec_PDB
+  Rsoil1  <- data[,11]  # rsoil1 = dry soil
+  Rsoil2 <- data[,12]  # rsoil2 = wet soil 
+  
+  if ( is.null(psoil)){
+    message(' PROSAIL model will be use as input')
+    psoil	 <-  0.5    # soil factor (psoil=0: wet soil / psoil=1: dry soil)
+    rsoil  <- psoil*Rsoil1+(1-psoil)*Rsoil2
+  } else {
+    rsoil  <- psoil*Rsoil1+(1-psoil)*Rsoil2
+  }
+  
+  set.seed(12345)
+  
+  if ( is.null(model)){
+    message(' PROSAIL model will be use as input')
+  }
+  
+  #Inputs by default for Leaf model (PROSPECT)
+  N=2.5;  Cab =40; Car=0; Anth=0; Cbrown=0
+  EWT=0.09; LMA=0.012; alpha=40
+  Prot=0;CBC=0
+  #Inputs by default for canopy model (fourSAIL) 
+  ## parameters for fourSAIL
+  LIDFa=30; LIDFb=0; TypeLidf=2; lai=3
+  hotspot=0; tts=5; tto=20; psi=30
+  
+  ## Input for INform model
+  LAIu=0.5
+  sd=500; cd=4.5; h=20; psi=30
+  skyl=0.2
+  
+  
+  if (is.null(Interval)){
+    message('number of varitions for each input is fixed to 100')
+    
+    Interval = 10
+    nLUT = 1 + Interval
+  }
+  
+  
+  if ( is.null(trait) | trait == 'Cab'){
+    message(' input is empty, chorophyll content will be use as input')
+    input<- seq(nmin,nmax, by=Interval)##stats::runif(nLUT,min = nmin,max=nmax)
+    Cab=input
+  } else if (trait == 'N'){
+      input<- seq(nmin,nmax, by=Interval)
+      N=input
+  } else if (trait == 'Car'){
+      input<- seq(nmin,nmax, by=Interval)#stats::runif(nLUT,min = nmin,max=nmax)
+      Car=input
+  } else if (trait == 'Anth'){
+    input<- seq(nmin,nmax, by=Interval)
+    Anth=input
+  } else if (trait == 'Cbrown'){
+    input<- seq(nmin,nmax, by=Interval)
+    Cbrown=input
+  } else if (trait == 'EWT'){
+    input<-seq(nmin,nmax, by=Interval)
+    EWR=input
+  }  else if (trait == 'LMA'){
+    input<- seq(nmin,nmax, by=Interval)
+    LMA=input
+  }  else if (trait == 'alpha'){
+    input<- seq(nmin,nmax, by=Interval)
+    alpha=input
+  } else if (trait == 'Prot'){
+    LMA=0
+    CBC= 0.02
+    input<- seq(nmin,nmax, by=Interval)
+    Prot=input
+  }  else if (trait == 'CBC'){
+    LMA=0
+    Prot = 0.02
+    input<- seq(nmin,nmax, by=Interval)
+    CBC=input
+  } else if (trait == 'LAI'){
+    input<- seq(nmin,nmax, by=Interval)
+    LAI=input
+  } else if (trait == 'LIDFa'){
+    input<- seq(nmin,nmax, by=Interval)
+    LIDFa=input
+  } else if (trait == 'hotspot'){
+    input<- seq(nmin,nmax, by=Interval)
+    hotspot=input
+  } else if (trait == 'tts'){
+    input<- seq(nmin,nmax, by=Interval)
+    tts=input
+  } else if (trait == 'tto'){
+    input<- seq(nmin,nmax, by=Interval)
+    tto=input
+  } else if (trait == 'psi'){
+    input<- seq(nmin,nmax, by=Interval)
+    psi=input
+  } else if (trait == 'LIDFb'){
+    message('Type LIDF to 2 is only use and LIDFb = 0')
+    LIDFb = 0
+  } else if (trait == 'LAIu'){
+    input<- seq(nmin,nmax, by=Interval)
+    LAIU=input
+  } else if (trait == 'sd'){
+    input<- seq(nmin,nmax, by=Interval)
+    sd=input
+  } else if (trait == 'cd'){
+    input<- seq(nmin,nmax, by=Interval)
+    cd=input
+  } else if (trait == 'h'){
+    input<- seq(nmin,nmax, by=Interval)
+    h=input
+  } 
+  
+  
+  if ( is.null(model) | model == 'PROSAIL'){
+    message('By default, PROPECT + fourSAIL model will be processing ...')
+    LUT<- data.frame(N,Cab,Car,Anth,Cbrown,EWT,LMA,alpha,Prot,CBC,
+                     LIDFa, LIDFb=0, TypeLidf=2, LAI=3,
+                     hspot=hotspot, tts, tto, psi)
+    nLUT = dim(LUT)[1]
+    ## choose number of processors/cores
+    no_cores <- parallel::detectCores() - 2 
+    cl <- parallel::makeCluster(no_cores)
+    doParallel::registerDoParallel(cl)
+    
+    start_time <- Sys.time()
+    sim.rfl<-list()
+    ### simulations
+      sims<-foreach(i=1:nLUT) %dopar% {
+        data.foursail_pro<-ToolsRTM::m4SAIL(inputLUT=LUT[i,],rsoil=rsoil,PROSPECTversion = 'PRO')
+        rdot<-data.foursail_pro[[1]]
+        rsot<-data.foursail_pro[[2]]
+        rfl.prosail<-ToolsRTM::Compute_BRF(rdot=rdot,rsot=rsot,tts=LUT[i,'tts'],data.light=ToolsRTM::dataSpec_PDB)
+        sim.rfl[[i]]<-rfl.prosail
+    
+      } ##end paralle
+    parallel::stopCluster(cl)
+    sim.canopy<-do.call(rbind,sims)
+    # remove box label
+    sim.canopy <- sim.canopy[,-1] 
+    # add the 'wavelength' and rotate the df
+    # (i didn't find the actual wavelength values, but hey).
+    sim.canopy <- cbind(1:ncol(sim.canopy), t(sim.canopy)) 
+    plotspectra(sim.canopy, y=2:ncol(sim.canopy), cols = c(rainbow(ncol(sim.canopy)-2),'black'),
+               type='l', main=trait,ylab="reflectance", xlab = 'Wavelength')
+    legend("topright", legend = seq(nmin, nmax, by=Interval),
+           fill=c(rainbow(ncol(sim.canopy)-1),'black'),cex=0.8)
+    
+  } else if (model == 'PROSPECT') {
+    
+    message('PROPECT-PRO will be processing ...')
+    
+    LUT<- data.frame(N,Cab,Car,Anth,Cbrown,EWT,LMA,alpha,Prot,CBC)
+    nLUT = dim(LUT)[1]
+    
+    no_cores <- parallel::detectCores() - 2 
+    cl <- parallel::makeCluster(no_cores)
+    doParallel::registerDoParallel(cl)
+    
+    start_time <- Sys.time()
+    sim.rfl<-list()
+      ### simulations
+      sims<-foreach(i=1:nLUT) %dopar% {
+        rfl.prospect<-ToolsRTM::prospect_PRO(N=LUT[i,'N'],Cab=LUT[i,'Cab'],Car=LUT[i,'Car'],
+                                           Anth=LUT[i,'Anth'],Cbrown=LUT[i,'Cbrown'],
+                                           EWT= LUT[i,'EWT'],LUT[i,'LMA'],
+                                           alpha=LUT[i,'alpha'],
+                                           Prot= LUT[i,'Prot'],CBC=LUT[i,'CBC'])
+        rho	 <- 	rfl.prospect[[2]]
+      
+        sim.rfl[[i]]<-rho
+      
+      } ##end paralle
+    parallel::stopCluster(cl)
+    
+
+    sim.leaf<-do.call(rbind,sims)
+    # remove box label
+    sim.leaf <- sim.leaf[,-1] 
+    # add the 'wavelength' and rotate the df
+    # (i didn't find the actual wavelength values, but hey).
+    sim.leaf <- cbind(1:ncol(sim.leaf), t(sim.leaf)) 
+    plotspectra(sim.leaf, y=2:ncol(sim.leaf), cols = c(rainbow(ncol(sim.leaf)-2),'black'),
+                type='l', main=trait,ylab="reflectance", xlab = 'Wavelength')
+    legend("topright", legend = seq(nmin, nmax, by=Interval),
+           fill=c(rainbow(ncol(sim.leaf)-1),'black'),cex=0.8)
+       
+  } else if ( model == 'INFORM'){
+      message('INFORM model will be processing ...')
+      LUT<- data.frame(N,Cab,Car,Anth,Cbrown,EWT,LMA,alpha,Prot,CBC,
+                       LIDFa, LIDFb=0, TypeLidf=2, LAI=3,
+                       hspot=hotspot, tts, tto, psi,LAIu,sd,cd,h,skyl)
+      nLUT = dim(LUT)[1]
+      
+      ## choose number of processors/cores
+      no_cores <- parallel::detectCores() - 2 
+      cl <- parallel::makeCluster(no_cores)
+      doParallel::registerDoParallel(cl)
+      
+      start_time <- Sys.time()
+      sim.rfl<-list()
+      ### simulations
+        sims<-foreach(i=1:nLUT) %dopar% {
+          rfl.inform<-ToolsRTM::inform(inputLUT = LUT[i,],rsoil=rsoil,PROSPECTversion = 'PRO')
+          sim.rfl[[i]]<-rfl.inform
+          
+        } ##end paralle
+      
+      parallel::stopCluster(cl)
+      
+      sim.canopy<-do.call(rbind,sims)
+      # remove box label
+      sim.canopy <- sim.canopy[,-1] 
+      # add the 'wavelength' and rotate the df
+      # (i didn't find the actual wavelength values, but hey).
+      sim.canopy <- cbind(1:ncol(sim.canopy), t(sim.canopy)) 
+      plotspectra(sim.canopy, y=2:ncol(sim.canopy), cols = c(rainbow(ncol(sim.canopy)-2),'black'),
+                  type='l', main=trait,ylab="reflectance", xlab = 'Wavelength')
+      legend("topright", legend = seq(nmin, nmax, by=Interval),
+             fill=c(rainbow(ncol(sim.canopy)-1),'black'),cex=0.8)
+      
+     }
+       
+return(LUT)
+  }
+  
+
+  
+#' for plotting spectra
+#'
+#' @param df 
+#' @param x 
+#' @param y 
+#' @param cols 
+#' @param xlim 
+#' @param ylim 
+#' @param main 
+#' @param xlab 
+#' @param ylab 
+#' @param ... 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+plotspectra <- function(df, x=1, y=2, cols=y,
+                          xlim=range(df[,x], na.rm = T),
+                          ylim=range(df[,y], na.rm = T),
+                          main="", xlab="", ylab="", ...){
+    # setup plot frame
+    par(mfrow=c(1,1),  mar = c(5,5,1.1,1),bg= "white", 
+        font.main=1.5, cex.main=1.2,font.axis=2, cex.axis=1.2, las=1,
+        font.lab=2, cex.lab=1.0)
+    plot(NULL, 
+         xlim=xlim, 
+         ylim=ylim,
+         main=main, xlab=xlab, ylab=ylab)
+    rect(par("usr")[1],par("usr")[3],par("usr")[2],par("usr")[4],col = "gray")
+    grid(lwd = 2) 
+    # plot all your y's against your x
+    pb <- sapply(seq_along(y), function(i){
+      points(df[,c(x, y[i])], col=cols[i], ...)
+    })
+  }
+  
+#' Gradient scale
+#'
+#' @param x 
+#' @param colors 
+#' @param colsteps 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+color.gradient <- function(x, colors=c("red","yellow","green"), colsteps=100) {
+  
+  return( colorRampPalette(colors) (colsteps) [ findInterval(x, seq(min(x),max(x), length.out=colsteps)) ] )
+}
+  
+  
+  
+

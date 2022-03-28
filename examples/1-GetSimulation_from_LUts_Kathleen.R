@@ -13,6 +13,13 @@ if (!require("doParallel")) { install.packages("doParallel"); require("doParalle
 # My packages in R
 if (!require("ToolsRTM")) { install.packages("ToolsRTM"); require("ToolsRTM") }  ### Paralell foreach and caret
 
+
+##############################################################################################################################
+#	o. Get simulations for understanding spectral ----   
+##############################################################################################################################
+
+LUT_to<-ToolsRTM::getSim_fromLUT(trait = 'Cab',nmin = 10,nmax=90,Interval = 5,model = 'PROSAIL')
+
 ##############################################################################################################################
 #	1. Get spectra from GetLUT ----   
 ##############################################################################################################################
