@@ -53,15 +53,16 @@ getSim_fromLUT<-function(trait='Cab',nmin=0, nmax=100, Interval=10, psoil=0.5,mo
   
   
   if (is.null(Interval)){
-    message('number of varitions for each input is fixed to 100')
+    message('number of classes is null, by default 10 classes will be greated')
     
     Interval = 10
     nLUT = 1 + Interval
   }
-  
-  
-  if ( is.null(trait) | trait == 'Cab'){
+  if ( is.null(trait)){
     message(' input is empty, chorophyll content will be use as input')
+    input<- seq(nmin,nmax, by=Interval)##stats::runif(nLUT,min = nmin,max=nmax)
+    Cab=input
+  } else if (trait == 'Cab'){
     input<- seq(nmin,nmax, by=Interval)##stats::runif(nLUT,min = nmin,max=nmax)
     Cab=input
   } else if (trait == 'N'){
