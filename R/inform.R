@@ -175,20 +175,20 @@ adapt <- 1
 k <- adapt * (pi * (cd / 2)^2) / 10000
 
 # angles (degree) to angles (radian)
-tto <- tto*pi/180 #teta_o
-tts <- tts*pi/180 #teta_s
-psi <- psi*pi/180
+tto_ <- tto * pi / 180 #teta_o
+tts_ <- tts * pi / 180 #teta_s
+psi_ <- psi * pi / 180
 
 
 
 ## Coverage and Shadowing 
 # Observed ground coverage  by crowns (co) under observation zenith angle teta_o
 
-co <- 1 - exp(-k * sd / cos(tto) ) # eq 1 from Rosema et al 1992
+co <- 1 - exp(-k * sd / cos(tto_) ) # eq 1 from Rosema et al 1992
 # Ground coverage by shadow (cs) under a solar zenith angle teta_s
-cs <- 1 - exp(-k * sd / cos(tts) )
+cs <- 1 - exp(-k * sd / cos(tts_) )
 # Geometrical factor (g) depending on the illumination and viewing geometry
-g <- ( tan(tto)^2 + tan(tts)^2 - (2 * tan(tto) * tan(tts) * cos(psi) ))^(0.5)
+g <- ( tan(tto_)^2 + tan(tts_)^2 - (2 * tan(tto_) * tan(tts_) * cos(psi_) ))^(0.5)
 
 # Correlation coefficient (p)
 

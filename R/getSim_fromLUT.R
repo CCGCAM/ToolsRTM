@@ -7,17 +7,15 @@
 #' @param Interval the interval
 #' @param psoil the factor for the soil
 #' @param model the model for making the simulations (PROSAIL, INFORM or PROSPECT)
+#' @param method or ggplot or classical method, by default is taken  'ggplot'
 #' @model a dataframe with all parameters
 #' @export
 #'
 #' @examples
 #' 
-getSim_fromLUT<-function(trait='Cab',nmin=0, nmax=100, Interval=10, psoil=0.5,model='PROSAIL'){
+getSim_fromLUT<-function(trait='Cab',nmin=0, nmax=100, Interval=10, psoil=0.5,model='PROSAIL', method='ggplot'){
   if (!require("foreach")) { install.packages("foreach"); require("foreach") }  ### hsdar for PROSAIL
-  if (!require("photobiology")) { install.packages("photobiology"); require("photobiology") }  ### hsdar for PROSAIL
-  if (!require("photobiologyWavebands")) { install.packages("photobiologyWavebands"); require("photobiologyWavebands") }  ### hsdar for PROSAIL
-  if (!require("ggspectra")) { install.packages("ggspectra"); require("ggspectra") }  ### hsdar for PROSAIL
-  
+
   # to rm
   #trait='EWT';nmin=0.02; nmax=0.25; Interval=0.05; psoil=0.5;model='PROSAIL'
   
@@ -159,13 +157,35 @@ getSim_fromLUT<-function(trait='Cab',nmin=0, nmax=100, Interval=10, psoil=0.5,mo
     sim.canopy<-do.call(rbind,sims)
     # remove box label
     sim.canopy <- sim.canopy[,-1] 
-    # add the 'wavelength' and rotate the df
-    # (i didn't find the actual wavelength values, but hey).
-    sim.canopy <- cbind(1:ncol(sim.canopy), t(sim.canopy)) 
-    plotspectra(sim.canopy, y=2:ncol(sim.canopy), cols = c(rainbow(ncol(sim.canopy)-2),'black'),
-               type='l', main=trait,ylab="reflectance", xlab = 'Wavelength')
-    legend("topright", legend = seq(nmin, nmax, by=Interval),
-           fill=c(rainbow(ncol(sim.canopy)-1),'black'),cex=0.8)
+    if (is.null(method) | method == 'ggplot' | method != 'classical' ){
+      
+      sim.canopy.ggplot <-data.frame(Trait= LUT[,trait],ID=1:nrow(sim.canopy), sim.canopy)
+      colnames(sim.canopy.ggplot)<-c('Trait','ID',paste('R',c(400:2499),sep='.'))
+      sim.canopy.ggplot <-cbind(sim.canopy.ggplot[1], stack(sim.canopy.ggplot[3:dim(sim.canopy.ggplot)[2]]))
+      sim.canopy.ggplot$ind =as.numeric(sub("R.", "", sim.canopy.ggplot$ind, fixed = TRUE))
+      
+      spectral_plot<-ggplot(sim.canopy.ggplot, aes(x=ind, y=values, group=Trait)) +theme_bw() +
+        geom_line(aes(color=as.factor(Trait)),linetype = "dashed", size=0.8) +
+        labs(color = trait, x='',y='Reflectance')+  ggtitle("spectral signatures")+
+        geom_point(aes(color=as.factor(Trait)), size=0.4) +
+        theme(plot.title = element_text(hjust = 0.5, size=18))
+      print(spectral_plot)
+      
+      to_export = list('LUT'=LUT,'Plot'=spectral_plot)
+      
+    } else if (method == 'classical') {
+      
+      # add the 'wavelength' and rotate the df
+      # (i didn't find the actual wavelength values, but hey).
+      sim.canopy <- cbind(1:ncol(sim.canopy), t(sim.canopy)) 
+      plotspectra(sim.canopy, y=2:ncol(sim.canopy), cols = c(rainbow(ncol(sim.canopy)-2),'black'),
+                  type='l', main=trait,ylab="reflectance", xlab = 'Wavelength')
+      
+      legend("topright", legend = seq(nmin, nmax, by=Interval),
+             fill=c(rainbow(ncol(sim.canopy)-1),'black'),cex=0.8)
+      
+      to_export = LUT
+    }
     
   } else if (model == 'PROSPECT') {
     
@@ -198,13 +218,34 @@ getSim_fromLUT<-function(trait='Cab',nmin=0, nmax=100, Interval=10, psoil=0.5,mo
     sim.leaf<-do.call(rbind,sims)
     # remove box label
     sim.leaf <- sim.leaf[,-1] 
-    # add the 'wavelength' and rotate the df
-    # (i didn't find the actual wavelength values, but hey).
-    sim.leaf <- cbind(1:ncol(sim.leaf), t(sim.leaf)) 
-    plotspectra(sim.leaf, y=2:ncol(sim.leaf), cols = c(rainbow(ncol(sim.leaf)-2),'black'),
-                type='l', main=trait,ylab="reflectance", xlab = 'Wavelength')
-    legend("topright", legend = seq(nmin, nmax, by=Interval),
-           fill=c(rainbow(ncol(sim.leaf)-1),'black'),cex=0.8)
+    
+    if (is.null(method) | method == 'ggplot' | method != 'classical' ){
+      
+      sim.leaf.ggplot <-data.frame(Trait= LUT[,trait],ID=1:nrow(sim.leaf), sim.leaf)
+      colnames(sim.leaf.ggplot)<-c('Trait','ID',paste('R',c(400:2499),sep='.'))
+      sim.leaf.ggplot <-cbind(sim.leaf.ggplot[1], stack(sim.leaf.ggplot[3:dim(sim.leaf.ggplot)[2]]))
+      sim.leaf.ggplot$ind =as.numeric(sub("R.", "", sim.leaf.ggplot$ind, fixed = TRUE))
+    
+      spectral_plot<-ggplot(sim.leaf.ggplot, aes(x=ind, y=values, group=Trait)) +theme_bw() +
+          geom_line(aes(color=as.factor(Trait)),linetype = "dashed", size=0.8) +
+          labs(color = trait, x='',y='Reflectance')+  ggtitle("spectral signatures")+
+          geom_point(aes(color=as.factor(Trait)), size=0.4) +
+          theme(plot.title = element_text(hjust = 0.5, size=18))
+      print(spectral_plot)
+      
+      to_export = list('LUT'=LUT,'Plot'=spectral_plot)
+    } else if (method == 'classical') {
+    
+      # add the 'wavelength' and rotate the df
+      # (i didn't find the actual wavelength values, but hey).
+      sim.leaf <- cbind(1:ncol(sim.leaf), t(sim.leaf)) 
+      plotspectra(sim.leaf, y=2:ncol(sim.leaf), cols = c(rainbow(ncol(sim.leaf)-2),'black'),
+                  type='l', main=trait,ylab="reflectance", xlab = 'Wavelength')
+      legend("topright", legend = seq(nmin, nmax, by=Interval),
+             fill=c(rainbow(ncol(sim.leaf)-1),'black'),cex=0.8)
+      
+      to_export = LUT
+    }
        
   } else if ( model == 'INFORM'){
       message('INFORM model will be processing ...')
@@ -232,17 +273,40 @@ getSim_fromLUT<-function(trait='Cab',nmin=0, nmax=100, Interval=10, psoil=0.5,mo
       sim.canopy<-do.call(rbind,sims)
       # remove box label
       sim.canopy <- sim.canopy[,-1] 
-      # add the 'wavelength' and rotate the df
-      # (i didn't find the actual wavelength values, but hey).
-      sim.canopy <- cbind(1:ncol(sim.canopy), t(sim.canopy)) 
-      plotspectra(sim.canopy, y=2:ncol(sim.canopy), cols = c(rainbow(ncol(sim.canopy)-2),'black'),
-                  type='l', main=trait,ylab="reflectance", xlab = 'Wavelength')
-      legend("topright", legend = seq(nmin, nmax, by=Interval),
-             fill=c(rainbow(ncol(sim.canopy)-1),'black'),cex=0.8)
+      
+      if (is.null(method) | method == 'ggplot' | method != 'classical' ){
+        
+        sim.canopy.ggplot <-data.frame(Trait= LUT[,trait],ID=1:nrow(sim.canopy), sim.canopy)
+        colnames(sim.canopy.ggplot)<-c('Trait','ID',paste('R',c(400:2499),sep='.'))
+        sim.canopy.ggplot <-cbind(sim.canopy.ggplot[1], stack(sim.canopy.ggplot[3:dim(sim.canopy.ggplot)[2]]))
+        sim.canopy.ggplot$ind =as.numeric(sub("R.", "", sim.canopy.ggplot$ind, fixed = TRUE))
+        
+        spectral_plot<-ggplot(sim.canopy.ggplot, aes(x=ind, y=values, group=Trait)) +theme_bw() +
+          geom_line(aes(color=as.factor(Trait)),linetype = "dashed", size=0.8) +
+          labs(color = trait, x='',y='Reflectance')+  ggtitle("spectral signatures")+
+          geom_point(aes(color=as.factor(Trait)), size=0.4) +
+          theme(plot.title = element_text(hjust = 0.5, size=18))
+        print(spectral_plot)
+        
+        to_export = list('LUT'=LUT,'Plot'=spectral_plot)
+        
+      } else if (method == 'classical') {
+        
+        # add the 'wavelength' and rotate the df
+        # (i didn't find the actual wavelength values, but hey).
+        sim.canopy <- cbind(1:ncol(sim.canopy), t(sim.canopy)) 
+        plotspectra(sim.canopy, y=2:ncol(sim.canopy), cols = c(rainbow(ncol(sim.canopy)-2),'black'),
+                    type='l', main=trait,ylab="reflectance", xlab = 'Wavelength')
+        
+        legend("topright", legend = seq(nmin, nmax, by=Interval),
+               fill=c(rainbow(ncol(sim.canopy)-1),'black'),cex=0.8)
+        to_export = LUT
+      }
+      
       
      }
        
-return(LUT)
+return(to_export)
   }
   
 
