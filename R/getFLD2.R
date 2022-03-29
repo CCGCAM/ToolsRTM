@@ -10,6 +10,7 @@
 #' @export
 #'
 #' @examples
+#' 
 getFLD2 <- function(values, wavelengths, irradiance) {
 
   Eout <- irradiance[which(irradiance[,1] == 750),2] #a750
