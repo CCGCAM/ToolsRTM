@@ -24,7 +24,7 @@ getSim_fromLUT<-function(trait='Cab',nmin=0, nmax=100, Interval=10, psoil=0.5,mo
   Rsoil2 <- data[,12]  # rsoil2 = wet soil 
   
   if ( is.null(psoil)){
-    message(' PROSAIL model will be use as input')
+    message(' soil factor of 0.5 will be used as default')
     psoil	 <-  0.5    # soil factor (psoil=0: wet soil / psoil=1: dry soil)
     rsoil  <- psoil*Rsoil1+(1-psoil)*Rsoil2
   } else {
@@ -34,7 +34,7 @@ getSim_fromLUT<-function(trait='Cab',nmin=0, nmax=100, Interval=10, psoil=0.5,mo
   set.seed(12345)
   
   if ( is.null(model)){
-    message(' PROSAIL model will be use as input')
+    message(' PROSAIL model will be used as input')
   }
   
   #Inputs by default for Leaf model (PROSPECT)
@@ -59,7 +59,7 @@ getSim_fromLUT<-function(trait='Cab',nmin=0, nmax=100, Interval=10, psoil=0.5,mo
     nLUT = 1 + Interval
   }
   if ( is.null(trait)){
-    message(' input is empty, chorophyll content will be use as input')
+    message(' trait is empty, chorophyll content will be used as default')
     input<- seq(nmin,nmax, by=Interval)##stats::runif(nLUT,min = nmin,max=nmax)
     Cab=input
   } else if (trait == 'Cab'){
@@ -115,7 +115,7 @@ getSim_fromLUT<-function(trait='Cab',nmin=0, nmax=100, Interval=10, psoil=0.5,mo
     input<- seq(nmin,nmax, by=Interval)
     psi=input
   } else if (trait == 'LIDFb'){
-    message('Type LIDF to 2 is only use and LIDFb = 0')
+    message('Type LIDF is set to 2; and LIDFb = 0')
     LIDFb = 0
   } else if (trait == 'LAIu'){
     input<- seq(nmin,nmax, by=Interval)
@@ -133,7 +133,7 @@ getSim_fromLUT<-function(trait='Cab',nmin=0, nmax=100, Interval=10, psoil=0.5,mo
   
   
   if ( is.null(model) | model == 'PROSAIL'){
-    message('By default, PROPECT + fourSAIL model will be processing ...')
+    message('By default, PROPECT + fourSAIL model is processing ...')
     LUT<- data.frame(N,Cab,Car,Anth,Cbrown,EWT,LMA,alpha,Prot,CBC,
                      LIDFa, LIDFb=0, TypeLidf=2, LAI=3,
                      hspot=hotspot, tts, tto, psi)
@@ -190,7 +190,7 @@ getSim_fromLUT<-function(trait='Cab',nmin=0, nmax=100, Interval=10, psoil=0.5,mo
     
   } else if (model == 'PROSPECT') {
     
-    message('PROPECT-PRO will be processing ...')
+    message('PROPECT-PRO is processing ...')
     
     LUT<- data.frame(N,Cab,Car,Anth,Cbrown,EWT,LMA,alpha,Prot,CBC)
     nLUT = dim(LUT)[1]
@@ -249,7 +249,7 @@ getSim_fromLUT<-function(trait='Cab',nmin=0, nmax=100, Interval=10, psoil=0.5,mo
     }
        
   } else if ( model == 'INFORM'){
-      message('INFORM model will be processing ...')
+      message('INFORM model is processing ...')
       LUT<- data.frame(N,Cab,Car,Anth,Cbrown,EWT,LMA,alpha,Prot,CBC,
                        LIDFa, LIDFb=0, TypeLidf=2, LAI=3,
                        hspot=hotspot, tts, tto, psi,LAIu,sd,cd,h,skyl)
