@@ -91,6 +91,7 @@ plotspectra_image<-function(Raster = NULL,n_spectra=1, sensor='Sentinel2a', fact
 #' @export
 #'
 #' @examples
+#' 
 plotspectra_SE <- function(df, x=1, y=2, cols=y,
                         xlim=range(df[,x], na.rm = T),
                         ylim=range(df[,y], na.rm = T),

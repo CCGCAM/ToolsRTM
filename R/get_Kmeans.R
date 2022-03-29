@@ -61,9 +61,7 @@ getKmeans <- function(stack,k=12,iter.max=100,nstart=10,geo=T,geo.weight=1){
   return(raster.classify)
 }
 
-# Normalize
-
-#' Title
+#' Normalize
 #'
 #' @param x 
 #' @param low 
@@ -73,6 +71,7 @@ getKmeans <- function(stack,k=12,iter.max=100,nstart=10,geo=T,geo.weight=1){
 #' @export
 #'
 #' @examples
+#' 
 normalize <- function(x,low=0,high=1){
   low+(x-min(x,na.rm=T))*(high-low)/(max(x,na.rm=T)-min(x,na.rm=T))
 }

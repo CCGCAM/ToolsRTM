@@ -10,6 +10,7 @@
 #' @export
 #'
 #' @examples
+#' 
 getCWSI <- function(df, Ta, HR,df.data) {
 
   cwsi.list = list()

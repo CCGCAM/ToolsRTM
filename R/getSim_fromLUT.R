@@ -8,7 +8,7 @@
 #' @param psoil the factor for the soil
 #' @param model the model for making the simulations (PROSAIL, INFORM or PROSPECT)
 #' @param method or ggplot or classical method, by default is taken  'ggplot'
-#' @model a dataframe with all parameters
+#' @param model a dataframe with all parameters
 #' @export
 #'
 #' @examples
@@ -328,6 +328,7 @@ return(to_export)
 #' @export
 #'
 #' @examples
+#' 
 plotspectra <- function(df, x=1, y=2, cols=y,
                           xlim=range(df[,x], na.rm = T),
                           ylim=range(df[,y], na.rm = T),
@@ -358,6 +359,7 @@ plotspectra <- function(df, x=1, y=2, cols=y,
 #' @export
 #'
 #' @examples
+#' 
 color.gradient <- function(x, colors=c("red","yellow","green"), colsteps=100) {
   
   return( colorRampPalette(colors) (colsteps) [ findInterval(x, seq(min(x),max(x), length.out=colsteps)) ] )

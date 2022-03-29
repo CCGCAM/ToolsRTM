@@ -12,6 +12,7 @@
 #' @export
 #'
 #' @examples
+#' 
 getSpectraIndices<-function(rasterFiles=NULL,Sensor='Sentinel2a',SpecEq=NULL,SpectraltoCompute= 'All',
                             factorR=NULL, path.export=NULL, single.bands=T){
   options(warn=-1) ###avoid warnings

@@ -8,6 +8,7 @@
 #' @export
 #'
 #' @examples
+#' 
 getLUT<-function(inputs=NULL, nLUT=100, setseed = 123){
   
   if ( is.null(setseed)){

@@ -12,6 +12,7 @@
 #' @export
 #'
 #' @examples
+#' 
 getSCOPE_outputs<-function(pathin=NULL,nsamples=100, resampling='Sentinel2a',
                             reflectance ='apparent', SIF=T,
                             radiance =T){
