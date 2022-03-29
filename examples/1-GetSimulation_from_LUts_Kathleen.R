@@ -27,7 +27,25 @@ LUT_CBC<-ToolsRTM::getSim_fromLUT(trait = 'CBC',nmin = 0.001,nmax=0.35,Interval 
 LUT_Car<-ToolsRTM::getSim_fromLUT(trait = 'Car',nmin = 0.0,nmax=20,Interval = 2,model = 'INFORM')
 LUT_Anth<-ToolsRTM::getSim_fromLUT(trait = 'Anth',nmin = 0.0,nmax=20,Interval = 2,model = 'INFORM')
 LUT_tts<-ToolsRTM::getSim_fromLUT(trait = 'tts',nmin = 0.0,nmax=90,Interval = 10,model = 'PROSAIL')
-LUT_tto<-ToolsRTM::getSim_fromLUT(trait = 'tto',nmin = 0.0,nmax=90,Interval = 10,model = 'INFORM')
+LUT_tto<-ToolsRTM::getSim_fromLUT(trait = 'tto',nmin = 0.0,nmax=90,Interval = 10,model = 'PROSAIL')
+
+
+
+##############################################################################################################################
+# 0.2.   Get simulations directly using a new functions  ----   
+##############################################################################################################################
+
+inputsPRO = read.table('examples/LUTs/inputs_PROSAIL_Kathleen.csv', sep=',', header = T)
+inputsINFORM= read.table('examples/LUTs/inputs_INFORM.csv', sep=',', header = T)
+
+nSamples =500
+
+#inputs = ToolsRTM::inputsINF
+LUT<-as.data.frame(getLUT(inputs = inputsPRO, nLUT=nSamples, setseed = 1234))
+data.sim <- get_simulations(inputLUT = LUT,psoil = 1,rtm.model = 'PROSAIL')
+
+LUT_inform<-as.data.frame(getLUT(inputs = inputsINFORM, nLUT=nSamples, setseed = 1234))
+data.simI <- get_simulations(inputLUT = LUT_inform,psoil = 0.5,rtm.model = 'INFORM')
 
 ##############################################################################################################################
 #	1. Get spectra from GetLUT ----   
@@ -38,6 +56,7 @@ nSamples =500
 
 #inputs = ToolsRTM::inputsINF
 LUT<-as.data.frame(getLUT(inputs = inputsPRO, nLUT=nSamples, setseed = 1234))
+
 LUT$LIDFa =24
 head(LUT)
 dim(LUT)
