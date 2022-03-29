@@ -19,15 +19,15 @@ if (!require("ToolsRTM")) { install.packages("ToolsRTM"); require("ToolsRTM") } 
 ##############################################################################################################################
 ## input you can use are in the LUT table
 
-LUT_cab<-ToolsRTM::getSim_fromLUT(trait = 'Cab',nmin = 10,nmax=90,Interval = 5,model = 'PROSAIL')
+LUT_cab<-ToolsRTM::getSim_fromLUT(trait = 'Cab',nmin = 10,nmax=90,Interval = 10,model = 'PROSAIL', method='classical')
 LUT_ewt<-ToolsRTM::getSim_fromLUT(trait = 'EWT',nmin = 0.001,nmax=0.35,Interval = 0.05,model = 'INFORM')
 LUT_lma<-ToolsRTM::getSim_fromLUT(trait = 'LMA',nmin = 0.001,nmax=0.35,Interval = 0.05,model = 'PROSAIL')
 LUT_prot<-ToolsRTM::getSim_fromLUT(trait = 'Prot',nmin = 0.001,nmax=0.35,Interval = 0.05,model = 'PROSPECT')
 LUT_CBC<-ToolsRTM::getSim_fromLUT(trait = 'CBC',nmin = 0.001,nmax=0.35,Interval = 0.05,model = 'INFORM')
 LUT_Car<-ToolsRTM::getSim_fromLUT(trait = 'Car',nmin = 0.0,nmax=20,Interval = 2,model = 'INFORM')
 LUT_Anth<-ToolsRTM::getSim_fromLUT(trait = 'Anth',nmin = 0.0,nmax=20,Interval = 2,model = 'INFORM')
-LUT_tto<-ToolsRTM::getSim_fromLUT(trait = 'tts',nmin = 0.0,nmax=90,Interval = 10,model = 'PROSAIL')
-LUT_tts<-ToolsRTM::getSim_fromLUT(trait = 'tto',nmin = 0.0,nmax=90,Interval = 10,model = 'PROSAIL')
+LUT_tts<-ToolsRTM::getSim_fromLUT(trait = 'tts',nmin = 0.0,nmax=90,Interval = 10,model = 'PROSAIL')
+LUT_tto<-ToolsRTM::getSim_fromLUT(trait = 'tto',nmin = 0.0,nmax=90,Interval = 10,model = 'INFORM')
 
 ##############################################################################################################################
 #	1. Get spectra from GetLUT ----   
