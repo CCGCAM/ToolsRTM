@@ -14,7 +14,7 @@
 #' @examples
 #' 
 getSim_fromLUT<-function(trait='Cab',nmin=0, nmax=100, Interval=10, psoil=0.5,model='PROSAIL', method='ggplot'){
-  if (!require("foreach")) { install.packages("foreach"); require("foreach") }  ### hsdar for PROSAIL
+  if (!require("foreach")) { install.packages("foreach"); require("foreach") }  ### 
 
   # to rm
   #trait='EWT';nmin=0.02; nmax=0.25; Interval=0.05; psoil=0.5;model='PROSAIL'
