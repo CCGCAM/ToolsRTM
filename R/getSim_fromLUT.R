@@ -166,7 +166,7 @@ getSim_fromLUT<-function(trait='Cab',nmin=0, nmax=100, Interval=10, psoil=0.5,mo
       
       spectral_plot<-ggplot(sim.canopy.ggplot, aes(x=ind, y=values, group=Trait)) +theme_bw() +
         geom_line(aes(color=as.factor(Trait)),linetype = "dashed", size=0.8) +
-        labs(color = trait, x='',y='Reflectance')+  ggtitle("spectral signatures")+
+        labs(color = trait, x='Wavelength',y='Reflectance')+  ggtitle("spectral signatures")+
         geom_point(aes(color=as.factor(Trait)), size=0.4) +
         theme(plot.title = element_text(hjust = 0.5, size=18))
       print(spectral_plot)
@@ -228,7 +228,7 @@ getSim_fromLUT<-function(trait='Cab',nmin=0, nmax=100, Interval=10, psoil=0.5,mo
     
       spectral_plot<-ggplot(sim.leaf.ggplot, aes(x=ind, y=values, group=Trait)) +theme_bw() +
           geom_line(aes(color=as.factor(Trait)),linetype = "dashed", size=0.8) +
-          labs(color = trait, x='',y='Reflectance')+  ggtitle("spectral signatures")+
+          labs(color = trait, x='Wavelength',y='Reflectance')+  ggtitle("spectral signatures")+
           geom_point(aes(color=as.factor(Trait)), size=0.4) +
           theme(plot.title = element_text(hjust = 0.5, size=18))
       print(spectral_plot)
@@ -283,7 +283,7 @@ getSim_fromLUT<-function(trait='Cab',nmin=0, nmax=100, Interval=10, psoil=0.5,mo
         
         spectral_plot<-ggplot(sim.canopy.ggplot, aes(x=ind, y=values, group=Trait)) +theme_bw() +
           geom_line(aes(color=as.factor(Trait)),linetype = "dashed", size=0.8) +
-          labs(color = trait, x='',y='Reflectance')+  ggtitle("spectral signatures")+
+          labs(color = trait, x='Wavelength',y='Reflectance')+  ggtitle("spectral signatures")+
           geom_point(aes(color=as.factor(Trait)), size=0.4) +
           theme(plot.title = element_text(hjust = 0.5, size=18))
         print(spectral_plot)
