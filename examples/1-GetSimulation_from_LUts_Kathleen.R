@@ -26,8 +26,9 @@ LUT_prot<-ToolsRTM::getSim_fromLUT(trait = 'Prot',nmin = 0.001,nmax=0.35,Interva
 LUT_CBC<-ToolsRTM::getSim_fromLUT(trait = 'CBC',nmin = 0.001,nmax=0.35,Interval = 0.05,model = 'INFORM')
 LUT_Car<-ToolsRTM::getSim_fromLUT(trait = 'Car',nmin = 0.0,nmax=20,Interval = 2,model = 'INFORM')
 LUT_Anth<-ToolsRTM::getSim_fromLUT(trait = 'Anth',nmin = 0.0,nmax=20,Interval = 2,model = 'INFORM')
-LUT_tto<-ToolsRTM::getSim_fromLUT(trait = 'tto',nmin = 0.0,nmax=90,Interval = 10,model = 'PROSAIL')
-LUT_tts<-ToolsRTM::getSim_fromLUT(trait = 'tts',nmin = 0.0,nmax=90,Interval = 10,model = 'INFORM')
+LUT_tto<-ToolsRTM::getSim_fromLUT(trait = 'tts',nmin = 0.0,nmax=90,Interval = 10,model = 'PROSAIL')
+LUT_tts<-ToolsRTM::getSim_fromLUT(trait = 'tto',nmin = 0.0,nmax=90,Interval = 10,model = 'PROSAIL')
+
 ##############################################################################################################################
 #	1. Get spectra from GetLUT ----   
 ##############################################################################################################################
