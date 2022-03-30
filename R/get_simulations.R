@@ -236,7 +236,7 @@ get_simulations<-function(inputLUT = NULL, psoil=0.5, rtm.model = 'PROSAIL'){
     theme(plot.title = element_text(hjust = 0.5, size=18))
   print(spectral_plot)
   
-  to_export = list('LUT'=sim.leaf.ggplot,'Plot'=spectral_plot)
+  to_export = list('LUT'=sim.leaf.to_export,'Plot'=spectral_plot)
 }
   
   return(to_export)
