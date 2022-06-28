@@ -21,3 +21,6 @@ getCWSI(df, Ta, HR, df.data)
 \description{
 Get CWSI for almonds
 }
+\examples{
+
+}

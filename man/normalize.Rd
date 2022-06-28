@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_Kmeans.R
 \name{normalize}
 \alias{normalize}
-\title{Title}
+\title{Normalize}
 \usage{
 normalize(x, low = 0, high = 1)
 }
@@ -17,5 +17,8 @@ normalize(x, low = 0, high = 1)
 
 }
 \description{
-Title
+Normalize
+}
+\examples{
+
 }

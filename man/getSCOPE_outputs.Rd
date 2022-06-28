@@ -32,3 +32,6 @@ getSCOPE_outputs(
 \description{
 Get in a LUT all main outputs from SCOPE model
 }
+\examples{
+
+}

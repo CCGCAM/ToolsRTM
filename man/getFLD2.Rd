@@ -19,3 +19,6 @@ getFLD2(values, wavelengths, irradiance)
 \description{
 Get FLD2
 }
+\examples{
+
+}

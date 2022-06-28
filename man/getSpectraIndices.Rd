@@ -35,3 +35,6 @@ getSpectraIndices(
 \description{
 this function produces Spatial maps of the spectral indices
 }
+\examples{
+
+}
