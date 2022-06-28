@@ -25,8 +25,14 @@ getStacks<-function(rasterFiles=NULL, frequency='Daily', bands=NULL,output=NULL)
     files = list.files(path_out,pattern="*.tif$", full.names=TRUE)
     #rs <- stack(files) 
     ## by order B1-B2-B3-B4-B5-B6-B7-B8-B8A-B9-B11-B12
-    rs <- stack(files[1],files[4],files[5],files[6],files[7],files[8],files[9],files[10],files[11],files[12],files[2],files[3])
-    names(rs) <- bands
+    if ('SCL' %in% bands){
+      rs <- stack(files[1],files[4],files[5],files[6],files[7],files[8],files[9],files[10],files[11],files[12],files[2],files[3],files[13])
+      names(rs) <- bands
+    } else {
+      rs <- stack(files[1],files[4],files[5],files[6],files[7],files[8],files[9],files[10],files[11],files[12],files[2],files[3])
+      names(rs) <- bands[1:12]
+    }
+   
     #plot(rs)
     path_out<-paste(output,'/Stacks',sep="")
     ifelse(!dir.exists(path_out), dir.create(path_out), FALSE)

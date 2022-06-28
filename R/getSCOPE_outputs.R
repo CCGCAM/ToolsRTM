@@ -96,8 +96,11 @@ getSCOPE_outputs<-function(pathin=NULL,nsamples=100, resampling='Sentinel2a',
    
    # Vegeetation Parameters
    vegetation<-data.table::fread(paste(pathin,'vegetation.csv',sep=''),header=F,skip=2,nrows=nsamples,sep=',')
-   colnames(vegetation)<-c('simulation_number','year','DoY','aPAR','aPARbyCab','aPARbyCab(energyunits)','Photosynthesis','Electron_transport','NPQ_energy','LST')
-   #
+   ##old version
+   # colnames(vegetation)<-c('simulation_number','year','DoY','aPAR','aPARbyCab','aPARbyCab(energyunits)','Photosynthesis','Electron_transport','NPQ_energy','LST')
+   ## new version
+   colnames(vegetation)<-c('simulation_number','year','DoY','Photosynthesis','Electron_transport','NPQ_energy','NPQ_photon','canopy_level_FQE','LST','emis')
+    #
    if (resampling == 'Sentinel2a'){
      if (radiance == T){
         SpecLoF.SE<-hsdar::spectralResampling(SpecLoF, "Sentinel2a",response_function = TRUE)
@@ -112,6 +115,7 @@ getSCOPE_outputs<-function(pathin=NULL,nsamples=100, resampling='Sentinel2a',
      progress_bar = txtProgressBar(min=0, max=nsamples, style = 3, char="=")
        for (m in c(1:nsamples)) {
          #print(m)
+         m=1
          Vcmax[m]<-inputs[m,'Vcmax25']
          ### rad at 1nm
          rad.total.i<-SpecLoF@spectra[m][341:451]

@@ -44,12 +44,12 @@ getSim_fromLUT<-function(trait='Cab',nmin=0, nmax=100, Interval=10, psoil=0.5,mo
   #Inputs by default for canopy model (fourSAIL) 
   ## parameters for fourSAIL
   LIDFa=30; LIDFb=0; TypeLidf=2; lai=3
-  hotspot=0; tts=5; tto=20; psi=30
+  hotspot=0; tts=5; tto=0; psi=0
   
   ## Input for INform model
   LAIu=0.5
   sd=500; cd=4.5; h=20; psi=30
-  skyl=0.2
+  skyl=0.1
   
   
   if (is.null(Interval)){
