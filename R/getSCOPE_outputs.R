@@ -38,8 +38,13 @@ getSCOPE_outputs<-function(pathin=NULL,nsamples=100, resampling='Sentinel2a',
   } else if (length(colnames(inputs)) == 20) {
     colnames(inputs)<-c('n_pars','Cab','Cca','Cdm','Cw','N','Cant','Vcmax25','BallBerrySlope','LAI','LIDFa','Rin','Ta','Rli','p','ea','u','Ca','tts','tto')
     
+  } else if (length(colnames(inputs)) == 24) {
+      ## version SCOPE 2.1
+    colnames(inputs)<-c('n_pars','Cab','Cca','Cdm','Cw','Cs','N','Cant','Cp','Cbc','Vcmax25','BallBerrySlope','LAI','LIDFa','Rin','Ta','Rli','p','ea','u','Ca','tts','tto','psi')
+    
   }
  
+
   
    # ######################################################################################
    # #reflectance  #fraction of radiation in observation direction *pi / irradiance 
@@ -115,7 +120,6 @@ getSCOPE_outputs<-function(pathin=NULL,nsamples=100, resampling='Sentinel2a',
      progress_bar = txtProgressBar(min=0, max=nsamples, style = 3, char="=")
        for (m in c(1:nsamples)) {
          #print(m)
-         m=1
          Vcmax[m]<-inputs[m,'Vcmax25']
          ### rad at 1nm
          rad.total.i<-SpecLoF@spectra[m][341:451]
