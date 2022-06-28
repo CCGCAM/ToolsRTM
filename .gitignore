@@ -13,7 +13,13 @@ examples/codes/*
 examples/SEdata/*
 examples/field-dataset/*
 examples/SCOPE/*
-examples/LUTs/*
+#examples/LUTs/
 examples/Maria/*
 examples/Mirco/*
 examples/ICOS/*
+examples/LUTs/*
+examples/DART/*
+examples/DEFID2/*
+examples/KMZ/*
+examples/XF_Mallorca/*
+examples/TROPOSIF/*
