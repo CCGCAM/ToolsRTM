@@ -240,7 +240,7 @@ litab <- LeafDistribution$litab
 		rddt	 <-  rsoil
 		rsdt	 <-  rsoil
 		rdot	 <-  rsoil
-		rsodt	 <-  0*rsoil
+		rsodt	 <-  0 * rsoil
 		rsost	 <-  rsoil
 		rsot	 <-  rsoil
 
