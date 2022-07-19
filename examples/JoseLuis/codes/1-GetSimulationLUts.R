@@ -33,47 +33,6 @@ LUT_tts<-ToolsRTM::getSim_fromLUT(trait = 'tto',nmin = 0.0,nmax=90,Interval = 10
 LUT_tto<-ToolsRTM::getSim_fromLUT(trait = 'tto',nmin = 0.0,nmax=90,Interval = 5,model = 'INFORM')
 
 
-
-##############################################################################################################################
-# 0.2.   Get simulations directly using a new functions  ----   
-##############################################################################################################################
-
-inputsPRO = read.table('examples/LUTs/inputs_PROSAIL_Kathleen.csv', sep=',', header = T)
-
-nSamples =200
-
-#inputs = ToolsRTM::inputsINF
-LUT<-as.data.frame(getLUT(inputs = inputsPRO, nLUT=nSamples, setseed = 1234))
-data.sim <- get_simulations(inputLUT = LUT,psoil = 1,rtm.model = 'PROSPECT-PRO')
-
-GSA_results <- GSAtool(as.matrix(LUT), as.matrix(data.sim$LUT[,c(20:dim(data.sim$LUT)[2])]), names(LUT), steps = 15, save=FALSE)
-sobo_df<-as.data.frame(GSA_results[[2]][["AMAE"]])
-sobo_df<-as.data.frame(GSA_results[[1]][["sobol"]])
-sobo_df<-as.data.frame(GSA_results[[1]][["sobol_total"]])
-sobo_df$wave= c(400:2499)
-
-plot = ggplot(sobo_df, aes(x=wave, y=Anth*100)) +	theme_bw() +
-  geom_area(colour="black", size=.2, alpha=.8) + ylab('Sobol')
-plot
-
-plot(wave,sobo_df$Cab,ylim=c(0,1), type='l',ylab='',lwd=2,col='green')
-par(new=T)
-plot(wave,1-sobo_df$Car,ylim=c(0,1), type='l',ylab='',lwd=2,col='black')
-par(new=T)
-plot(wave,1-sobo_df$Anth,ylim=c(0,1), type='l',ylab='',lwd=2,col='red')
-
-par(new=T)
-plot(wave,sobo_df$LAI,ylim=c(0,2), type='l',ylab='',lwd=2,col='forestgreen')
-par(new=T)
-plot(sobo_df$LMA,ylim=c(0,1), type='l',ylab='',lwd=2,col='red')
-par(new=T)
-plot(sobo_df$LIDFa,ylim=c(0,1), type='l',ylab='',lwd=2,col='blue')
-par(new=T)
-
-
-LUT_inform<-as.data.frame(getLUT(inputs = inputsINFORM, nLUT=nSamples, setseed = 1234))
-data.simI <- get_simulations(inputLUT = LUT_inform,psoil = 0.1,rtm.model = 'INFORM')
-
 ##############################################################################################################################
 #	1. Get spectra from GetLUT ----   
 ##############################################################################################################################
