@@ -9,7 +9,7 @@ Prot,0.00001,0.03,g cm-2,Uniform,-,-,No,0,0
 CBC,0.00001,0.03,g cm-2,Uniform,-,-,No,0,0
 N,1.5,2.5,-,Uniform,-,-,No,1,1.5
 alpha,0,90,-,Uniform,-,-,No,0,40
-LIDFa,30,70,degree,Uniform,-,-,No,1,45
+LIDFa,0,70,degree,Uniform,-,-,No,1,45
 LIDFb,0,0,degree,Uniform,-,-,No,0,0
 TypeLidf,1,2,-,Uniform,-,-,No,0,2
 LAI,2,5,m2 m-2,Uniform,-,-,No,1,3

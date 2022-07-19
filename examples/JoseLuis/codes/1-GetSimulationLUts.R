@@ -26,11 +26,11 @@ LUT_lma<-ToolsRTM::getSim_fromLUT(trait = 'LMA',nmin = 0.001,nmax=0.35,Interval 
 LUT_prot<-ToolsRTM::getSim_fromLUT(trait = 'Prot',nmin = 0.001,nmax=0.35,Interval = 0.05,model = 'PROSPECT')
 LUT_CBC<-ToolsRTM::getSim_fromLUT(trait = 'CBC',nmin = 0.001,nmax=0.35,Interval = 0.05,model = 'INFORM')
 LUT_LIDFa<-ToolsRTM::getSim_fromLUT(trait = 'LIDFa',nmin = 0.0,nmax=90,Interval = 10,model = 'PROSAIL')
-LUT_LAI<-ToolsRTM::getSim_fromLUT(trait = 'LAI',nmin = 0,nmax=5,Interval = 1,model = 'PROSAIL')
+LUT_LAI<-ToolsRTM::getSim_fromLUT(trait = 'LAI',nmin = 0,nmax=7,Interval = 1,model = 'PROSAIL')
 LUT_Car<-ToolsRTM::getSim_fromLUT(trait = 'Car',nmin = 0.0,nmax=20,Interval = 2,model = 'INFORM')
 LUT_Anth<-ToolsRTM::getSim_fromLUT(trait = 'Anth',nmin = 0.0,nmax=20,Interval = 2,model = 'INFORM')
 LUT_tts<-ToolsRTM::getSim_fromLUT(trait = 'tto',nmin = 0.0,nmax=90,Interval = 10,model = 'PROSAIL')
-LUT_tto<-ToolsRTM::getSim_fromLUT(trait = 'tto',nmin = 0.0,nmax=90,Interval = 5,model = 'INFORM')
+LUT_tto<-ToolsRTM::getSim_fromLUT(trait = 'tto',nmin = 0.0,nmax=90,Interval = 5,model = 'PROSAIL')
 
 
 ##############################################################################################################################
