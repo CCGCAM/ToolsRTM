@@ -87,6 +87,15 @@ getSCOPE_outputs<-function(pathin=NULL,nsamples=100, resampling='Sentinel2a',
      #plot(SpecLoF,FUN=min,ylab='radiance with F',xlim=c(740,780))
    }
    
+  ## Apar
+  aPAR<-data.table::fread(paste(pathin,'aPAR.csv',sep=''),header=F,skip=2,nrows=nsamples,sep=',')
+  
+  colnames(aPAR)<-c('simulation_number','year','DoY','iPAR','iPARE','LAIsunlit','LAIshaded','aPARtot',
+                         'aPARsun','aPARsha','aPARCabtot','aPARCabsun','aPARCabsha','aPARCartot','aPARCarsun',
+                         'aPARCarsha','aPARtotE','aPARsunE','aPARshaE','aPARCabtotE','aPARCabsunE','aPARCabshaE',
+                         'aPARCartotE','aPARCarsunE','aPARCarshaE')
+  
+  
    ## Radiation
    radiation<-data.table::fread(paste(pathin,'radiation.csv',sep=''),header=F,skip=2,nrows=nsamples,sep=',')
    colnames(radiation)<-c('simulation_number','year','DoY','ShortIn','LongIn','HemisOutShort','HemisOutLong','lo','Lot','Lote')
@@ -137,7 +146,12 @@ getSCOPE_outputs<-function(pathin=NULL,nsamples=100, resampling='Sentinel2a',
    }
    ## get a LUT table
    
-   outputs<-cbind(vegetation,Fluo_scalar,fluxes,radiation)
+   outputs<-as.data.frame(cbind(vegetation,Fluo_scalar,fluxes,aPAR,radiation))
+   # Find Duplicate Column Names
+   duplicated_names <- duplicated(colnames(outputs))
+   # Remove Duplicate Column Names
+   outputs<-outputs[!duplicated_names]
+   
    if( SIF == T) {
      outputs$SIF_1nm<-SIF_1nm
      outputs$SIF_SE<-SIF_SE

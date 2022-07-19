@@ -5,6 +5,7 @@
 #' @param nLUT  the number of rows for the LUT
 #' @param distribution  the number of rows for the LUT
 #' @param setseed  the number of rows for the LUT
+#' @param rho  the correlate value for Uniform distribution
 #' @param Varnames  the number of rows for the LUT
 #' @param MinRage  the number of rows for the LUT
 #' @param MaxRange  the number of rows for the LUT
@@ -14,10 +15,16 @@
 #' @examples
 #' 
 #' 
-getCor<-function(n_inputs=NULL, nLUT=100,  distribution = 'Uniform',setseed = 123,
+getCor<-function(n_inputs=NULL, nLUT=100,  distribution = 'Uniform',setseed = 123, rho=NULL,
                          Varnames = NULL,
                          MinRage = NULL,
                          MaxRange = NULL){
+  
+  if (is.null(rho)){
+    message('Please insert r value, only valid for Uniform distribution')
+    stop()
+  } 
+  
   if (is.null(n_inputs)){
     message('Please insert number of variables that you need correlate')
     stop()
@@ -94,7 +101,7 @@ getCor<-function(n_inputs=NULL, nLUT=100,  distribution = 'Uniform',setseed = 12
   
   if ( distribution == 'Uniform'){
     message('Generating a Uniform distribution for all correlated inputs ...')
-    norm.cop <- copula::normalCopula(0.85,dim=n); 
+    norm.cop <- copula::normalCopula(rho,dim=n); 
     df.uniform <- copula::rCopula(n.samples, norm.cop)
     
     ## convert to uniform
