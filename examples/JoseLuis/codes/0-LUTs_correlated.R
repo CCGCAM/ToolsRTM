@@ -53,6 +53,7 @@ df.matrix.kde <- MASS::kde2d(LUT.pigments$LUT[,1], LUT.pigments$LUT[,3], n = 300
 graphics::image(df.matrix.kde)       # from base graphics package
 contour(df.matrix.kde, add = TRUE)  
 
+#
 
 ###### histogram 
 ggplot(LUT.pigments$LUT, aes(x=Car)) +   geom_histogram(aes(y=..density..), colour="black", fill="white")+
