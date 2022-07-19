@@ -18,7 +18,7 @@ if (!require("caretEnsemble")) { install.packages("caretEnsemble"); require("car
 ##############################################################################################################################
 
 inputsPRO = read.table('examples/JoseLuis/Tables/inputs_PROSAIL.csv', sep=',', header = T)
-nSamples_topredict =2500
+nSamples_topredict =500
 #inputs = ToolsRTM::inputsINF
 LUT<-as.data.frame(getLUT(inputs = inputsPRO, nLUT=nSamples_topredict, setseed = 1234))
 ID<-c(1:nSamples_topredict)
@@ -30,11 +30,14 @@ variable_inputs <- c('ID','Cab','Car','Anth','LMA','EWT','N','LAI','LIDFa','tts'
 LUT.sb <- LUT[,c(variable_inputs)]
 
 
-LUT.pigments<-getCor(n_inputs = 4,setseed = 1234,distribution = 'Uniform',nLUT = nSamples_topredict,rho=0.99,
+LUT.pigments<-getCor(n_inputs = 4,setseed = 1234,distribution = 'Uniform',nLUT = nSamples_topredict,rho=0.95,
                      Varnames = c('Cab','Car','Anth','LAI'),MinRage = c(0.5,0.1,0,0.5), MaxRange = c(95,40,7,7))
 
 summary(LUT.pigments$LUT)
 LUT.pigments$LUT[,3]<- scales::rescale(LUT.pigments$LUT[,3], to = c(7, 0))  
+
+LUT$Cab <-LUT.pigments$LUT$Cab
+
 
 for (i_input in colnames(LUT.pigments$LUT)){
   

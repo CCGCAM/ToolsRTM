@@ -26,7 +26,7 @@ LUT_lma<-ToolsRTM::getSim_fromLUT(trait = 'LMA',nmin = 0.001,nmax=0.35,Interval 
 LUT_prot<-ToolsRTM::getSim_fromLUT(trait = 'Prot',nmin = 0.001,nmax=0.35,Interval = 0.05,model = 'PROSPECT')
 LUT_CBC<-ToolsRTM::getSim_fromLUT(trait = 'CBC',nmin = 0.001,nmax=0.35,Interval = 0.05,model = 'INFORM')
 LUT_LIDFa<-ToolsRTM::getSim_fromLUT(trait = 'LIDFa',nmin = 0.0,nmax=90,Interval = 10,model = 'PROSAIL')
-LUT_LAI<-ToolsRTM::getSim_fromLUT(trait = 'LAI',nmin = 0,nmax=5,Interval = 1,model = 'INFORM')
+LUT_LAI<-ToolsRTM::getSim_fromLUT(trait = 'LAI',nmin = 0,nmax=5,Interval = 1,model = 'PROSAIL')
 LUT_Car<-ToolsRTM::getSim_fromLUT(trait = 'Car',nmin = 0.0,nmax=20,Interval = 2,model = 'INFORM')
 LUT_Anth<-ToolsRTM::getSim_fromLUT(trait = 'Anth',nmin = 0.0,nmax=20,Interval = 2,model = 'INFORM')
 LUT_tts<-ToolsRTM::getSim_fromLUT(trait = 'tto',nmin = 0.0,nmax=90,Interval = 10,model = 'PROSAIL')
@@ -56,14 +56,18 @@ Rsoil2 <- data[,12]  # rsoil2 = wet soil
 #plot(rsoil0)
 j=1
 set.seed(j*1256)
-psoil	 <-  0.1#runif(nSamples, 0, 1) 
+psoil	 <-  0.1 #runif(nSamples, 0, 1) 
 rsoil0<- c(psoil*Rsoil1+(1-psoil)*Rsoil2)
+###### ### ### ### ### ### ### ### ### 
+### This spte is for varying psoil
+#psoil	 <-  runif(nSamples, 0, 1) 
 #rsoil0<-list()
-#for (k in c(1:nSamples)){
- # rsoil<- c(psoil[k]*Rsoil1+(1-psoil[k])*Rsoil2)
+#for (k in c(1:10)){
+ ## rsoil<- c(psoil[k]*Rsoil1+(1-psoil[k])*Rsoil2)
   #rsoil0[[k]]<-rsoil#
+  #print(plot(rsoil0[[k]]))
 #}
-#plot(rsoil0)
+### 
 ##############################################################################################################################
 # 2.Get Simulations  ----
 ##############################################################################################################################
@@ -129,7 +133,42 @@ LUT_rfl.hyper.sb <- LUT_rfl.hyper[,c(variable_inputs,SE_20m_NoB10)]
 write.table(LUT_rfl.hyper.sb,file=paste('examples/JoseLuis/Tables/LUT_n',nSamples/1000,'k_PROSAIL_sb.csv',sep=''),sep=',',row.names = F)
 
 
+##############################################################################################################################
+# 4.   load dataset   ----   
+##############################################################################################################################
 
+dataset = read.table('examples/JoseLuis/Tables/Table_Aranjuez.csv', sep=',', header = T)
+head(dataset)
+
+data.spectra<-as.matrix(dataset[,c('B2','B3','B4','B5','B6','B7','B8','B8A','B11','B12')])
+wave_ =c(Spec.simula.sentinel@wavelength[c(2:9,12:13)])
+Spec.data<- speclib(data.spectra, wave_)
+plot(Spec.data)
+
+##############################################################################################################################
+# 4.2.   Comparison Plots  ----   
+##############################################################################################################################
+
+color.d = brewer.pal(7, "Blues")
+axis_x<-expression(bold('wave (nm)'))
+axis_y<-expression(bold('Reflectance'))
+
+par(mfrow=c(1,1),  mar = c(5,5,1.1,1),bg= "white", 
+    font.main=1.5, cex.main=1.2,font.axis=2, cex.axis=1.2, las=1,
+    font.lab=2, cex.lab=1.0)
+
+
+plot(NA,NA, lwd=2,lty=2,type='l',col='forestgreen',ylim=c(0,0.5),xlim=c(400,2300),xlab=axis_x,ylab=axis_y)
+#rect(par("usr")[1],par("usr")[3],par("usr")[2],par("usr")[4],col = "gray")
+par(new=T)
+#plot(Spec.simula, lwd=1,lty=2,type='l',col='black',ylim=c(0,0.4),xlim=c(400,2300),xlab=axis_x,ylab=axis_y)
+#par(new=T)
+plot(Spec.simula.sentinel, lwd=1,lty=2,type='b',col='black',pch=19,ylim=c(0,0.5),xlim=c(400,2300),xlab=axis_x,ylab=axis_y)
+par(new=T)
+plot(Spec.data, lwd=1,lty=2,type='b',col='forestgreen',pch=19,ylim=c(0,0.5),xlim=c(400,2300),xlab=axis_x,ylab=axis_y)
+
+legend("topright", legend = c(expression(bold('PROSAIL')),expression(bold('Obser.'))),
+       fill=c('black','forestgreen'),cex=0.8)
 
 
 
