@@ -19,7 +19,8 @@ if (!require("ToolsRTM")) { install.packages("ToolsRTM"); require("ToolsRTM") } 
 ##############################################################################################################################
 ## input you can use are in the LUT table
 
-LUT_cab<-ToolsRTM::getSim_fromLUT(trait = 'Cab',nmin = 10,nmax=20,Interval = 10,model = 'PROSAIL', method='classical')
+LUT_cab<-ToolsRTM::getSim_fromLUT(trait = 'Cab',nmin = 10,nmax=90,Interval = 10,model = 'PROSAIL', method='ggplot')
+
 LUT_ewt<-ToolsRTM::getSim_fromLUT(trait = 'EWT',nmin = 0.001,nmax=0.35,Interval = 0.05,model = 'INFORM')
 LUT_lma<-ToolsRTM::getSim_fromLUT(trait = 'LMA',nmin = 0.001,nmax=0.35,Interval = 0.05,model = 'PROSAIL')
 LUT_prot<-ToolsRTM::getSim_fromLUT(trait = 'Prot',nmin = 0.001,nmax=0.35,Interval = 0.05,model = 'PROSPECT')
