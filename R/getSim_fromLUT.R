@@ -15,9 +15,6 @@
 #' 
 getSim_fromLUT<-function(trait='Cab',nmin=0, nmax=100, Interval=10, psoil=0.5,model='PROSAIL', method='ggplot'){
   if (!require("foreach")) { install.packages("foreach"); require("foreach") }  ### 
-
-  # to rm
-  #trait='EWT';nmin=0.02; nmax=0.25; Interval=0.05; psoil=0.5;model='PROSAIL'
   
   data <- ToolsRTM::dataSpec_PDB
   Rsoil1  <- data[,11]  # rsoil1 = dry soil
@@ -80,10 +77,10 @@ getSim_fromLUT<-function(trait='Cab',nmin=0, nmax=100, Interval=10, psoil=0.5,mo
   } else if (trait == 'EWT'){
     input<-seq(nmin,nmax, by=Interval)
     EWT=input
-  }  else if (trait == 'LMA'){
+  } else if (trait == 'LMA'){
     input<- seq(nmin,nmax, by=Interval)
     LMA=input
-  }  else if (trait == 'alpha'){
+  } else if (trait == 'alpha'){
     input<- seq(nmin,nmax, by=Interval)
     alpha=input
   } else if (trait == 'Prot'){
@@ -91,14 +88,14 @@ getSim_fromLUT<-function(trait='Cab',nmin=0, nmax=100, Interval=10, psoil=0.5,mo
     CBC= 0.02
     input<- seq(nmin,nmax, by=Interval)
     Prot=input
-  }  else if (trait == 'CBC'){
+  } else if (trait == 'CBC'){
     LMA=0
     Prot = 0.02
     input<- seq(nmin,nmax, by=Interval)
     CBC=input
   } else if (trait == 'LAI'){
     input<- seq(nmin,nmax, by=Interval)
-    LAI=input
+    lai=input
   } else if (trait == 'LIDFa'){
     input<- seq(nmin,nmax, by=Interval)
     LIDFa=input
@@ -135,7 +132,7 @@ getSim_fromLUT<-function(trait='Cab',nmin=0, nmax=100, Interval=10, psoil=0.5,mo
   if ( is.null(model) | model == 'PROSAIL'){
     message('By default, PROPECT + fourSAIL model is processing ...')
     LUT<- data.frame(N,Cab,Car,Anth,Cbrown,EWT,LMA,alpha,Prot,CBC,
-                     LIDFa, LIDFb=0, TypeLidf=2, LAI=3,
+                     LIDFa, LIDFb=0, TypeLidf=2, LAI=lai,
                      hspot=hotspot, tts, tto, psi)
     nLUT = dim(LUT)[1]
     ## choose number of processors/cores
@@ -251,7 +248,7 @@ getSim_fromLUT<-function(trait='Cab',nmin=0, nmax=100, Interval=10, psoil=0.5,mo
   } else if ( model == 'INFORM'){
       message('INFORM model is processing ...')
       LUT<- data.frame(N,Cab,Car,Anth,Cbrown,EWT,LMA,alpha,Prot,CBC,
-                       LIDFa, LIDFb=0, TypeLidf=2, LAI=3,
+                       LIDFa, LIDFb=0, TypeLidf=2, LAI=lai,
                        hspot=hotspot, tts, tto, psi,LAIu,sd,cd,h,skyl)
       nLUT = dim(LUT)[1]
       
