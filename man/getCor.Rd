@@ -9,6 +9,7 @@ getCor(
   nLUT = 100,
   distribution = "Uniform",
   setseed = 123,
+  rho = NULL,
   Varnames = NULL,
   MinRage = NULL,
   MaxRange = NULL
@@ -22,6 +23,8 @@ getCor(
 \item{distribution}{the number of rows for the LUT}
 
 \item{setseed}{the number of rows for the LUT}
+
+\item{rho}{the correlate value for Uniform distribution}
 
 \item{Varnames}{the number of rows for the LUT}
 

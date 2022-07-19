@@ -55,6 +55,6 @@ contour(df.matrix.kde, add = TRUE)
 
 
 ###### histogram 
-ggplot(LUT.pigments$LUT, aes(x=Cca)) +   geom_histogram(aes(y=..density..), colour="black", fill="white")+
+ggplot(LUT.pigments$LUT, aes(x=Car)) +   geom_histogram(aes(y=..density..), colour="black", fill="white")+
   geom_density(alpha=.2, fill="#FF6666") +  theme_bw() 
 
