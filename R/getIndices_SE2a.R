@@ -15,8 +15,10 @@ getIndicesSE2a <- function(df, wavelengths,df.data=NULL, header = F) {
   
   if (is.null(wavelengths) | length(wavelengths) == 12) {
     range2interpo <- c(442.7,492.4,559.8,664.6,704.1,740.5,782.8,832.8,864.7,945.1,1613.7,2202.4)
-  } else if(length(se2.bands) == 13) {
+  } else if(length(wavelengths) == 13) {
   range2interpo <- c(442.7,492.4,559.8,664.6,704.1,740.5,782.8,832.8,864.7,945.1,1373.5,1613.7,2202.4)
+  } else if(length(wavelengths) == 10) {
+    range2interpo <- c(492.4,559.8,664.6,704.1,740.5,782.8,832.8,864.7,1613.7,2202.4)
   } else{
     message('please check the band form Sentinel-2A')
     stop('number of bands are incorrect')
@@ -110,9 +112,14 @@ getIndicesSE2a <- function(df, wavelengths,df.data=NULL, header = F) {
     indices['TVI'] <- 0.5 * (120 * (r['740.5'] - r['559.8']) - 200 * (r['664.6'] - r['559.8']))
     # SRPI R430/R680
     
-    # SIPI (R800-R445)/(R800+R680)
-    # Pe??uelas et al. (1995)
-    indices['SIPI'] <- (r['832.8'] - r['442.7']) / (r['832.8'] + r['664.6'])
+    if (is.null(wavelengths) | length(wavelengths) == 12  | length(wavelengths) == 13 ) {
+      # SIPI (R800-R445)/(R800+R680)
+      # Pe??uelas et al. (1995)
+      indices['SIPI'] <- (r['832.8'] - r['442.7']) / (r['832.8'] + r['664.6'])
+    } else{
+      
+    }
+
 
 
     ## SEntinel 2a
@@ -124,7 +131,12 @@ getIndicesSE2a <- function(df, wavelengths,df.data=NULL, header = F) {
     indices['CIg'] <- r['832.8'] / r['559.8'] -1 
     y = 0.069;
     indices['ARVI'] <- (r['864.7'] - r['832.8'] - y * (r['664.6'] -r['492.4']) ) / (r['864.7'] + r['664.6'] - y * (r['664.6'] -r['492.4']) )
-    indices['AVI'] <- 2.0 * r['945.1'] - r['664.6']
+    
+    if (is.null(wavelengths) | length(wavelengths) == 12  | length(wavelengths) == 13 ) {
+      indices['AVI'] <- 2.0 * r['945.1'] - r['664.6']
+    } else{
+  
+    }
     #Atmospherically Resistant Vegetation Index 2  (abbrv. ARVI2)
     indices['ARV2'] <- -0.18 + 1.17 *(r['832.8'] - r['664.6']) / (r['832.8'] + r['664.6'])
     #Normalized Difference NIR/SWIR Normalized Burn Ratio (abbrv. NBR)

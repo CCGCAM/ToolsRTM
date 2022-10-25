@@ -7,16 +7,22 @@
 #' @param netCDFs  path with the Netcdf
 #' @param bands  a vector with the names of the inputs of the NetCDF
 #' @param output  path of the outputs
+#' @param pattern  File pattern to extract the netcdf (Area or studied region)
 #'
 #' @return
 #' @export
 #'
 #' @examples
 #' 
-getTIFFs<-function(netCDFs=NULL, bands=NULL, output=NULL){
+getTIFFs<-function(netCDFs=NULL, bands=NULL, output=NULL, pattern=NULL){
   
   is.nan.data.frame <- function(x) do.call(cbind, lapply(x, is.nan))
-  files_nc = list.files(netCDFs,pattern="*.nc$", full.names=TRUE)
+  
+  if (is.null(pattern)){
+    files_nc = list.files(netCDFs,pattern="*.nc$", full.names=TRUE)
+  } else {
+    files_nc = list.files(netCDFs,pattern=pattern, full.names=TRUE)
+  }
   
   message(' TIFFs conversion is processing ...')
 

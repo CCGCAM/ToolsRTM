@@ -65,7 +65,14 @@ getSeries<-function(pathRaster=NULL, shapefile=NULL, band_names=NULL,factorR=NUL
           data.write.sb<-data.write[,se2.bands]
           colnames(data.write.sb)<-paste('R.',c(442.7,492.4,559.8,664.6,704.1,740.5,782.8,832.8,864.7,945.1,1313.15,1613.7,2202.4),sep='')
           
-        } else{
+        } else if(length(se2.bands) == 10) { ## For bands without B1 and B9 but with SCL
+          wavelengths.sentinel<-c(492.4,559.8,664.6,704.1,740.5,782.8,832.8,864.7,1613.7,2202.4)
+          data.write.sb<-data.write[,se2.bands]
+          colnames(data.write.sb)<-paste('R.',c(492.4,559.8,664.6,704.1,740.5,782.8,832.8,864.7,1613.7,2202.4),sep='')
+          
+        }
+        
+        else{
           message('please check the band form Sentinel-2A')
           stop('number of bands are incorrect')
         }
