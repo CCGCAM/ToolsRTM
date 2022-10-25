@@ -4,7 +4,7 @@
 \alias{getTIFFs}
 \title{Extract all bands from SE images (adapted to NETCDF dataset)}
 \usage{
-getTIFFs(netCDFs = NULL, bands = NULL, output = NULL)
+getTIFFs(netCDFs = NULL, bands = NULL, output = NULL, pattern = NULL)
 }
 \arguments{
 \item{netCDFs}{path with the Netcdf}
@@ -12,6 +12,8 @@ getTIFFs(netCDFs = NULL, bands = NULL, output = NULL)
 \item{bands}{a vector with the names of the inputs of the NetCDF}
 
 \item{output}{path of the outputs}
+
+\item{pattern}{File pattern to extract the netcdf (Area or studied region)}
 }
 \value{
 
