@@ -5,10 +5,12 @@ An R packages with tools for simulating canopy reflectance using a set of radiat
 
 ## Getting started
 
-Install the package prospect with the following command line in R session:
+Install the package toolsrtm with the following command line in R session:
 >
 > devtools::install_gitlab('caminoccg/toolsrtm')
 >
+
+( This package is in a private repository for this reason this step doesn't work)
 
 ## Manual 
 
