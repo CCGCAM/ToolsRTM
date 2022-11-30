@@ -22,6 +22,7 @@ getIndices <- function(data, pattern.rfl='R.', spectral.domain=NULL) {
 
   if (is.null(spectral.domain)){
     s.domain ='VNIR'
+    
   } else {
     s.domain = spectral.domain
   }
@@ -31,15 +32,28 @@ getIndices <- function(data, pattern.rfl='R.', spectral.domain=NULL) {
   }
   
   
+  if (s.domain == 'VNIR' | s.domain == 'VNIR-SWIR' | s.domain =='SWIR' ){
+    print(paste('estimating indices using  ',s.domain, ' domain ....', sep=''))
+  } else {
+    stop('please use a correct spectral domain, options are VNIR,VNIR-SWIR and SWIR')
+  }
+  
   if (is.data.frame(data)){
-    rfl_bands = names(LUT)[grep(s.pattern, names(data))]
-    print(rfl_bands)
+    rfl_bands = names(data)[grep(s.pattern, names(data))]
     
-    df = data[1:100,rfl_bands]
-    wavelengths = as.numeric(gsub(".*?([0-9]+).*", "\\1", rfl_bands))
-    range2interpo <-  c((min(wavelengths)+10):max(wavelengths)+10)
-    
-    indices.list = list()
+    test_if = identical(rfl_bands, character(0))
+    if (test_if == TRUE) {
+      stop('please use a correct pattern for reflectance columns (pattern.rfl) ...e.g., R., RFL. ...')
+    } else {
+      
+      df = data[,rfl_bands]
+      wavelengths = as.numeric(gsub(".*?([0-9]+).*", "\\1", rfl_bands))
+      range2interpo <-  c((min(wavelengths)+10):max(wavelengths)+10)
+      
+      indices.list = list()
+    }
+
+   
   } else{
     stop('please use a dataframe or matrix with reflectance columns ...')
   }
