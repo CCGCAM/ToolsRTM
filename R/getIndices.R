@@ -65,7 +65,7 @@ getIndices <- function(data, pattern.rfl='R.', spectral.domain=NULL) {
 
     indices = c()
 
-    if(s.domain == 'VNIR'){
+    if(s.domain %in% 'VNIR'){
       
       ##########################################
       ## Structurual Indices
@@ -153,7 +153,7 @@ getIndices <- function(data, pattern.rfl='R.', spectral.domain=NULL) {
       
       # TCARI/OSAVI TCARI/OSAVI
       # Haboudane et al. (2002)
-      indices['T/O'] <- as.numeric(indices['TCARI']) / as.numeric(indices['OSAVI'])
+      indices['T.O'] <- as.numeric(indices['TCARI']) / as.numeric(indices['OSAVI'])
       
       # CI R750/R710
       # Zarco-Tejada et al. (2001)
@@ -346,11 +346,54 @@ getIndices <- function(data, pattern.rfl='R.', spectral.domain=NULL) {
       # Blackburn (1998)
       indices['PSNDc'] <- (r['800'] - r['470']) / (r['800'] + r['470'])
       
+      ########################################################
+      ## Adding spectral indices using  Red-edge channels
+      ########################################################
+      
+      ##original conf form J.B Feret for CR_SWIR
+      bandsSE <- c('B02'=497, 'B03'=560.0, 'B04'=665, 'B05'=704, 'B06'=740,
+                     'B07' = 782, 'B08' = 835, 'B8A' = 865, 'B11' = 1614, 'B12' = 2202,'B.800'=800,'B.762'=762)
+
+      if(any(wavelengths == 865)){
+        
+        indices['SIFe1'] <- r['740']  / (r['865'] + (bandsSE['B06'] - bandsSE['B8A']) * (r['782'] - r['865']) / (bandsSE['B07'] - bandsSE['B8A']))
+        indices['SIFe2'] <- r['704']  / (r['782'] + (bandsSE['B05'] - bandsSE['B07']) * (r['740'] - r['782']) / (bandsSE['B06'] - bandsSE['B07']))
+        indices['SIFe3'] <- r['704']  / (r['865'] + (bandsSE['B05'] - bandsSE['B8A']) * (r['740'] - r['865']) / (bandsSE['B06'] - bandsSE['B8A']))
+        indices['SIFe4'] <- r['665']  / (r['865'] + (bandsSE['B04'] - bandsSE['B8A']) * (r['704'] - r['865']) / (bandsSE['B06'] - bandsSE['B8A']))
+        indices['SIFe5'] <- r['740']  / (r['865'] + (bandsSE['B06'] - bandsSE['B8A']) * (r['704'] - r['865']) / (bandsSE['B05'] - bandsSE['B8A']))
+        indices['SIFe6'] <- r['782']  / (r['865'] + (bandsSE['B07'] - bandsSE['B8A']) * (r['704'] - r['865']) / (bandsSE['B05'] - bandsSE['B8A']))
+        indices['SIFe7'] <- r['762']  / (r['865'] + (bandsSE['B.762'] - bandsSE['B8A']) * (r['704'] - r['865']) / (bandsSE['B05'] - bandsSE['B8A']))
+        
+      } else if (any(wavelengths == 835)){
+        
+        indices['SIFe1'] <- r['740']  / (r['835'] + (bandsSE['B06'] - bandsSE['B08']) * (r['782'] - r['835']) / (bandsSE['B07'] - bandsSE['B08']))
+        indices['SIFe2'] <- r['704']  / (r['782'] + (bandsSE['B05'] - bandsSE['B07']) * (r['740'] - r['782']) / (bandsSE['B06'] - bandsSE['B07']))
+        indices['SIFe3'] <- r['704']  / (r['835'] + (bandsSE['B05'] - bandsSE['B08']) * (r['740'] - r['835']) / (bandsSE['B06'] - bandsSE['B08']))
+        indices['SIFe4'] <- r['665']  / (r['835'] + (bandsSE['B04'] - bandsSE['B08']) * (r['704'] - r['835']) / (bandsSE['B06'] - bandsSE['B08']))
+        indices['SIFe5'] <- r['740']  / (r['835'] + (bandsSE['B06'] - bandsSE['B08']) * (r['704'] - r['835']) / (bandsSE['B05'] - bandsSE['B08']))
+        indices['SIFe6'] <- r['782']  / (r['835'] + (bandsSE['B07'] - bandsSE['B08']) * (r['704'] - r['835']) / (bandsSE['B05'] - bandsSE['B08']))
+        indices['SIFe7'] <- r['762']  / (r['835'] + (bandsSE['B.762'] - bandsSE['B08']) * (r['704'] - r['835']) / (bandsSE['B05'] - bandsSE['B.800']))
+        
+      } else if (any(wavelengths == 800)){
+          
+          indices['SIFe1'] <- r['740']  / (r['800'] + (bandsSE['B06'] - bandsSE['B.800']) * (r['782'] - r['800']) / (bandsSE['B.762'] - bandsSE['B.800']))
+          indices['SIFe2'] <- r['704']  / (r['782'] + (bandsSE['B05'] - bandsSE['B07']) * (r['740'] - r['782']) / (bandsSE['B06'] - bandsSE['B.762']))
+          indices['SIFe3'] <- r['704']  / (r['800'] + (bandsSE['B05'] - bandsSE['B.800']) * (r['740'] - r['800']) / (bandsSE['B06'] - bandsSE['B.800']))
+          indices['SIFe4'] <- r['665']  / (r['800'] + (bandsSE['B04'] - bandsSE['B.800']) * (r['704'] - r['800']) / (bandsSE['B06'] - bandsSE['B.800']))
+          indices['SIFe5'] <- r['740']  / (r['800'] + (bandsSE['B06'] - bandsSE['B.800']) * (r['704'] - r['800']) / (bandsSE['B05'] - bandsSE['B.800']))
+          indices['SIFe6'] <- r['782']  / (r['800'] + (bandsSE['B07'] - bandsSE['B.800']) * (r['704'] - r['800']) / (bandsSE['B05'] - bandsSE['B.800']))
+          indices['SIFe7'] <- r['762']  / (r['800'] + (bandsSE['B.762'] - bandsSE['B.800']) * (r['704'] - r['800']) / (bandsSE['B05'] - bandsSE['B.800']))
+          
+        
+        }
+        
+        
+        
       indices.list[[i]] = indices
       
     }
     
-    else if (s.domain == 'VNIR-SWIR' | s.domain == 'SWIR' ) {
+    else if (s.domain %in% 'SWIR' ) {
       ##########################################
       ## SWIR Indices
       ##########################################
@@ -361,11 +404,11 @@ getIndices <- function(data, pattern.rfl='R.', spectral.domain=NULL) {
       
       # GnyLi ((R850_VNIR*R1050)-(R955*R1220))/((R850_VNIR*R1050)+(R955*R1220))
       # Prev. mod. 850 nm instead of 900 nm
-      indices['GnyLi (w/ VNIR) 850'] <- indices['GnyLi'] <- ((r['850'] * r['1050']) - (r['955'] * r['1220'])) / ((r['850'] * r['1050']) + (r['955'] * r['1220']))
+      indices['GnyLi.w850'] <- indices['GnyLi'] <- ((r['850'] * r['1050']) - (r['955'] * r['1220'])) / ((r['850'] * r['1050']) + (r['955'] * r['1220']))
       
       # GnyLi ((R850_VNIR*R1050)-(R955*R1220))/((R850_VNIR*R1050)+(R955*R1220))
       # Prev. mod. 950 nm instead of 900 nm
-      indices['GnyLi (w/ SWIR) 950'] <- indices['GnyLi'] <- ((r['950'] * r['1050']) - (r['955'] * r['1220'])) / ((r['950'] * r['1050']) + (r['955'] * r['1220']))
+      indices['GnyLi.w950'] <- indices['GnyLi'] <- ((r['950'] * r['1050']) - (r['955'] * r['1220'])) / ((r['950'] * r['1050']) + (r['955'] * r['1220']))
       
       # CI1 ((R736-R735)/1)*(R990/R720)
       # Yansong et al. (2013)
@@ -385,27 +428,27 @@ getIndices <- function(data, pattern.rfl='R.', spectral.domain=NULL) {
       
       # MCARI_1510 ((R700-R1510) - 0.2*(R700-R550))*(R700/R1510)
       # Hermann et al. (2010)
-      indices['MCARI 1510'] <- ((r['700'] - r['1510']) - 0.2 * (r['700'] - r['550'])) * (r['700'] / r['1510'])
+      indices['MCARI.1510'] <- ((r['700'] - r['1510']) - 0.2 * (r['700'] - r['550'])) * (r['700'] / r['1510'])
       
       # TCARI_1510 3*((R700-R1510)-0.2*(R700-R550))*(R700/R1510)
       # Hermann et al. (2010)
-      indices['TCARI 1510'] <- 3 * ((r['700'] - r['1510']) - 0.2 * (r['700'] - r['550']) * (r['700'] / r['1510']))
+      indices['TCARI.1510'] <- 3 * ((r['700'] - r['1510']) - 0.2 * (r['700'] - r['550']) * (r['700'] / r['1510']))
       
       # OSAVI_1510 (1+0.16)*(R800-R1510)/(R800+R1510+0.16)
       # Rondeaux et al. (1996)
-      indices['OSAVI 1510'] <- ((1 + 0.16) * (r['800'] - r['1510']) / (r['800'] + r['1510'] + 0.16))
+      indices['OSAVI.1510'] <- ((1 + 0.16) * (r['800'] - r['1510']) / (r['800'] + r['1510'] + 0.16))
       
       # TCARI_OSAVI_1510 TCARI/OSAVI (1510 nm)
       # Hermann et al. (2010)
-      indices['TCARI/OSAVI 1510'] <- as.numeric(indices['TCARI 1510']) / as.numeric(indices['OSAVI 1510'])
+      indices['TCARI/OSAVI.1510'] <- as.numeric(indices['TCARI 1510']) / as.numeric(indices['OSAVI 1510'])
       
       # NRI_1510 (R1510-R660)/(R1510+R660)
       # Hermann et al. (2010)
-      indices['NRI 1510'] <- (r['1510'] - r['660']) / (r['1510'] + r['660'])
+      indices['NRI.1510'] <- (r['1510'] - r['660']) / (r['1510'] + r['660'])
       
       # RSI_990_720 R990/R720
       # Yao et al. (2010)
-      indices['RSI 990 720'] <- r['990'] / r['720']
+      indices['RSI.990.720'] <- r['990'] / r['720']
       
       # NRI_1770_693 (R1770-R693)/(R1770+R693)
       # Ferwerda et al. (2005)
@@ -431,9 +474,19 @@ getIndices <- function(data, pattern.rfl='R.', spectral.domain=NULL) {
       # Pimstein et al. (2011)
       indices['N870'] <- (r['870'] - r['1450']) / (r['870'] + r['1450'])
       ## Camino et al. 2018
-      indices['N850_1510'] <- (r['850'] - r['1510']) / (r['850'] + r['1510'])
+      indices['N850.1510'] <- (r['850'] - r['1510']) / (r['850'] + r['1510'])
       ## Camino et al. 2018
       indices['NN1510'] <- (r['1510']) / (r['850'])
+      
+
+      if(any(wavelengths >= 2202)){
+        #CR_SWIR from J.B.Feret
+        bandsSE2 <- c('B02'=497, 'B03'=560.0, 'B04'=665, 'B05'=704, 'B06'=740,
+                      'B07' = 782, 'B08' = 835, 'B8A' = 865, 'B11' = 1614, 'B12' = 2202)
+        indices['CR.SWIR'] <- r['1614']/(r['865']+(bandsSE2['B11']-bandsSE2['B8A'])*(r['2202']-r['865'])/(bandsSE2['B12']-bandsSE2['B8A']))
+        
+      }
+     
 
       indices.list[[i]] = indices
    
