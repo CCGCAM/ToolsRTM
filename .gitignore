@@ -3,7 +3,12 @@
 .RData
 .Ruserdata
 ._*
+## remove mac files
+.DS_Store
+._*
 # exclude everything in folders
+Archive.zip
+examples/*
 examples/parameters/*
 examples/WheatPlots/*
 examples/SCOPE_v2.1/*
