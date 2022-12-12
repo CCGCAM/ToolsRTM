@@ -8,6 +8,8 @@
 ._*
 # exclude everything in folders
 Archive.zip
+*.zip
+*.nc
 examples/*
 examples/parameters/*
 examples/WheatPlots/*
