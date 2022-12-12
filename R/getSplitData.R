@@ -36,31 +36,23 @@ getSplitData<-function(data=NULL, depVar='Cab',inputs=NULL, transf=NULL,depVar.T
    data<-data[,c(depVar,inputs_to)]
    ## Nplit the data
    ind <- sample(2, nrow(data), replace=TRUE, prob = c(0.8,0.2))
-   inputs.bands = names(data)[-1] ## for rfl bands
-   cat('inputs are: ',inputs.bands)
+   inputs.to.include = names(data)[-1] ## for rfl bands
+   cat('inputs are: ',inputs.to.include)
    # change the data to matrix
-   LUT.keras<-data[,c(depVar,inputs.bands)]
+   LUT.keras<-data[,c(depVar,inputs.to.include)]
    #skimr::skim(LUT.keras)
    
    ### Clean data
    #lapply(LUT.keras, function(x) sum(is.na(x))) %>% str()
    LUT.keras <- na.omit(LUT.keras)
-   names_to<-c(depVar,inputs.bands)
+   names_to<-c(depVar,inputs.to.include)
   }
-  
-  
-  ## Normalization of dataset
-  normalize <- function(x) {
-    return ((x - min(x)) / (max(x) - min(x)))
-  }
-  
- 
   
   if (transf == 'normalized'){
 
     LUT.to <- as.data.frame(lapply(LUT.keras[,names_to], normalize))
     LUT.to <-cbind(LUT.keras[,depVar],LUT.to)
-    colnames(LUT.to)<-c(depVar,paste(depVar,'_Tra',sep=''),inputs.bands)
+    colnames(LUT.to)<-c(depVar,paste(depVar,'_Tra',sep=''),inputs.to.include)
     LUT.to<-as.matrix(LUT.to)
     head(LUT.to)
     dim(LUT.to)
@@ -95,7 +87,7 @@ getSplitData<-function(data=NULL, depVar='Cab',inputs=NULL, transf=NULL,depVar.T
   } else if (transf == 'PCA' ){
     
   
-    LUT.to <-prcomp(LUT.keras[,inputs.bands], scale = TRUE)
+    LUT.to <-prcomp(LUT.keras[,inputs.to.include], scale = TRUE)
     
     
     plot.pca.1<-factoextra::fviz_eig(LUT.to,)
@@ -122,7 +114,7 @@ getSplitData<-function(data=NULL, depVar='Cab',inputs=NULL, transf=NULL,depVar.T
       
       LUT.to <- as.data.frame(lapply(LUT.keras[,names_to], normalize))
       LUT.to <-cbind(LUT.keras[,depVar],LUT.to)
-      colnames(LUT.to)<-c(inputY,paste(depVar,'_Tra',sep=''),inputs.bands)
+      colnames(LUT.to)<-c(depVar,paste(depVar,'_Tra',sep=''),inputs.to.include)
       LUT.to<-as.matrix(LUT.to)
       
       data.Ytrain <- round(LUT.to[ind==1, 2],4)
@@ -133,7 +125,7 @@ getSplitData<-function(data=NULL, depVar='Cab',inputs=NULL, transf=NULL,depVar.T
       LUT.to <- as.data.frame(lapply(LUT.keras[,names_to], normalize))
       LUT.to <-cbind(LUT.keras[,depVar],LUT.to)
       
-      colnames(LUT.to)<-c(depVar,paste(depVar,'_Tra',sep=''),inputs.bands)
+      colnames(LUT.to)<-c(depVar,paste(depVar,'_Tra',sep=''),inputs.to.include)
       LUT.to<-as.matrix(LUT.to)
       
       data.Ytrain <- LUT.to[ind==1, 1]
@@ -155,7 +147,11 @@ return(split.database)
   
   
 
-  
+## Normalization of dataset
+normalize <- function(x) {
+  return ((x - min(x)) / (max(x) - min(x)))
+}
+
   
 
   
