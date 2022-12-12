@@ -10,6 +10,8 @@
 Archive.zip
 *.zip
 *.nc
+*.RDataTmp*
+NUL
 examples/*
 examples/parameters/*
 examples/WheatPlots/*
