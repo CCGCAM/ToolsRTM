@@ -2,7 +2,7 @@
 #'
 #' @param data A dataframw with inputs and dep
 #' @param depVar name of the variable to predict
-#' @param transf a trnasformation method, potions are: 'PCA', 'normalized'
+#' @param transf a trnasformation method, potions are: 'PCA', 'normalized', 'scaled'
 #' @param depVar.Transf a boolean variable for applying transformation in depend variable, options are: TRUE or FALSE
 #' @param inputs 
 #'
@@ -12,8 +12,13 @@
 #' @examples
 getSplitData<-function(data=NULL, depVar='Cab',inputs=NULL, transf=NULL,depVar.Transf=TRUE) {
   
+  data=LUT; depVar=depVar_i[i_var];inputs=inputs_;
+  transf=transf.data[i_trans];depVar.Transf=depVar.Transformation[i_depVar.trans]
+
+  
+  
   if (is.null(transf)){
-    stop('PLease insert a transormation for applying: PCA, normalized  ...')
+    stop('PLease insert a transormation for applying: PCA, normalized,scaled  ...')
   }
   
   if (is.null(depVar.Transf)){
@@ -48,7 +53,45 @@ getSplitData<-function(data=NULL, depVar='Cab',inputs=NULL, transf=NULL,depVar.T
    names_to<-c(depVar,inputs.to.include)
   }
   
-  if (transf == 'normalized'){
+  if (transf == 'scaled'){
+    
+    LUT.to <- scale(LUT.keras[,names_to[-1]], center = TRUE, scale = TRUE)
+    
+    scaled.center <- attr(LUT.to, "scaled:center")
+    scaled.scale <-attr(LUT.to, "scaled:scale")
+    LUT.to <- scale(LUT.keras[,names_to], center = TRUE, scale = TRUE)
+    LUT.to <-cbind(LUT.keras[,depVar],LUT.to)
+    colnames(LUT.to)<-c(depVar,paste(depVar,'_Tra',sep=''),inputs.to.include)
+    LUT.to<-as.matrix(LUT.to)
+    head(LUT.to)
+
+    data.Xtrain <- LUT.to[ind==1, 3:dim(LUT.to)[2]]
+    data.Xval <- LUT.to[ind==2, 3:dim(LUT.to)[2]]
+    
+    M <- cor(data.Xtrain)
+    plot.cor<-corrplot::corrplot(M, method = 'square', order = 'FPC',
+                                 type = 'lower',
+                                 tl.cex=0.5,tl.col = "black", cl.ratio=0.4,
+                                 diag = FALSE)
+    
+    if (depVar.Transf == TRUE){
+      
+      data.Ytrain <- round(LUT.to[ind==1, 2],4)
+      length(data.Ytrain)
+      data.Yval <- round(LUT.to[ind==2, 2],4)
+      length(data.Yval)
+      
+    } else{
+      
+      data.Ytrain <- round(LUT.to[ind==1, 1],4)
+      length(data.Ytrain)
+      data.Yval <- round(LUT.to[ind==2, 1],4)
+      length(data.Yval)
+      
+    }
+  
+  
+  } else if (transf == 'normalized'){
 
     LUT.to <- as.data.frame(lapply(LUT.keras[,names_to], normalize))
     LUT.to <-cbind(LUT.keras[,depVar],LUT.to)
@@ -137,9 +180,17 @@ getSplitData<-function(data=NULL, depVar='Cab',inputs=NULL, transf=NULL,depVar.T
     
     
   }
-  split.database<- list("Xtrain" = data.Xtrain,"Ytrain" =data.Ytrain,
-                        "XVal" =data.Xval,"YVal" = data.Yval,"LUT.to" = LUT.to)
-  
+  if (transf == 'scaled') {
+    
+    split.database<- list("Xtrain" = data.Xtrain,"Ytrain" =data.Ytrain,
+                        "XVal" =data.Xval,"YVal" = data.Yval,"LUT.to" = LUT.to,
+                        'scaled.center' = scaled.center, 'scaled.scale' = scaled.scale)
+  } else {
+    
+    split.database<- list("Xtrain" = data.Xtrain,"Ytrain" =data.Ytrain,
+                          "XVal" =data.Xval,"YVal" = data.Yval,"LUT.to" = LUT.to)
+  }
+
 
 return(split.database)
 

@@ -55,6 +55,7 @@ getPredicts<-function(model=NULL, type.model='All',data=NULL, data.Y=data.YVal, 
   
   if (type.model == 'Hidden-layers'){
     
+    
     pred.model.3hlayers <- predict(model, data)
     
     if (depVar.Transf == TRUE){
