@@ -19,7 +19,7 @@ getSplitData(
 
 \item{inputs}{}
 
-\item{transf}{a trnasformation method, potions are: 'PCA', 'normalized'}
+\item{transf}{a trnasformation method, potions are: 'PCA', 'normalized', 'scaled'}
 
 \item{depVar.Transf}{a boolean variable for applying transformation in depend variable, options are: TRUE or FALSE}
 }
