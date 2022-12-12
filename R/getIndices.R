@@ -58,9 +58,15 @@ getIndices <- function(data, pattern.rfl='R.', spectral.domain=NULL) {
     stop('please use a dataframe or matrix with reflectance columns ...')
   }
 
+  
+  
+  # create progress bar
+  total=dim(df)[1]
+  barProgress <- txtProgressBar(min = 1, max = total, style = 3)
+  
   for (i in c(1:dim(df)[1])){
     values<-as.numeric(df[i,])
-    r = interp1(wavelengths, values, range2interpo, extrap = T)
+    r = signal::interp1(wavelengths, values, range2interpo, extrap = T)
     names(r) <- range2interpo
 
     indices = c()
@@ -489,15 +495,19 @@ getIndices <- function(data, pattern.rfl='R.', spectral.domain=NULL) {
      
 
       indices.list[[i]] = indices
+      
    
     }
 
-    
+    setTxtProgressBar(barProgress, i)
   }
+  
   df.indices <- data.frame(matrix(unlist(indices.list), nrow=length(indices.list), byrow=T))
   colnames(df.indices)<-names(indices)
   df.indices<-cbind(data,df.indices)
   ## remove indices wih no data
   df.indices = df.indices[, colSums(is.na(df.indices)) != nrow(df.indices)]
+  
+  close(barProgress)
   return(df.indices)
 }

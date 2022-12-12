@@ -27,6 +27,10 @@ getIndicesSE2a <- function(df, wavelengths,df.data=NULL, header = F) {
   S2a_Bands <- c('B02'=496.6, 'B03'=560.0, 'B04'=664.5, 'B05'=703.9, 'B06'=740.2,
                'B07' = 782.5, 'B08' = 835.1, 'B8A' = 864.8, 'B11' = 1613.7, 'B12' = 2202.4)
   indices.list = list()
+  # create progress bar
+  total=dim(df)[1]
+  barProgress <- txtProgressBar(min = 1, max = total, style = 3)
+  
   for (i in c(1:dim(df)[1])){
   
   values<-df[i,]
@@ -141,7 +145,7 @@ getIndicesSE2a <- function(df, wavelengths,df.data=NULL, header = F) {
     indices['ARV2'] <- -0.18 + 1.17 *(r['832.8'] - r['664.6']) / (r['832.8'] + r['664.6'])
     #Normalized Difference NIR/SWIR Normalized Burn Ratio (abbrv. NBR)
     indices['NBR'] <- (r['832.8'] - r['2202.4']) / (r['832.8'] + r['2202.4'])
-    indices['NBR-2'] <- (r['1613.7'] - r['2202.4']) / (r['1613.7'] + r['2202.4'])
+    indices['NBR.2'] <- (r['1613.7'] - r['2202.4']) / (r['1613.7'] + r['2202.4'])
     
     #Normalized Difference NIR/Rededge Normalized Difference Red-Edge (abbrv. NDRE)
     indices['NDRE'] <- (r['832.8'] - r['704.1']) / (r['832.8'] + r['704.1'])
@@ -201,7 +205,10 @@ getIndicesSE2a <- function(df, wavelengths,df.data=NULL, header = F) {
    
 
     indices.list[[i]] = indices
+    setTxtProgressBar(barProgress, i)
+    
   }
+ 
   df.indices <- data.frame(matrix(unlist(indices.list), nrow=length(indices.list), byrow=T))
   colnames(df.indices)<-names(indices)
   df.rfl<-as.data.frame(df)
@@ -214,6 +221,6 @@ getIndicesSE2a <- function(df, wavelengths,df.data=NULL, header = F) {
     df.indices_<-cbind(df.data,df.indices)
   }
 
-  
+  close(barProgress)
   return(df.indices_)
 }
