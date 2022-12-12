@@ -34,6 +34,18 @@ getSplitData<-function(data=NULL, depVar='Cab',inputs=NULL, transf=NULL,depVar.T
    inputs_to<-which(names(data)  %in% inputs)
    inputs_to<-names(data)[inputs_to]
    data<-data[,c(depVar,inputs_to)]
+   ## Nplit the data
+   ind <- sample(2, nrow(data), replace=TRUE, prob = c(0.8,0.2))
+   inputs.bands = names(data)[-1] ## for rfl bands
+   cat('inputs are: ',inputs.bands)
+   # change the data to matrix
+   LUT.keras<-data[,c(depVar,inputs.bands)]
+   #skimr::skim(LUT.keras)
+   
+   ### Clean data
+   #lapply(LUT.keras, function(x) sum(is.na(x))) %>% str()
+   LUT.keras <- na.omit(LUT.keras)
+   names_to<-c(depVar,inputs.bands)
   }
   
   
@@ -42,30 +54,17 @@ getSplitData<-function(data=NULL, depVar='Cab',inputs=NULL, transf=NULL,depVar.T
     return ((x - min(x)) / (max(x) - min(x)))
   }
   
+ 
   
   if (transf == 'normalized'){
-  
-    inputs.bands = names(data)[-1] ## for rfl bands
-    cat('inputs are: ',inputs.bands)
-    # change the data to matrix
-    LUT.keras<-LUT[,c(depVar,inputs.bands)]
-    #skimr::skim(LUT.keras)
-    
-    ### Clean data
-    #lapply(LUT.keras, function(x) sum(is.na(x))) %>% str()
-    LUT.keras <- na.omit(LUT.keras)
-    
-    names_to<-c(depVar,inputs.bands)
-    
+
     LUT.to <- as.data.frame(lapply(LUT.keras[,names_to], normalize))
     LUT.to <-cbind(LUT.keras[,depVar],LUT.to)
     colnames(LUT.to)<-c(depVar,paste(depVar,'_Tra',sep=''),inputs.bands)
     LUT.to<-as.matrix(LUT.to)
     head(LUT.to)
-    
+    dim(LUT.to)
 
-    
-    ind <- sample(2, nrow(LUT.to), replace=TRUE, prob = c(0.8,0.2))
     data.Xtrain <- LUT.to[ind==1, 3:dim(LUT.to)[2]]
     data.Xval <- LUT.to[ind==2, 3:dim(LUT.to)[2]]
   
@@ -78,16 +77,24 @@ getSplitData<-function(data=NULL, depVar='Cab',inputs=NULL, transf=NULL,depVar.T
     if (depVar.Transf == TRUE){
       
       data.Ytrain <- round(LUT.to[ind==1, 2],4)
+      length(data.Ytrain)
       data.Yval <- round(LUT.to[ind==2, 2],4)
+      length(data.Yval)
       
     } else{
+      
       data.Ytrain <- round(LUT.to[ind==1, 1],4)
+      length(data.Ytrain)
       data.Yval <- round(LUT.to[ind==2, 1],4)
+      length(data.Yval)
+    
     }
+  
+
     
   } else if (transf == 'PCA' ){
     
-    names_to<-c(depVar,inputs.bands)
+  
     LUT.to <-prcomp(LUT.keras[,inputs.bands], scale = TRUE)
     
     
@@ -105,10 +112,11 @@ getSplitData<-function(data=NULL, depVar='Cab',inputs=NULL, transf=NULL,depVar.T
     
     LUT.to <-LUT.to$x
     LUT.to<-LUT.to[,1:max.pca[1]]
-    ## Nplit the data
-    ind <- sample(2, nrow(LUT.to), replace=TRUE, prob = c(0.7,0.3))
+  
+   
     data.Xtrain <- LUT.to[ind==1, 1:dim(LUT.to)[2]]
     data.Xval <- LUT.to[ind==2, 1:dim(LUT.to)[2]]
+    
     
     if (depVar.Transf == TRUE){
       
@@ -119,20 +127,27 @@ getSplitData<-function(data=NULL, depVar='Cab',inputs=NULL, transf=NULL,depVar.T
       
       data.Ytrain <- round(LUT.to[ind==1, 2],4)
       data.Yval <- round(LUT.to[ind==2, 2],4)
+      
     } else {
       
       LUT.to <- as.data.frame(lapply(LUT.keras[,names_to], normalize))
       LUT.to <-cbind(LUT.keras[,depVar],LUT.to)
+      
       colnames(LUT.to)<-c(depVar,paste(depVar,'_Tra',sep=''),inputs.bands)
       LUT.to<-as.matrix(LUT.to)
       
       data.Ytrain <- LUT.to[ind==1, 1]
+      length(data.Ytrain)
       data.Yval <- LUT.to[ind==2, 1]
+      length(data.Yval)
+    
     }
     
+    
   }
+  split.database<- list("Xtrain" = data.Xtrain,"Ytrain" =data.Ytrain,
+                        "XVal" =data.Xval,"YVal" = data.Yval,"LUT.to" = LUT.to)
   
-split.database<- list("Xtrain" = data.Xtrain,"Ytrain" =data.Ytrain,"XVal" =data.Xval,"YVal" =data.Ytrain)
 
 return(split.database)
 
