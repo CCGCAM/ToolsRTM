@@ -16,14 +16,15 @@ getPredicts<-function(model=NULL, type.model='CNN',data=NULL,data.trans=NULL ,
   
 
   if (is.null(data.trans)){
-    stop('PLease insert a tranformation for applying: PCA, normalized, scaled or preProcess  ...')
+    stop('PLease insert a tranformation for applying: PCA or preProcess  ...')
   
   }
   
-  if (is.null(scaler.depVar)){
-    stop('PLease insert the scaler for the model  ...')
-    
-  }
+  # 
+  # if (is.null(scaler.depVar)){
+  #   stop('PLease insert the scaler for the model  ...')
+  #   
+  # }
   
   if (is.null(scaler.depVar)){
     depVar.trans=FALSE

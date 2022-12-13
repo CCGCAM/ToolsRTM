@@ -16,12 +16,9 @@
 #' 
 
 getSplitData<-function(data=NULL, depVar='Cab',inputs=NULL, 
-                       data.trans=NULL,method.preProcess=NULL,depVar.trans=TRUE,
+                       data.trans=NULL,method.preProcess=NULL,depVar.trans=NULL,
                        prop.split=NULL) {
 
-  data=LUT; depVar='Cab';inputs=inputs_;
-  data.trans='preProcess';prop.split=c(0.7,0.3);method.preProcess='Standarize'; 
-  depVar.trans=TRUE
   
   if (is.null(data.trans)){
     stop('PLease insert a transformation: PCA, preProcess are avalaible.')
