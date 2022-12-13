@@ -6,31 +6,28 @@
 \usage{
 getPredicts(
   model = NULL,
-  type.model = "All",
+  type.model = "CNN",
   data = NULL,
-  data.Y = data.YVal,
-  data.LUT = LUT.to,
+  data.trans = NULL,
+  data.Y = NULL,
   depVar = "Cab",
-  transf = NULL,
-  depVar.Transf = TRUE
+  scaler.depVar = NULL
 )
 }
 \arguments{
 \item{model}{a keras model}
 
-\item{type.model}{the type of  keras model; the options are: 'CNN'; 'Hidden-layers'}
+\item{type.model}{keras model type; the options are: 'CNN'; 'Hidden-layers'}
 
 \item{data}{the dataset in matrix format for predicting depVar}
 
-\item{data.Y}{the Y variable: Avaliable options are: 'NULL' in real cases or a vector or matrix or data.frame}
+\item{data.trans}{PCA and normalized, options are avalaible}
 
-\item{data.LUT}{the dataset for transformations}
+\item{data.Y}{the Y variable: Avalaible options are: 'NULL' in real cases or a vector or matrix or data.frame}
 
 \item{depVar}{variable name}
 
-\item{transf}{PCA and normalized options are avalaible}
-
-\item{depVar.Transf}{True or False are the options for DepVar}
+\item{scaler.depVar}{Scaler for Y}
 }
 \value{
 

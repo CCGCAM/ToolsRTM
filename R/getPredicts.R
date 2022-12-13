@@ -1,30 +1,36 @@
 #' getPredicts
 #'
 #' @param model a keras model
-#' @param type.model the type of  keras model; the options are: 'CNN'; 'Hidden-layers'
+#' @param type.model keras model type; the options are: 'CNN'; 'Hidden-layers'
 #' @param data the dataset in matrix format for predicting depVar
-#' @param data.Y  the Y variable: Avaliable options are: 'NULL' in real cases or a vector or matrix or data.frame
-#' @param data.LUT the dataset for transformations 
+#' @param data.trans PCA and normalized, options are avalaible
+#' @param data.Y  the Y variable: Avalaible options are: 'NULL' in real cases or a vector or matrix or data.frame
 #' @param depVar variable name 
-#' @param transf PCA and normalized options are avalaible
-#' @param depVar.Transf True or False are the options for DepVar
+#' @param scaler.depVar Scaler for Y 
 #' @return
 #' @export
 #'
 #' @examples
-getPredicts<-function(model=NULL, type.model='All',data=NULL, data.Y=data.YVal, data.LUT=LUT.to, depVar='Cab', transf=NULL,depVar.Transf=TRUE) {
+getPredicts<-function(model=NULL, type.model='CNN',data=NULL,data.trans=NULL ,
+                      data.Y=NULL, depVar='Cab', scaler.depVar = NULL) {
   
-  
-  #model=model.3hlayers; data=data.Xval; data.Y=data.YVal; data.LUT=LUT.to; depVar='Cab';transf='normalized';depVar.Transf=FALSE
 
-  if (is.null(transf)){
-    stop('PLease insert a transormation for applying: PCA, normalized  ...')
+  if (is.null(data.trans)){
+    stop('PLease insert a tranformation for applying: PCA, normalized, scaled or preProcess  ...')
   
   }
   
-  if (is.null(depVar.Transf)){
-    depVar.Trans=FALSE
+  if (is.null(scaler.depVar)){
+    stop('PLease insert the scaler for the model  ...')
+    
   }
+  
+  if (is.null(scaler.depVar)){
+    depVar.trans=FALSE
+  } else {
+    depVar.trans=TRUE
+  }
+  
   
   if (is.null(depVar)){
     stop('PLease insert the name variable to predict ...')
@@ -56,15 +62,18 @@ getPredicts<-function(model=NULL, type.model='All',data=NULL, data.Y=data.YVal, 
   if (type.model == 'Hidden-layers'){
     
     
-    pred.model.3hlayers <- predict(model, data)
-    
-    if (depVar.Transf == TRUE){
-      pred.model.3hlayers <- pred.model.3hlayers * abs(diff(range(LUT.to[,depVar]))) + min(LUT.to[,depVar])
+    pred.model.3hlayers <- as.numeric(predict(model, data))
+    pred.model.3hlayers<-as.matrix(pred.model.3hlayers)
+    colnames(pred.model.3hlayers)<-depVar
+    if (depVar.trans == TRUE){
+      
+      pred.model.3hlayers <- getReverse.trans(preProc=scaler.depVar,data=pred.model.3hlayers)
+
     }
     if (is.null(data.Y.to)){
-        df.plot<-data.frame(data,predicted.3hlayer=pred.model.3hlayers,predicted.cnn='NA')
+        df.plot<-data.frame(data,predicted.3hlayer=pred.model.3hlayers[,1],predicted.cnn='NA')
     } else {
-          df.plot<-data.frame(depVar=data.Y.to,predicted.3hlayer=pred.model.3hlayers,predicted.cnn='NA')
+          df.plot<-data.frame(depVar=data.Y.to,predicted.3hlayer=pred.model.3hlayers[,1],predicted.cnn='NA')
     }
     
     
@@ -72,25 +81,31 @@ getPredicts<-function(model=NULL, type.model='All',data=NULL, data.Y=data.YVal, 
     
     data.cnn <- array_reshape(data, c(nrow(data), ncol(data), 1))
     pred.model.cnn <- predict(model,data.cnn)
-    if (depVar.Transf == TRUE){
-      pred.model.cnn <- pred.model.cnn * abs(diff(range(LUT.to[,depVar]))) + min(LUT.to[,depVar])
+    pred.model.cnn<-as.matrix(pred.model.cnn)
+    colnames(pred.model.cnn)<-depVar
+    if (depVar.trans == TRUE){
+      pred.model.cnn <- getReverse.trans(preProc=scaler.depVar,data=pred.model.cnn)
     }
     if (is.null(data.Y.to)){
-      df.plot<-data.frame(data,predicted.3hlayer='NA',predicted.cnn=pred.model.cnn)
+      df.plot<-data.frame(data,predicted.3hlayer='NA',predicted.cnn=pred.model.cnn[,1])
     } else {
-      df.plot<-data.frame(depVar=data.Y.to,predicted.3hlayer='NA',predicted.cnn=pred.model.cnn)
+      df.plot<-data.frame(depVar=data.Y.to,predicted.3hlayer='NA',predicted.cnn=pred.model.cnn[,1])
     }
   
     
   } else if (type.model == 'All'){
     
     pred.model.3hlayers <- predict(model, data)
+    pred.model.3hlayers<-as.matrix(pred.model.3hlayers)
+    colnames(pred.model.3hlayers)<-depVar
     data.cnn <- array_reshape(data, c(nrow(data), ncol(data), 1))
     pred.model.cnn <- predict(model,data.cnn)
+    pred.model.cnn<-as.matrix(pred.model.cnn)
+    colnames(pred.model.cnn)<-depVar
     
-    if (depVar.Transf == TRUE){
-      pred.model.3hlayers <- pred.model.3hlayers * abs(diff(range(LUT.to[,depVar]))) + min(LUT.to[,depVar])
-      pred.model.cnn <- pred.model.cnn * abs(diff(range(LUT.to[,depVar]))) + min(LUT.to[,depVar])
+    if (depVar.trans == TRUE){
+      pred.model.3hlayers <- getReverse.trans(preProc=scaler.depVar,data=pred.model.3hlayers)
+      pred.model.cnn <- getReverse.trans(preProc=scaler.depVar,data=pred.model.cnn)
     }
     if (is.null(data.Y.to)){
       df.plot<-data.frame(data,predicted.3hlayer=pred.model.3hlayers,predicted.cnn=pred.model.cnn)
@@ -112,8 +127,60 @@ getPredicts<-function(model=NULL, type.model='All',data=NULL, data.Y=data.YVal, 
   
 }
 
+#' getReverse.trans
+#'
+#' @param preProc a keras model
+#' @param data a matrix
+#' @param digits 
 
+#' @return
+#' @export
+#'
+#' @examples
 
+getReverse.trans <- function(preProc=NULL, data=NULL, digits = 10) {
+  
+  stopifnot(class(preProc) == "preProcess")
+  stopifnot(class(data)[1] == "matrix")
+  
+  if (is.null(preProc)){
+    stop('PLease insert the scaler for the model  ...')
+    
+  }
+  if (is.null(data)){
+    stop('PLease insert a matrix to reverse the applied transfromation  ...')
+    
+  }
+  if (is.null(data)){
+    stop('PLease insert a matrix to reverse the applied transfromation  ...')
+    
+  }
+  df.to<-as.data.frame(data)
+  
+  nc <- ncol(df.to); nr <- nrow(df.to)
+  df.mean <- t(replicate(nr, preProc$mean))
+  df.std <- t(replicate(nr, preProc$std))
+  boundaries  <- preProc$rangeBounds
+  df.max <- t(replicate(nr, preProc$ranges[2,]))
+  df.min <- t(replicate(nr, preProc$ranges[1,]))
+  
+  if(sum(!is.na(match(c("center", "scale"), 
+                      names(preProc$method)))) == 2) {
+    df.transformed <- df.to * df.std + df.mean
+    
+  } else if(sum(!is.na(match("center", 
+                             names(preProc$method)))) == 1) {
+    df.transformed <- df.to + df.mean
+    
+  } else if(sum(!is.na(match("scale", 
+                             names(preProc$method)))) == 1) {
+    df.transformed <- df.to * df.std
+  } else {
+    df.transformed <- (df.to-boundaries[1])/(boundaries[2]-boundaries[1])*(df.max - df.min) + df.min
+  }
+  
+  return(round(df.transformed, digits))
+}
 
 
 

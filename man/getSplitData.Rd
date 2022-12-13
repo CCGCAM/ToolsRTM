@@ -8,24 +8,34 @@ getSplitData(
   data = NULL,
   depVar = "Cab",
   inputs = NULL,
-  transf = NULL,
-  depVar.Transf = TRUE
+  data.trans = NULL,
+  method.preProcess = NULL,
+  depVar.trans = TRUE,
+  prop.split = NULL
 )
 }
 \arguments{
-\item{data}{A dataframw with inputs and dep}
+\item{data}{A dataframe with inputs and variable to predic}
 
 \item{depVar}{name of the variable to predict}
 
-\item{inputs}{}
+\item{inputs}{the a vector with variables names for training and testing the model}
 
-\item{transf}{a trnasformation method, potions are: 'PCA', 'normalized', 'scaled'}
+\item{data.trans}{a data.transformation method, options are: 'PCA','preProcess',}
 
-\item{depVar.Transf}{a boolean variable for applying transformation in depend variable, options are: TRUE or FALSE}
+\item{method.preProcess}{the data.transformation method, data.transformation are: 'Normalize', 'YeoJohnson','BoxCox', Standarize', 'Center','Scale', and 'PCA'}
+
+\item{depVar.trans}{a boolean variable for applying data transformation in Y variable, options are: TRUE or FALSE.}
+
+\item{prop.split}{a vector with proportion for spliting the dataset. prop.split =c(0.8,02) will be used as default.}
 }
 \value{
-the training and testing dataset
+the training and testing dataset with plot and scalers
 }
 \description{
 getSplitData for ML models
+}
+\examples{
+
+
 }
