@@ -156,7 +156,7 @@ getSplitData<-function(data=NULL, depVar='Cab',inputs=NULL,
     
     
     split.database<- list('Xtrain' = data.Xtrain,'Ytrain' =data.Ytrain,
-                          'XVal' =data.Xval,'YVal' = data.Yval,
+                          'Xval' =data.Xval,'Yval' = data.Yval,
                           'Scalar.train' = preprocess.scalar,
                           'Scalar.Ytrain' = NA,
                           'plot.train' = plot.cor)
@@ -185,7 +185,7 @@ getSplitData<-function(data=NULL, depVar='Cab',inputs=NULL,
       
       
       split.database<- list('Xtrain' = data.Xtrain,'Ytrain' =data.Ytrain,
-                            'XVal' =data.Xval,'YVal' = data.Yval,
+                            'Xval' =data.Xval,'Yval' = data.Yval,
                             'Scalar.train' = preprocess.scalar,
                             'Scalar.Ytrain' = preprocess.scalarY,
                             'plot.train' = plot.cor)
@@ -229,7 +229,7 @@ getSplitData<-function(data=NULL, depVar='Cab',inputs=NULL,
     data.Xval <- LUT.to.xVal
     
     split.database<- list('Xtrain' = data.Xtrain,'Ytrain' =data.Ytrain,
-                          'XVal' =data.Xval,'YVal' = data.Yval,
+                          'Xval' =data.Xval,'Yval' = data.Yval,
                           'Scalar.train' = NA,
                           'Scalar.Ytrain' = NA,
                           'plot.train' = plot.pca.2)
@@ -257,7 +257,7 @@ getSplitData<-function(data=NULL, depVar='Cab',inputs=NULL,
       data.Yval <- round(LUT.to.Val[,2],4)
       
       split.database<- list('Xtrain' = data.Xtrain,'Ytrain' =data.Ytrain,
-                            'XVal' =data.Xval,'YVal' = data.Yval,
+                            'Xval' =data.Xval,'Yval' = data.Yval,
                             'Scalar.train' = NA,
                             'Scalar.Ytrain' = preprocess.scalarY,
                             'plot.train' = plot.pca.2)
