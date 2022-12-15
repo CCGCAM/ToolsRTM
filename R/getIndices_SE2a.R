@@ -19,27 +19,12 @@ getIndicesSE2a <- function(df,sensor='Sentinel-2a', df.data=NULL ,header = F) {
     df<-as.data.frame(df)
   }
   
-  
   #wave.avalaible = sort(as.numeric(gsub(".*?([0-9]+).*", "\\1", wavelengths)))
-  #names(wave.avalaible)<-S2.provided.bands
 
   S2.provided.bands <- sort(names(df))
-  if(any(S2.provided.bands == 'B11') & any(S2.provided.bands == 'B12')){
-    nl <- length(S2.provided.bands)
-    S2.provided.bands<-S2.provided.bands[c(3:nl,1,2)]
-  }  else if(any(S2.provided.bands == 'B11') & !(any(S2.provided.bands == 'B12'))){
-    nl <- length(S2.provided.bands)
-    S2.provided.bands<-S2.provided.bands[c(2:nl,1)]
-  } else if(any(S2.provided.bands == 'B12') & !(any(S2.provided.bands == 'B11'))){
-    nl <- length(S2.provided.bands)
-    S2.provided.bands<-S2.provided.bands[c(2:nl,1)]
-  } else {
-    nl <- length(S2.provided.bands)
-    S2.provided.bands<-S2.provided.bands[c(1:nl)]
-  }
-  #print(S2.provided.bands)
-  
-  
+  S2.sort<-c('B1','B2','B3','B4','B5','B6','B7','B8','B8A','B9','B11','B12')
+  S2.provided.bands<-S2.provided.bands[order(match(S2.provided.bands,S2.sort))]
+  print(S2.provided.bands)
   ##original conf form J.B Feret for CR.SWIR
   bandset.SE2a <- c('B1'=442.7,'B2'=492.7, 'B3'=559.8, 'B4'=664.6, 'B5'=704.1, 'B6'=740.5,
                  'B7' = 782.8, 'B8' =832.8,'B8A' = 864.7, 
