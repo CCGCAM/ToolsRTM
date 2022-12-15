@@ -4,18 +4,10 @@
 \alias{getIndicesSE2a}
 \title{extract spectral indices at Sentinel-2 resolution}
 \usage{
-getIndicesSE2a(
-  df,
-  wavelengths,
-  sensor = "Sentinel-2a",
-  df.data = NULL,
-  header = F
-)
+getIndicesSE2a(df, sensor = "Sentinel-2a", df.data = NULL, header = F)
 }
 \arguments{
 \item{df}{a dataframe with reflectance where each rows correspond with an spectrum}
-
-\item{wavelengths}{wavelength ovector with each reflectance}
 
 \item{df.data}{dataset with IDs that corresponde with each spectrum, is null is also enable}
 
@@ -28,5 +20,6 @@ a dataframe with indices and your dataset
 extract spectral indices at Sentinel-2 resolution
 }
 \examples{
+
 
 }
