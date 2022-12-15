@@ -2,7 +2,6 @@
 #' extract spectral indices at Sentinel-2 resolution
 #'
 #' @param df a dataframe with reflectance where each rows correspond with an spectrum 
-#' @param wavelengths  wavelength ovector with each reflectance
 #' @sensor Sensor options: 'Sentinel-2a', or 'Sentinel-2b'
 #' @param df.data  dataset with IDs that corresponde with each spectrum, is null is also enable
 #' @param header TRUE organize the indices by caterioas / False only return then name
@@ -12,15 +11,34 @@
 #'
 #' @examples
 #' 
-getIndicesSE2a <- function(df, wavelengths,sensor='Sentinel-2a',df.data=NULL ,header = F) {
+#' 
+
+getIndicesSE2a <- function(df,sensor='Sentinel-2a', df.data=NULL ,header = F) {
   
   if (class(data)[1] == "matrix"){
     df<-as.data.frame(df)
   }
   
-  #df=data.field[,bands.rfl];wavelengths=wave.se2.filtered;df.data=data.field;header = F
-  wave.avalaible = as.numeric(gsub(".*?([0-9]+).*", "\\1", wavelengths))
+  
+  #wave.avalaible = sort(as.numeric(gsub(".*?([0-9]+).*", "\\1", wavelengths)))
+  #names(wave.avalaible)<-S2.provided.bands
 
+  S2.provided.bands <- sort(names(df))
+  if(any(S2.provided.bands == 'B11') & any(S2.provided.bands == 'B12')){
+    nl <- length(S2.provided.bands)
+    S2.provided.bands<-S2.provided.bands[c(3:nl,1,2)]
+  }  else if(any(S2.provided.bands == 'B11') & !(any(S2.provided.bands == 'B12'))){
+    nl <- length(S2.provided.bands)
+    S2.provided.bands<-S2.provided.bands[c(2:nl,1)]
+  } else if(any(S2.provided.bands == 'B12') & !(any(S2.provided.bands == 'B11'))){
+    nl <- length(S2.provided.bands)
+    S2.provided.bands<-S2.provided.bands[c(2:nl,1)]
+  } else {
+    nl <- length(S2.provided.bands)
+    S2.provided.bands<-S2.provided.bands[c(1:nl)]
+  }
+  #print(S2.provided.bands)
+  
   
   ##original conf form J.B Feret for CR.SWIR
   bandset.SE2a <- c('B1'=442.7,'B2'=492.7, 'B3'=559.8, 'B4'=664.6, 'B5'=704.1, 'B6'=740.5,
@@ -39,8 +57,8 @@ getIndicesSE2a <- function(df, wavelengths,sensor='Sentinel-2a',df.data=NULL ,he
   } else if (sensor == 'Sentinel-2a'){
     bandset.SE<-  bandset.SE2b
   }
-    
-
+  
+  
   indices.list = list()
   # create progress bar
   total=dim(df)[1]
@@ -49,12 +67,14 @@ getIndicesSE2a <- function(df, wavelengths,sensor='Sentinel-2a',df.data=NULL ,he
   for (i in c(1:dim(df)[1])){
   
   
-  r = values<-df[i,]
-  r = signal::interp1(wave.avalaible, as.numeric(r), bandset.SE, extrap = T)
-  names(r) <- names(bandset.SE)
-
+  values<-df[i,]
+  r <- as.numeric(values[1,])
+  names(r)<-S2.provided.bands
+  list.r<-list(bandset.SE,r)
+  # take our list and rbind it into a data.frame, filling in missing values with NA
+  list.r<-plyr::ldply(list.r , rbind)
+  r <- list.r[2,]
  
-
   indices = c()
 
     if(header) indices['Structural'] <- 'Structural'
@@ -122,6 +142,8 @@ getIndicesSE2a <- function(df, wavelengths,sensor='Sentinel-2a',df.data=NULL ,he
     # TCARI 3*[(RB5-R670)-0.2*(RB5-R550)*(RB5/R670)]
     # Haboudane et al. (2002)
     indices['TCARI'] <- 3 * ((r['B5'] - r['B4']) - 0.2 * (r['B5'] - r['B3']) * (r['B5'] / r['B4']))
+    a.factor = 0.496
+    indices['CARI2']  <-  abs((r['B5'] - r['B3']) / 150.0 * r['B4'] + r['B4'] + r['B3'] - (a.factor * r['B3'])) / ((a.factor ** 2) + 1.0) ** 0.5 * (r['B5'] / r['B4']) 
     
     # TCARI/OSAVI TCARI/OSAVI
     # Haboudane et al. (2002)
@@ -131,26 +153,35 @@ getIndicesSE2a <- function(df, wavelengths,sensor='Sentinel-2a',df.data=NULL ,he
     # Broge and Leblanc (2000)
     indices['TVI'] <- 0.5 * (120 * (r['B6'] - r['B3']) - 200 * (r['B4'] - r['B3']))
     # SRPI R430/R680
-    if(any(bandset.SE <= 445)){
+    
+    #if(any(bandset.SE <= 445)){
       
     # SIPI (R800-R445)/(R800+R680)
       # Pe??uelas et al. (1995)
     indices['SIPI'] <- (r['B8'] - r['B1']) / (r['B8'] + r['B4'])
-    } 
+     
 
     ## SEntinel 2a
     if(header) indices['SE2a'] <- 'SE2a Indices'
     
     #Anthocyanin reflectance index
+    
+    indices['Datt1'] <- (r['B8'] - r['B5']) / (r['B8'] + r['B4'])
+    indices['Datt4'] <- (r['B4']) / (r['B3'] * r['B8'])
+    indices['Datt6'] <- (r['B8A']) / (r['B3'] * r['B5'])
+    # Canopy Chlorophyll Content Index  (abbrv. CCCI)
+    indices['CCCI'] <- ((r['B8'] - r['B5']) / (r['B8'] + r['B5'])) / ((r['B8'] - r['B4'])/ (r['B8'] + r['B4']))
+    
     indices['ARI'] <- (1/r['B3'])- (1/r['B5']) 
     indices['GNDVI'] <- (r['B8'] - r['B3']) / (r['B8'] + r['B3'])
     indices['CIg'] <- r['B8'] / r['B3'] -1 
+    
     y = 0.069;
     indices['ARVI'] <- (r['B8A'] - r['B8'] - y * (r['B4'] -r['B2']) ) / (r['B8A'] + r['B4'] - y * (r['B4'] -r['B2']) )
     
-    if (any(bandset.SE == 945) | any(bandset.SE == 943)) {
-      indices['AVI'] <- 2.0 * r['B9'] - r['B4']
-    } 
+    #if (any(bandset.SE == 945) | any(bandset.SE == 943)) {
+    indices['AVI'] <- 2.0 * r['B9'] - r['B4']
+    #} 
     #Atmospherically Resistant Vegetation Index 2  (abbrv. ARVI2)
     indices['ARV2'] <- -0.18 + 1.17 *(r['B8'] - r['B4']) / (r['B8'] + r['B4'])
     #Normalized Difference NIR/SWIR Normalized Burn Ratio (abbrv. NBR)
@@ -179,7 +210,10 @@ getIndicesSE2a <- function(df, wavelengths,sensor='Sentinel-2a',df.data=NULL ,he
 
     #CIre
     indices['CIre'] <- (r['B7'] / r['B5'])-1
+    indices['CIrededge'] <- (r['B8'] / r['B5'])-1
     indices['CIgreen'] <- (r['B8'] / r['B3'])-1
+    indices['Chlred-edge'] <- (r['B7'] / r['B5'])** (-1)
+    indices['CVI'] <- (r['B8'] * r['B4']) / r['B4']**2
     indices['IRECI'] <- (r['B7'] - r['B4']) / (r['B5'] / r['B6'])
     indices['REP'] <- 700 + 40* (((r['B4'] + r['B7'])/2) -  r['B5'])/ (r['B6'] - r['B5'])
     indices['RVI'] <-  (r['B8'] / r['B4'])
@@ -213,8 +247,9 @@ getIndicesSE2a <- function(df, wavelengths,sensor='Sentinel-2a',df.data=NULL ,he
     indices['PSSRa'] <- r['B8'] / r['B4']
    
     if(header) indices['Red-edge'] <- 'Red-edge'
-      if(any(bandset.SE == 864) | any(bandset.SE == 865)){
-        
+    
+      if (is.na(r['B8A']) != TRUE){
+        #### Using Band 8A
         indices['SIFe1'] <- r['B6']  / (r['B8A'] + (bandset.SE['B6'] - bandset.SE['B8A']) * (r['B7'] - r['B8A']) / (bandset.SE['B7'] - bandset.SE['B8A']))
         indices['SIFe2'] <- r['B5']  / (r['B7'] + (bandset.SE['B5'] - bandset.SE['B7']) * (r['B6'] - r['B7']) / (bandset.SE['B6'] - bandset.SE['B7']))
         indices['SIFe3'] <- r['B5']  / (r['B8A'] + (bandset.SE['B5'] - bandset.SE['B8A']) * (r['B6'] - r['B8A']) / (bandset.SE['B6'] - bandset.SE['B8A']))
@@ -222,7 +257,8 @@ getIndicesSE2a <- function(df, wavelengths,sensor='Sentinel-2a',df.data=NULL ,he
         indices['SIFe5'] <- r['B6']  / (r['B8A'] + (bandset.SE['B6'] - bandset.SE['B8A']) * (r['B5'] - r['B8A']) / (bandset.SE['B5'] - bandset.SE['B8A']))
         indices['SIFe6'] <- r['B7']  / (r['B8A'] + (bandset.SE['B7'] - bandset.SE['B8A']) * (r['B5'] - r['B8A']) / (bandset.SE['B5'] - bandset.SE['B8A']))
         
-      } else {
+      } else{
+        #### Using Band 8
         indices['SIFe1'] <- r['B6']  / (r['B8'] + (bandset.SE['B6'] - bandset.SE['B8']) * (r['B7'] - r['B8']) / (bandset.SE['B7'] - bandset.SE['B8']))
         indices['SIFe2'] <- r['B5']  / (r['B7'] + (bandset.SE['B5'] - bandset.SE['B7']) * (r['B6'] - r['B7']) / (bandset.SE['B6'] - bandset.SE['B7']))
         indices['SIFe3'] <- r['B5']  / (r['B8'] + (bandset.SE['B5'] - bandset.SE['B8']) * (r['B6'] - r['B8']) / (bandset.SE['B6'] - bandset.SE['B8']))

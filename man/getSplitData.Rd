@@ -10,7 +10,7 @@ getSplitData(
   inputs = NULL,
   data.trans = NULL,
   method.preProcess = NULL,
-  depVar.trans = TRUE,
+  depVar.trans = NULL,
   prop.split = NULL
 )
 }
