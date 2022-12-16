@@ -23,7 +23,7 @@ getSplitData(
 
 \item{data.trans}{a data.transformation method, options are: 'PCA','preProcess',}
 
-\item{method.preProcess}{the data.transformation method, data.transformation are: 'Normalize', 'YeoJohnson','BoxCox', Standarize', 'Center','Scale', and 'PCA'}
+\item{method.preProcess}{the data.transformation method for preProcess, data.transformation are: 'Normalize', 'YeoJohnson','BoxCox', Standarize', 'Center','Scale', and 'PCA'}
 
 \item{depVar.trans}{a boolean variable for applying data transformation in Y variable, options are: TRUE or FALSE.}
 

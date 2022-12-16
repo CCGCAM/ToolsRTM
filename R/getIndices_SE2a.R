@@ -197,7 +197,7 @@ getIndicesSE2a <- function(df,sensor='Sentinel-2a', df.data=NULL ,header = F) {
     indices['CIre'] <- (r['B7'] / r['B5'])-1
     indices['CIrededge'] <- (r['B8'] / r['B5'])-1
     indices['CIgreen'] <- (r['B8'] / r['B3'])-1
-    indices['Chlred-edge'] <- (r['B7'] / r['B5'])** (-1)
+    indices['Chlred.edge'] <- (r['B7'] / r['B5']) ** (-1)
     indices['CVI'] <- (r['B8'] * r['B4']) / r['B4']**2
     indices['IRECI'] <- (r['B7'] - r['B4']) / (r['B5'] / r['B6'])
     indices['REP'] <- 700 + 40* (((r['B4'] + r['B7'])/2) -  r['B5'])/ (r['B6'] - r['B5'])
