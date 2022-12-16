@@ -20,6 +20,7 @@ getSplitData<-function(data=NULL, depVar='Cab',inputs=NULL,
                        prop.split=NULL) {
 
   
+  
   if (is.null(data.trans)){
     stop('PLease insert a transformation: PCA, preProcess are avalaible.')
   }
@@ -55,6 +56,7 @@ getSplitData<-function(data=NULL, depVar='Cab',inputs=NULL,
   
     method.preProcess = 'NA'
   }
+  
   methods<-c('Normalize', 'YeoJohnson','BoxCox', 'Standarize', 'Center','Scale', 'PCA')
   
   if ((method.preProcess %in% methods) == TRUE){

@@ -8,6 +8,7 @@ getMLmodel(
   dataset = NULL,
   depVar = "Cab",
   model = "CNN",
+  optimizer = "adam",
   batch.size = 125,
   n.epochs = 10,
   save.model = T,
@@ -24,6 +25,8 @@ getMLmodel(
 \item{depVar}{name of the variable to predict}
 
 \item{model}{a ML model. options are: 'CNN','Hidden-layers',}
+
+\item{optimizer}{the optimizer for the model. options are: 'adam','adadelta','adagrad', 'adamax', 'nadam', 'msprop', 'sgd'}
 
 \item{batch.size}{batch size used for each epoch. By default is 125}
 
