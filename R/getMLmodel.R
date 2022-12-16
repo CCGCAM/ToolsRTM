@@ -4,6 +4,7 @@
 #' @param dataset a dataframe
 #' @param depVar name of the variable to predict
 #' @param model a ML model. options are: 'CNN','Hidden-layers',
+#' @param optimizer the optimizer for the model. options are: 'adam','adadelta','adagrad', 'adamax', 'nadam', 'msprop', 'sgd'
 #' @param batch.size batch size used for each epoch. By default is 125
 #' @param n.epochs  number of epoch. By default is 100
 #' @param save.model a boolean variable for saving ML model, options are: TRUE or FALSE. if TRUE, please use path.model to give a folder for the model
@@ -20,15 +21,13 @@
 #'
 
 
-getMLmodel<-function(dataset=NULL, depVar='Cab',model='CNN',
+getMLmodel<-function(dataset=NULL, depVar='Cab',model='CNN',optimizer='adam',
                      batch.size=125,n.epochs=10, save.model=T, path.model=NULL,
                      prop.split=c(0.8,0.2),
                      data.trans='preProcess',method.preProcess='Normalize',
                      depVar.trans=FALSE) {
 
   stopifnot(class(dataset) == 'data.frame')
-
-  stopifnot(depVar == 'NULL')
 
   stopifnot(model != 'CNN' | model != 'Hidden-layers')
 
@@ -72,8 +71,8 @@ getMLmodel<-function(dataset=NULL, depVar='Cab',model='CNN',
 
   }
 
-  split.data<-ToolsRTM::getSplitData(data=dataset[,inputs_], depVar=depVar,inputs=inputs_,
-                                     data.trans='preProcess',prop.split=prop.split,method.preProcess='Normalize',
+  split.data<-ToolsRTM::getSplitData(data=dataset[,inputs_], depVar=depVar,inputs=inputs_[-1],
+                                     data.trans=data.trans,prop.split=prop.split,method.preProcess=method.preProcess,
                                      depVar.trans=depVar.trans)
   ##########################################################################################
   ##### Parameters for the models
@@ -93,8 +92,41 @@ getMLmodel<-function(dataset=NULL, depVar='Cab',model='CNN',
     batch.size = batch.size
   }
 
-
+  if (exists('optimizer') == FALSE) {
+    optimizer = 'adam'
+    opt = optimizer_adam(learning_rate = 0.0001,beta_1 = 0.9, beta_2 = 0.999)
+  } else {
+    optimizer = optimizer
+  }
+  
+  if (optimizer == 'adadelta') {
+    opt = optimizer_adadelta(learning_rate = 1, rho = 0.95, epsilon = NULL, decay = 0)
+    
+  } else if (optimizer =='adagrad') {
+    opt = optimizer_adagrad(learning_rate = 0.01, epsilon = NULL, decay=0)
+    
+  } else if (optimizer =='adamax'){
+    opt = optimizer_adamax( learning_rate = 0.002, beta_1 = 0.9,beta_2 = 0.999)
+     
+  } else if (optimizer =='nadam'){
+    opt = optimizer_nadam(learning_rate = 0.002, beta_1 = 0.9,  beta_2 = 0.999, epsilon = NULL, schedule_decay = 0.004)
+    
+  } else if (optimizer =='nadam'){
+    opt = optimizer_rmsprop(learning_rate = 0.001, rho = 0.9, epsilon = NULL, decay = 0)
+    
+  } else if (optimizer =='sgd'){
+    opt = optimizer_sgd(learning_rate = 0.01, momentum = 0, decay = 0,  nesterov = FALSE)
+  } 
   stats<-list()
+  ###########################################################################
+  ############ step to improve the model
+  ###########################################################################
+  ## 1.Reduce your learning rate to a very small number like 0.001 or even 0.0001.
+  ## 2.Provide more data.
+  ## 3.Set Dropout rates to a number like 0.2. Keep them uniform across the network.
+  ## 4.Try decreasing the batch size.
+  ###########################################################################
+
 
   ##########################################################################################
   ##### Run the models
@@ -122,7 +154,7 @@ getMLmodel<-function(dataset=NULL, depVar='Cab',model='CNN',
 
     # Compile the configuration for the model
     model.dML %>% compile(loss = "mse",
-                               optimizer = 'adam',#,get_optimizer(),#"adam", #'sgd' can also be used
+                               optimizer = opt,'adam',#,get_optimizer(),#"adam", #'sgd' can also be used
                                metrics = list("mean_absolute_error"))
     model.dML %>% summary()
 
@@ -165,7 +197,7 @@ getMLmodel<-function(dataset=NULL, depVar='Cab',model='CNN',
       layer_max_pooling_1d(pool_size=2) %>%
       layer_conv_1d(filters=32, kernel_size=2, activation="relu") %>%
       layer_max_pooling_1d(pool_size=2) %>%
-      layer_dropout(rate=0.4) %>%
+      #layer_dropout(rate=0.4) %>%
       layer_flatten() %>%
       layer_dense(units=16, activation="relu") %>%
       layer_dropout(rate=0.1) %>%
@@ -174,7 +206,7 @@ getMLmodel<-function(dataset=NULL, depVar='Cab',model='CNN',
     # Compile the configuration for the model
 
     model.dML %>% compile(loss = "mse",
-                          optimizer =  "adam", #'sgd' can also be used
+                          optimizer =  opt,#"adam", #'sgd' can also be used
                           metrics = list("mean_absolute_error")
     )
 
@@ -209,6 +241,7 @@ getMLmodel<-function(dataset=NULL, depVar='Cab',model='CNN',
                                    depVar=depVar, scaler.depVar= scaler.depVar)
       df.plot <- df.plot[, colSums(is.na(df.plot)) != nrow(df.plot)]
       colnames(df.plot) <- c(depVar,paste(depVar,'.predicted',sep=''))
+      df.plot[,1] <-ToolsRTM::getReverse.trans(preProc=scaler.depVar,data=as.matrix(df.plot[,depVar]))
 
     }
 
