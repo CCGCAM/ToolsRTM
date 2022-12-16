@@ -4,7 +4,7 @@
 #' @param inputs  the a vector with variables names for training and testing the model
 #' @param depVar name of the variable to predict
 #' @param data.trans a data.transformation method, options are: 'PCA','preProcess',
-#' @param method.preProcess the data.transformation method, data.transformation are: 'Normalize', 'YeoJohnson','BoxCox', Standarize', 'Center','Scale', and 'PCA'
+#' @param method.preProcess the data.transformation method for preProcess, data.transformation are: 'Normalize', 'YeoJohnson','BoxCox', Standarize', 'Center','Scale', and 'PCA'
 #' @param depVar.trans a boolean variable for applying data transformation in Y variable, options are: TRUE or FALSE.
 #' @param prop.split a vector with proportion for spliting the dataset. prop.split =c(0.8,02) will be used as default.
 #'
