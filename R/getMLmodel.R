@@ -154,7 +154,7 @@ getMLmodel<-function(dataset=NULL, depVar='Cab',model='CNN',optimizer='adam',
 
     # Compile the configuration for the model
     model.dML %>% compile(loss = "mse",
-                               optimizer = opt,'adam',#,get_optimizer(),#"adam", #'sgd' can also be used
+                               optimizer = opt,#'adam',#,get_optimizer(),#"adam", #'sgd' can also be used
                                metrics = list("mean_absolute_error"))
     model.dML %>% summary()
 
