@@ -72,9 +72,9 @@ getPredicts<-function(model=NULL, type.model='CNN',data=NULL,data.trans=NULL ,
 
     }
     if (is.null(data.Y.to)){
-        df.plot<-data.frame(data,predicted.3hlayer=pred.model.3hlayers[,1],predicted.cnn='NA')
+        df.plot<-data.frame(data,predicted.3hlayer=pred.model.3hlayers[,1],predicted.cnn=NA)
     } else {
-          df.plot<-data.frame(depVar=data.Y.to,predicted.3hlayer=pred.model.3hlayers[,1],predicted.cnn='NA')
+          df.plot<-data.frame(depVar=data.Y.to,predicted.3hlayer=pred.model.3hlayers[,1],predicted.cnn=NA)
     }
     
     
@@ -88,9 +88,9 @@ getPredicts<-function(model=NULL, type.model='CNN',data=NULL,data.trans=NULL ,
       pred.model.cnn <- getReverse.trans(preProc=scaler.depVar,data=pred.model.cnn)
     }
     if (is.null(data.Y.to)){
-      df.plot<-data.frame(data,predicted.3hlayer='NA',predicted.cnn=pred.model.cnn[,1])
+      df.plot<-data.frame(data,predicted.3hlayer=NA,predicted.cnn=pred.model.cnn[,1])
     } else {
-      df.plot<-data.frame(depVar=data.Y.to,predicted.3hlayer='NA',predicted.cnn=pred.model.cnn[,1])
+      df.plot<-data.frame(depVar=data.Y.to,predicted.3hlayer=NA,predicted.cnn=pred.model.cnn[,1])
     }
   
     
