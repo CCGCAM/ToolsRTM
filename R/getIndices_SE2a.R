@@ -24,7 +24,7 @@ getIndicesSE2a <- function(df,sensor='Sentinel-2a', df.data=NULL ,header = F) {
   S2.provided.bands <- sort(names(df))
   S2.sort<-c('B1','B2','B3','B4','B5','B6','B7','B8','B8A','B9','B11','B12')
   S2.provided.bands<-S2.provided.bands[order(match(S2.provided.bands,S2.sort))]
-  print(S2.provided.bands)
+  #print(S2.provided.bands)
   ##original conf form J.B Feret for CR.SWIR
   bandset.SE2a <- c('B1'=442.7,'B2'=492.7, 'B3'=559.8, 'B4'=664.6, 'B5'=704.1, 'B6'=740.5,
                  'B7' = 782.8, 'B8' =832.8,'B8A' = 864.7, 
@@ -56,10 +56,11 @@ getIndicesSE2a <- function(df,sensor='Sentinel-2a', df.data=NULL ,header = F) {
   r <- as.numeric(values[1,])
   names(r)<-S2.provided.bands
   list.r<-list(bandset.SE,r)
+
   # take our list and rbind it into a data.frame, filling in missing values with NA
-  list.r<-plyr::ldply(list.r , rbind)
+  list.r<-plyr::ldply(list.r , rbind,parallel = TRUE)
   r <- list.r[2,]
- 
+
   indices = c()
 
     if(header) indices['Structural'] <- 'Structural'
@@ -252,9 +253,11 @@ getIndicesSE2a <- function(df,sensor='Sentinel-2a', df.data=NULL ,header = F) {
         indices['SIFe6'] <- r['B7']  / (r['B8'] + (bandset.SE['B7'] - bandset.SE['B8']) * (r['B5'] - r['B8']) / (bandset.SE['B5'] - bandset.SE['B8']))
             }  
     
-    indices['SBI'] <- 0.3037*r['B2']+0.2793*r['B3']+0.4743*r['B4']+0.5585*r['B8']+0.5082*r['B11']+0.1863*r['B2'] 
-    indices['GVI'] <- -0.2848*r['B2'] - 0.2435*r['B3']  - 0.5436*r['B4']+0.7243*r['B8']+0.0840*r['B11'] - 0.1800*r['B12'] 
-    indices['WET'] <- 0.1509*r['B2']+0.1973*r['B3']+0.3279*r['B4']+0.3406*r['B8A']-0.7112*r['B11']-0.4572*r['B12'] 
+    
+    indices['SBI'] <- 0.3037 * r['B2'] + 0.2793 * r['B3'] + 0.4743 * r['B4'] + 0.5585 * r['B8'] + 0.5082 * r['B11'] + 0.1863 * r['B2'] 
+    indices['GVI'] <- -0.2848 * r['B2'] - 0.2435 * r['B3']  - 0.5436 * r['B4'] + 0.7243 * r['B8'] + 0.0840 * r['B11'] - 0.1800 * r['B12'] 
+    indices['WET'] <- 0.1509 * r['B2'] + 0.1973 * r['B3'] + 0.3279 * r['B4'] + 0.3406 * r['B8A'] - 0.7112 * r['B11'] - 0.4572 * r['B12'] 
+    
     
     indices.list[[i]] = indices
     setTxtProgressBar(barProgress, i)
