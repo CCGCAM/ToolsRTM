@@ -38,7 +38,7 @@ getPredicts<-function(model=NULL, type.model='CNN',data=NULL,data.trans=NULL ,
   }
   
   if (type.model == "CNN" | type.model == "Hidden-layers"){
-    cat('get predictions .....')
+    #cat('get predictions .....')
   } else{
     stop('PLease insert a type model: CNN; Hidden-layers  or All options are avalaible')
   }

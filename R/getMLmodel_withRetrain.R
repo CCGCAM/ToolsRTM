@@ -22,8 +22,7 @@
 #' @examples
 #'
 
-
-getMLmodel_withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimizer='adam',
+getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimizer='adam',
                      kfold=NULL,n.Kfold=3,
                      batch.size=125,n.epochs=10, save.model=T, path.model=NULL,
                      prop.split=c(0.8,0.2),
@@ -61,8 +60,7 @@ getMLmodel_withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
     inputs_<-inputs_[! inputs_ %in% depVar]
     ## reorder and put DepVar first in the vector.
     inputs_<-c(depVar,inputs_)
-  }
-  else{
+  } else{
     inputs_<-c(depVar,inputs_)
   }
 
@@ -141,13 +139,19 @@ getMLmodel_withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
   preds.model <- list()
   preds.model.retrain <- list()
   scatters <- list()
+  models.keras <-list()
+  history.keras <-list()
+  Scalar.to  <-list()
+  plot.cor.to <-list()
 
-  total=n.kfold
-  barProgress <- txtProgressBar(min = 1, max = total, style = 3)
+  #total=n.kfold
+  #barProgress <- txtProgressBar(min = 1, max = total, style = 3)
 
   for (i.kfold in c(1:n.kfold)){
+    
+    message(paste(model,' with Kfold :',i.kfold,sep=''))
     #print(i.kfold)
-    setTxtProgressBar(barProgress, i.kfold)
+    #setTxtProgressBar(barProgress, i.kfold)
     ##########################################################################################
     ##### Split the Dataset
     ##########################################################################################
@@ -184,12 +188,11 @@ getMLmodel_withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
       model.dML %>% compile(loss = "mse",
                             optimizer = opt,#'adam',#,get_optimizer(),#"adam", #'sgd' can also be used
                             metrics = list("mean_absolute_error"))
-      #model.dML %>% summary()
-
+      model.dML %>% summary()
 
       # fit the configuration for the model
       history.model.dML<- model.dML %>% fit(data.Xtrain.reshape, split.data[['Ytrain']],
-                                            epochs = n.epochs, batch_size = batch.size, verbose=0,shuffle=F,callbacks =callbacks,
+                                            epochs = n.epochs, batch_size = batch.size, verbose=1,shuffle=F,callbacks =callbacks,
                                             validation_split = 0.2)
 
       # evaluate the configuration for the model
@@ -200,7 +203,7 @@ getMLmodel_withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
 
       if (depVar.trans == FALSE) {
 
-        df.val<-ToolsRTM::getPredicts(model=model.dML, type.model=model,
+        df.val<-ToolsRTM::getPredicts(model=model.dML, type.model='Hidden-layers',
                                        data=split.data[['Xval']], data.trans=data.trans,
                                        data.Y=split.data[['Yval']],
                                        depVar=depVar)
@@ -208,7 +211,7 @@ getMLmodel_withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
         colnames(df.val) <- c(depVar,paste(depVar,'.predicted',sep=''))
       } else {
         scaler.depVar = split.data[['Scalar.Ytrain']]
-        df.val<-ToolsRTM::getPredicts(model=model.dML, type.model=model,
+        df.val<-ToolsRTM::getPredicts(model=model.dML, type.model='Hidden-layers',
                                        data=split.data[['Xval']], data.trans=data.trans,
                                        data.Y=split.data[['Yval']],
                                        depVar=depVar, scaler.depVar= scaler.depVar)
@@ -221,7 +224,7 @@ getMLmodel_withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
       ### skill scores
       table.stats <- list()
       table.stats['VarDep'] <- depVar
-      table.stats['Model'] <- model
+      table.stats['Model'] <- 'Hidden-layers'
       table.stats['Trans'] <- method.preProcess
       table.stats['db'] <-'Testing'
       table.stats['kfold'] <- i.kfold
@@ -229,7 +232,7 @@ getMLmodel_withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
       table.stats['RMSE'] <-  round(MLmetrics::RMSE(df.val[,depVar], df.val[,paste(depVar,'.predicted',sep='')]),3)
       table.stats['R2'] <-  round(MLmetrics::R2_Score(df.val[,depVar], df.val[,paste(depVar,'.predicted',sep='')]),3)
       table.stats<-data.frame(do.call(cbind,table.stats))
-      print(table.stats)
+      #print(table.stats)
 
       #############################################################################################################################
       #	Update model wit new predictions  -----
@@ -240,7 +243,7 @@ getMLmodel_withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
 
 
       dim(data.to.retrain)
-      split.retrain<-ToolsRTM::getSplitData_noMessages(data=data.to.retrain, depVar=depVar,inputs=inputs.to,
+      split.retrain<-ToolsRTM::getSplitData_noMessages(data=data.to.retrain, depVar=depVar,inputs=inputs_[-1],
                                             data.trans=data.trans,prop.split=c(0.95,0.05),method.preProcess=method.preProcess,
                                             depVar.trans=depVar.trans)
       scaler.train.retrain <-  split.retrain[['Scalar.train']]
@@ -250,8 +253,8 @@ getMLmodel_withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
 
       # fit the configuration for the model
       history.model.dML<- model.dML %>% fit(data.Xtrain.reshape, split.retrain[['Ytrain']],
-                                            epochs = floor(n.epochs/2), batch_size = batch.size, verbose=0,shuffle=F,callbacks =callbacks,
-                                            validation_split = 0.1)
+                                            epochs = floor(n.epochs/2), batch_size = batch.size, verbose=1,shuffle=F,callbacks =callbacks,
+                                            validation_split = 0.2)
 
       # evaluate the configuration for the model
       model.dML %>% evaluate(split.retrain[['Xval']], split.retrain[['Yval']])
@@ -261,7 +264,7 @@ getMLmodel_withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
 
       if (depVar.trans == FALSE) {
 
-        df.val.retrain<-ToolsRTM::getPredicts(model=model.dML, type.model=model,
+        df.val.retrain<-ToolsRTM::getPredicts(model=model.dML, type.model='Hidden-layers',
                                       data=split.data[['Xval']], data.trans=data.trans,
                                       data.Y=split.data[['Yval']],
                                       depVar=depVar)
@@ -269,7 +272,7 @@ getMLmodel_withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
         colnames(df.val.retrain) <- c(depVar,paste(depVar,'.predicted',sep=''))
       } else {
         scaler.depVar = split.data[['Scalar.Ytrain']]
-        df.val.retrain<-ToolsRTM::getPredicts(model=model.dML, type.model=model,
+        df.val.retrain<-ToolsRTM::getPredicts(model=model.dML, type.model='Hidden-layers',
                                       data=split.data[['Xval']], data.trans=data.trans,
                                       data.Y=split.data[['Yval']],
                                       depVar=depVar, scaler.depVar= scaler.depVar)
@@ -282,7 +285,7 @@ getMLmodel_withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
 
       table.stats.r<-list()
       table.stats.r['VarDep'] <- depVar
-      table.stats.r['Model'] <- model
+      table.stats.r['Model'] <- 'Hidden-layers'
       table.stats.r['Trans'] <- method.preProcess
       table.stats.r['db'] <-'Val.retrain'
       table.stats.r['kfold'] <- i.kfold
@@ -338,7 +341,7 @@ getMLmodel_withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
       #model.dML %>% summary()
       # fit the configuration for the model
       history.model.dML <- model.dML %>% fit(data.Xtrain.CNN, split.data[['Ytrain']],
-                                             epochs = n.epochs,batch_size = batch.size, verbose=0,shuffle=F,
+                                             epochs = n.epochs,batch_size = batch.size, verbose=1,shuffle=F,
                                              callbacks = callbacks,
                                              validation_split = 0.2)
       # evaluate the configuration for the model
@@ -347,7 +350,7 @@ getMLmodel_withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
 
       if (depVar.trans == FALSE) {
 
-        df.val<-ToolsRTM::getPredicts(model=model.dML, type.model=model,
+        df.val<-ToolsRTM::getPredicts(model=model.dML, type.model='CNN',
                                       data=split.data[['Xval']], data.trans=data.trans,
                                       data.Y=split.data[['Yval']],
                                       depVar=depVar)
@@ -355,7 +358,7 @@ getMLmodel_withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
         colnames(df.val) <- c(depVar,paste(depVar,'.predicted',sep=''))
       } else {
         scaler.depVar = split.data[['Scalar.Ytrain']]
-        df.val<-ToolsRTM::getPredicts(model=model.dML, type.model=model,
+        df.val<-ToolsRTM::getPredicts(model=model.dML, type.model='CNN',
                                       data=split.data[['Xval']], data.trans=data.trans,
                                       data.Y=split.data[['Yval']],
                                       depVar=depVar, scaler.depVar= scaler.depVar)
@@ -368,7 +371,7 @@ getMLmodel_withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
       ### skill scores
       table.stats <- list()
       table.stats['VarDep'] <- depVar
-      table.stats['Model'] <- model
+      table.stats['Model'] <- 'CNN'
       table.stats['Trans'] <- method.preProcess
       table.stats['db'] <-'Testing'
       table.stats['kfold'] <- i.kfold
@@ -376,7 +379,7 @@ getMLmodel_withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
       table.stats['RMSE'] <-  round(MLmetrics::RMSE(df.val[,depVar], df.val[,paste(depVar,'.predicted',sep='')]),3)
       table.stats['R2'] <-  round(MLmetrics::R2_Score(df.val[,depVar], df.val[,paste(depVar,'.predicted',sep='')]),3)
       table.stats<-data.frame(do.call(cbind,table.stats))
-      print(table.stats)
+      #print(table.stats)
       #############################################################################################################################
       #	Update model wit new predictions  -----
       ##############################################################################################################################
@@ -384,7 +387,7 @@ getMLmodel_withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
       data.to.retrain <- dataset[,inputs_]
       data.to.retrain <-na.omit(data.to.retrain)
       dim(data.to.retrain)
-      split.retrain<-ToolsRTM::getSplitData_noMessages(data=data.to.retrain, depVar=depVar,inputs=inputs.to,
+      split.retrain<-ToolsRTM::getSplitData_noMessages(data=data.to.retrain, depVar=depVar,inputs=inputs_[-1],
                                             data.trans=data.trans,prop.split=c(0.95,0.05),method.preProcess=method.preProcess,
                                             depVar.trans=depVar.trans)
       scaler.train.retrain <-  split.retrain[['Scalar.train']]
@@ -395,7 +398,7 @@ getMLmodel_withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
 
       # fit the configuration for the model
       history.model.dML<- model.dML %>% fit(data.Xtrain.reshape, split.retrain[['Ytrain']],
-                                            epochs = floor(n.epochs/2), batch_size = batch.size, verbose=0,shuffle=F,callbacks =callbacks,
+                                            epochs = floor(n.epochs/2), batch_size = batch.size, verbose=1,shuffle=F,callbacks =callbacks,
                                             validation_split = 0.1)
 
       # evaluate the configuration for the model
@@ -406,7 +409,7 @@ getMLmodel_withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
 
       if (depVar.trans == FALSE) {
 
-        df.val.retrain<-ToolsRTM::getPredicts(model=model.dML, type.model=model,
+        df.val.retrain<-ToolsRTM::getPredicts(model=model.dML, type.model='CNN',
                                               data=split.data[['Xval']], data.trans=data.trans,
                                               data.Y=split.data[['Yval']],
                                               depVar=depVar)
@@ -414,7 +417,7 @@ getMLmodel_withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
         colnames(df.val.retrain) <- c(depVar,paste(depVar,'.predicted',sep=''))
       } else {
         scaler.depVar = split.data[['Scalar.Ytrain']]
-        df.val.retrain<-ToolsRTM::getPredicts(model=model.dML, type.model=model,
+        df.val.retrain<-ToolsRTM::getPredicts(model=model.dML, type.model='CNN',
                                               data=split.data[['Xval']], data.trans=data.trans,
                                               data.Y=split.data[['Yval']],
                                               depVar=depVar, scaler.depVar= scaler.depVar)
@@ -427,7 +430,7 @@ getMLmodel_withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
       # skill scores
       table.stats.r<-list()
       table.stats.r['VarDep'] <- depVar
-      table.stats.r['Model'] <- model
+      table.stats.r['Model'] <- 'CNN'
       table.stats.r['Trans'] <- method.preProcess
       table.stats.r['db'] <-'Val.retrain'
       table.stats.r['kfold'] <- i.kfold
@@ -492,13 +495,26 @@ getMLmodel_withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
       stat_smooth(method = "lm",formula = y ~ x,geom = "smooth",col='#C1CDC1',lty=2,se=T)
     print(scatter.model)
 
+    
+    ####
+    
     scatters[[i.kfold]] <- scatter.model
-
+    models.keras[[i.kfold]]<- model.dML
+    history.keras[[i.kfold]] <- history.model.dML
+    
+    Scalar.train<-split.retrain[['Scalar.train']]
+    Scalar.to[[i.kfold]] <- Scalar.train
+    
+    plot.cor <-split.retrain[['plot.train']]
+    
+    plot.cor.to[[i.kfold]] <- plot.cor
+    
 
 
   }
-
   stats.to.export<-data.frame(do.call(rbind, stats))
+
+  
   #preds.model.to.export<-data.frame(do.call(cbind, preds.model))
   #colnames(preds.model.to.export) <-c(paste(depVar,'model',method.preProcess,c(1:n.Kfold),sep='.'))
 
@@ -506,24 +522,24 @@ getMLmodel_withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
   #colnames(preds.model.retrain.to.export) <-c(paste(depVar,'retrain',method.preProcess,c(1:n.Kfold),sep='.'))
 
   if (depVar.trans == FALSE) {
-    model.outputs<- list('model' = model.dML,'history' =history.model.dML,
+    model.outputs<- list('model' = models.keras,'history' =history.keras,
                          'stats' = stats.to.export,
-                         'Scalar.train' = split.retrain[['Scalar.train']],
+                         'Scalar.train' = Scalar.to,
                          'Scalar.Ytrain' = NA,
                          'plot.val' =scatters,
-                         'plot.cor' = split.retrain[['plot.train']])
+                         'plot.cor' = plot.cor.to)
   }
   else {
-    model.outputs<- list('model' = model.dML,'history' =history.model.dML,
+    model.outputs<- list('model' = models.keras, 'history' =history.keras,
                          'stats' = stats.to.export,
-                         'Scalar.train' = split.retrain[['Scalar.train']],
+                         'Scalar.train' = Scalar.to,
                          'Scalar.Ytrain' = split.retrain[['Scalar.Ytrain']],
                          'plot.val' = scatters,
-                         'plot.cor' = split.retrain[['plot.train']])
+                         'plot.cor' = plot.cor.to)
   }
 
   return(model.outputs)
-  close(barProgress)
+  #close(barProgress)
 }
 
 
