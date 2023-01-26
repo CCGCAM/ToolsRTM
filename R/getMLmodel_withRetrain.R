@@ -1,12 +1,12 @@
 
-#' getMLmodel with a prefixed configuration
+#' getMLmodel is a function for retrain a deep model with a prefixed configuration
 #'
 #' @param dataset a dataframe
 #' @param depVar name of the variable to predict
 #' @param model a ML model. options are: 'CNN','Hidden-layers',
 #' @param optimizer the optimizer for the model. options are: 'adam','adadelta','adagrad', 'adamax', 'nadam', 'msprop', 'sgd'
-#' @param kfold a boolean variable for applying K-folds. By default is TRUE with n=3
-#' @param n.Kfold  number of k-folds By default is 3
+#' @param repeat.Model a boolean variable for repeating the model. By default is TRUE with n=3
+#' @param n.times  number of times to repaet the model. By default is 3
 #' @param batch.size batch size used for each epoch. By default is 125
 #' @param n.epochs  number of epoch. By default is 100
 #' @param save.model a boolean variable for saving ML model, options are: TRUE or FALSE. if TRUE, please use path.model to give a folder for the model
@@ -23,8 +23,8 @@
 #'
 
 getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimizer='adam',
-                     kfold=NULL,n.Kfold=3,
-                     batch.size=125,n.epochs=10, save.model=T, path.model=NULL,
+                    repeat.Model=NULL,n.times=3,
+                     batch.size=125,n.epochs=100, save.model=T, path.model=NULL,
                      prop.split=c(0.8,0.2),
                      data.trans='preProcess',method.preProcess='Normalize',
                      depVar.trans=FALSE) {
@@ -45,12 +45,12 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
     depVar.trans=FALSE
   }
 
-  if (is.null(kfold)) {
-    n.kfold = 3
-  } else if (kfold == FALSE){
-    n.kfold = 1
-  } else if (kfold == TRUE) {
-    n.kfold = n.Kfold
+  if (is.null(repeat.Model)) {
+    n.times = 3
+  } else if (repeat.Model == FALSE){
+    n.times = 1
+  } else if (repeat.Model == TRUE) {
+    n.times = n.times
   }
 
   inputs_<-colnames(dataset)
@@ -70,12 +70,12 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
       # output folder
       path.model='Models/'
       ifelse(!dir.exists(path.model), dir.create(path.model), FALSE)
-      message(paste('model will save in ',path.model,' folder',sep=''))
+      message(paste('model will save in ',path.model,' ',sep=''))
     } else{
       # output folder
       path.model=path.model
       ifelse(!dir.exists(path.model), dir.create(path.model), FALSE)
-      message(paste('model will save in ',path.model,' folder',sep=''))
+      message(paste('model will save in ',path.model,' ',sep=''))
     }
 
 
@@ -86,12 +86,12 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
   ##### Parameters for the models
   ##########################################################################################
 
-  callbacks = list(callback_early_stopping(monitor = "loss", patience = 75, restore_best_weights = TRUE))
+  callbacks_ = callback_early_stopping(monitor = 'val_loss', mode='min',patience = 7,restore_best_weights = TRUE)
 
   if (is.null(n.epochs)){
     n.epochs = 100
   } else {
-    batch.size = n.epochs
+    n.epochs = n.epochs
   }
 
   if (is.null(batch.size)){
@@ -144,14 +144,14 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
   Scalar.to  <-list()
   plot.cor.to <-list()
 
-  #total=n.kfold
+  #total=n.times
   #barProgress <- txtProgressBar(min = 1, max = total, style = 3)
 
-  for (i.kfold in c(1:n.kfold)){
+  for (i.times in c(1:n.times)){
     
-    message(paste(model,' with Kfold :',i.kfold,sep=''))
-    #print(i.kfold)
-    #setTxtProgressBar(barProgress, i.kfold)
+    message(paste(model,' with N Time :',i.times,sep=''))
+    #print(i.times)
+    #setTxtProgressBar(barProgress, i.times)
     ##########################################################################################
     ##### Split the Dataset
     ##########################################################################################
@@ -179,7 +179,7 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
                     input_shape=c(dim(data.Xtrain.reshape)[2]))  %>%
         #layer_dropout(rate=0.1) %>%
         layer_dense(units = 32, activation = 'relu') %>%
-        layer_dropout(rate=0.1) %>%
+        #layer_dropout(rate=0.1) %>%
         layer_dense(units = 16, activation = 'relu') %>%
         #layer_dropout(rate=0.1) %>%
         layer_dense(units = 1, activation = 'relu')
@@ -192,7 +192,7 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
 
       # fit the configuration for the model
       history.model.dML<- model.dML %>% fit(data.Xtrain.reshape, split.data[['Ytrain']],
-                                            epochs = n.epochs, batch_size = batch.size, verbose=1,shuffle=F,callbacks =callbacks,
+                                            epochs = n.epochs, batch_size = batch.size, verbose=1,shuffle=F,callbacks =callbacks_,
                                             validation_split = 0.2)
 
       # evaluate the configuration for the model
@@ -227,7 +227,7 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
       table.stats['Model'] <- 'Hidden-layers'
       table.stats['Trans'] <- method.preProcess
       table.stats['db'] <-'Testing'
-      table.stats['kfold'] <- i.kfold
+      table.stats['i.Time'] <- i.times
       table.stats['MAE'] <-  round(MLmetrics::MAE(df.val[,depVar], df.val[,paste(depVar,'.predicted',sep='')]),3)
       table.stats['RMSE'] <-  round(MLmetrics::RMSE(df.val[,depVar], df.val[,paste(depVar,'.predicted',sep='')]),3)
       table.stats['R2'] <-  round(MLmetrics::R2_Score(df.val[,depVar], df.val[,paste(depVar,'.predicted',sep='')]),3)
@@ -253,7 +253,7 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
 
       # fit the configuration for the model
       history.model.dML<- model.dML %>% fit(data.Xtrain.reshape, split.retrain[['Ytrain']],
-                                            epochs = floor(n.epochs/2), batch_size = batch.size, verbose=1,shuffle=F,callbacks =callbacks,
+                                            epochs = floor(n.epochs/2), batch_size = floor(batch.size/2), verbose=1,shuffle=F,callbacks =callbacks_,
                                             validation_split = 0.2)
 
       # evaluate the configuration for the model
@@ -288,19 +288,22 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
       table.stats.r['Model'] <- 'Hidden-layers'
       table.stats.r['Trans'] <- method.preProcess
       table.stats.r['db'] <-'Val.retrain'
-      table.stats.r['kfold'] <- i.kfold
+      table.stats.r['i.Time'] <- i.times
 
       table.stats.r['MAE'] <-  round(MLmetrics::MAE(df.val.retrain[,depVar], df.val.retrain[,paste(depVar,'.predicted',sep='')]),3)
       table.stats.r['RMSE'] <-  round(MLmetrics::RMSE(df.val.retrain[,depVar], df.val.retrain[,paste(depVar,'.predicted',sep='')]),3)
       table.stats.r['R2'] <-  round(MLmetrics::R2_Score(df.val.retrain[,depVar], df.val.retrain[,paste(depVar,'.predicted',sep='')]),3)
 
       table.stats.r<-data.frame(do.call(cbind,table.stats.r))
-
-
+      
+      table.stats.to.export<-rbind(table.stats,table.stats.r)
 
       # Save the model
       if (save.model == TRUE){
-        model.dML %>% save_model_hdf5(paste(path.model,'/model_3hlayers_for_',depVar,'-',i.kfold,'.hdf5',sep=''))
+        model.dML %>% save_model_hdf5(paste(path.model,'Model-3hlayers-for-',depVar,'-',method.preProcess,'-',i.times,'.hdf5',sep=''))
+        saveRDS(split.retrain[['Scalar.train']], file = paste(path.model,'1-ScalerX-Model-3hlayers-for-',depVar,'-',method.preProcess,'-',i.times,'.rds',sep=''))
+        write.table(table.stats.to.export, file = paste(path.model,'1-Statistcal_scores_for_Model-3hlayers-for-',depVar,'-',method.preProcess,'-',i.times,'.csv',sep=''),sep=',',row.names = F)
+        
       }
 
     } else if (model == 'CNN'){
@@ -342,7 +345,7 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
       # fit the configuration for the model
       history.model.dML <- model.dML %>% fit(data.Xtrain.CNN, split.data[['Ytrain']],
                                              epochs = n.epochs,batch_size = batch.size, verbose=1,shuffle=F,
-                                             callbacks = callbacks,
+                                             callbacks = callbacks_,
                                              validation_split = 0.2)
       # evaluate the configuration for the model
       #stats[['CNN-model']] <-model.dML %>% evaluate(data.Xval.CNN, split.data[['Yval']])
@@ -374,7 +377,7 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
       table.stats['Model'] <- 'CNN'
       table.stats['Trans'] <- method.preProcess
       table.stats['db'] <-'Testing'
-      table.stats['kfold'] <- i.kfold
+      table.stats['i.Time'] <- i.times
       table.stats['MAE'] <-  round(MLmetrics::MAE(df.val[,depVar], df.val[,paste(depVar,'.predicted',sep='')]),3)
       table.stats['RMSE'] <-  round(MLmetrics::RMSE(df.val[,depVar], df.val[,paste(depVar,'.predicted',sep='')]),3)
       table.stats['R2'] <-  round(MLmetrics::R2_Score(df.val[,depVar], df.val[,paste(depVar,'.predicted',sep='')]),3)
@@ -398,7 +401,7 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
 
       # fit the configuration for the model
       history.model.dML<- model.dML %>% fit(data.Xtrain.reshape, split.retrain[['Ytrain']],
-                                            epochs = floor(n.epochs/2), batch_size = batch.size, verbose=1,shuffle=F,callbacks =callbacks,
+                                            epochs = floor(n.epochs/2), batch_size = floor(batch.size/2), verbose=1,shuffle=F,callbacks =callbacks_,
                                             validation_split = 0.1)
 
       # evaluate the configuration for the model
@@ -433,32 +436,37 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
       table.stats.r['Model'] <- 'CNN'
       table.stats.r['Trans'] <- method.preProcess
       table.stats.r['db'] <-'Val.retrain'
-      table.stats.r['kfold'] <- i.kfold
+      table.stats.r['i.Time'] <- i.times
 
       table.stats.r['MAE'] <-  round(MLmetrics::MAE(df.val.retrain[,depVar], df.val.retrain[,paste(depVar,'.predicted',sep='')]),3)
       table.stats.r['RMSE'] <-  round(MLmetrics::RMSE(df.val.retrain[,depVar], df.val.retrain[,paste(depVar,'.predicted',sep='')]),3)
       table.stats.r['R2'] <-  round(MLmetrics::R2_Score(df.val.retrain[,depVar], df.val.retrain[,paste(depVar,'.predicted',sep='')]),3)
 
       table.stats.r<-data.frame(do.call(cbind,table.stats.r))
-
+      table.stats.to.export<-rbind(table.stats,table.stats.r)
 
 
       # Save the model
       if (save.model == TRUE){
-        model.dML %>% save_model_hdf5(paste(path.model,'1-model-CNN_for_',depVar,'-',i.kfold,'.hdf5',sep=''))
+        model.dML %>% save_model_hdf5(paste(path.model,'Model-CNN-for-',depVar,'-',method.preProcess,'-',i.times,'.hdf5',sep=''))
+        saveRDS(split.retrain[['Scalar.train']], file = paste(path.model,'1-ScalerX-Model-CNN-for-',depVar,'-',method.preProcess,'-',i.times,'.rds',sep=''))
+        
+        write.table(table.stats.to.export, file = paste(path.model,'1-Statistcal_scores_for_Model-CNN-for-',depVar,'-',method.preProcess,'-',i.times,'.csv',sep=''),sep=',',row.names = F)
+        
+        
       }
     }
     ##############################################################################################################################
-    # Save table with skill scores for kfolds  ---
+    # Save table with skill scores for times  ---
     ##############################################################################################################################
 
     table.stats.to.save <- rbind(table.stats,table.stats.r)
     print(table.stats.to.save)
-    stats[[i.kfold]] <-table.stats.to.save
+    stats[[i.times]] <-table.stats.to.save
 
     y.predicted = paste(depVar,'.predicted',sep='')
-    preds.model[[i.kfold]] <-df.val.retrain[,c(depVar,y.predicted)]
-    preds.model.retrain[[i.kfold]] <-df.val.retrain[,c(depVar,y.predicted)]
+    preds.model[[i.times]] <-df.val.retrain[,c(depVar,y.predicted)]
+    preds.model.retrain[[i.times]] <-df.val.retrain[,c(depVar,y.predicted)]
 
 
 
@@ -494,20 +502,26 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
       labs(title = statsLabel, x=axis_x,y=axis_y, size=8,face="bold") +
       stat_smooth(method = "lm",formula = y ~ x,geom = "smooth",col='#C1CDC1',lty=2,se=T)
     print(scatter.model)
+    
+    # Save the scatterplot
+    if (save.model == TRUE){
+      ggsave(paste(path.model,'1-ScatterPLot-',model,'-for_',depVar,'-',method.preProcess,'-',i.times,'.png',sep=''),
+             width = 10, height = 10,  dpi = 300,units = "cm")
+    }
 
     
     ####
     
-    scatters[[i.kfold]] <- scatter.model
-    models.keras[[i.kfold]]<- model.dML
-    history.keras[[i.kfold]] <- history.model.dML
+    scatters[[i.times]] <- scatter.model
+    models.keras[[i.times]]<- model.dML
+    history.keras[[i.times]] <- history.model.dML
     
     Scalar.train<-split.retrain[['Scalar.train']]
-    Scalar.to[[i.kfold]] <- Scalar.train
+    Scalar.to[[i.times]] <- Scalar.train
     
     plot.cor <-split.retrain[['plot.train']]
     
-    plot.cor.to[[i.kfold]] <- plot.cor
+    plot.cor.to[[i.times]] <- plot.cor
     
 
 
@@ -516,10 +530,10 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
 
   
   #preds.model.to.export<-data.frame(do.call(cbind, preds.model))
-  #colnames(preds.model.to.export) <-c(paste(depVar,'model',method.preProcess,c(1:n.Kfold),sep='.'))
+  #colnames(preds.model.to.export) <-c(paste(depVar,'model',method.preProcess,c(1:n.times),sep='.'))
 
   #preds.model.retrain.to.export<-data.frame(do.call(cbind, preds.model.retrain))
-  #colnames(preds.model.retrain.to.export) <-c(paste(depVar,'retrain',method.preProcess,c(1:n.Kfold),sep='.'))
+  #colnames(preds.model.retrain.to.export) <-c(paste(depVar,'retrain',method.preProcess,c(1:n.times),sep='.'))
 
   if (depVar.trans == FALSE) {
     model.outputs<- list('model' = models.keras,'history' =history.keras,

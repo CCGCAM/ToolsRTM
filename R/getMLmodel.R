@@ -60,12 +60,12 @@ getMLmodel<-function(dataset=NULL, depVar='Cab',model='CNN',optimizer='adam',
       # output folder
       path.model='Models/'
       ifelse(!dir.exists(path.model), dir.create(path.model), FALSE)
-      message(paste('model will save in ',path.model,' folder',sep=''))
+      message(paste('model will save in ',path.model,' ',sep=''))
     } else{
       # output folder
       path.model=path.model
       ifelse(!dir.exists(path.model), dir.create(path.model), FALSE)
-      message(paste('model will save in ',path.model,' folder',sep=''))
+      message(paste('model will save in ',path.model,' ',sep=''))
     }
 
 
@@ -78,12 +78,12 @@ getMLmodel<-function(dataset=NULL, depVar='Cab',model='CNN',optimizer='adam',
   ##### Parameters for the models
   ##########################################################################################
 
-  callbacks = list(callback_early_stopping(monitor = "loss", patience = 75, restore_best_weights = TRUE))
+  callbacks = list(callback_early_stopping(monitor = "val_loss",mode='min',patience = 5, restore_best_weights = TRUE))
 
   if (is.null(n.epochs)){
     n.epochs = 100
   } else {
-    batch.size = n.epochs
+    n.epochs = n.epochs
   }
 
   if (is.null(batch.size)){
@@ -172,6 +172,9 @@ getMLmodel<-function(dataset=NULL, depVar='Cab',model='CNN',optimizer='adam',
     # Save the model
     if (save.model == TRUE){
     model.dML %>% save_model_hdf5(paste(path.model,'/model_3hlayers_for_',depVar,'.hdf5',sep=''))
+    model.dML %>% save_model_hdf5(paste(path.model,'Model-3hlayers-for-',depVar,'-',method.preProcess,'.hdf5',sep=''))
+    saveRDS(split.data[['Scalar.train']], file = paste(path.model,'1-ScalerX-Model-3hlayers-for-',depVar,'-',method.preProcess,'.rds',sep=''))
+      
     }
 
   } else if (model == 'CNN'){
@@ -220,7 +223,8 @@ getMLmodel<-function(dataset=NULL, depVar='Cab',model='CNN',optimizer='adam',
     stats[['CNN-model']] <-model.dML %>% evaluate(data.Xval.CNN, split.data[['Yval']])
     # Save the model
     if (save.model == TRUE){
-    model.dML %>% save_model_hdf5(paste(path.model,'model_cnn_for_',depVar,'.hdf5',sep=''))
+      model.dML %>% save_model_hdf5(paste(path.model,'Model-CNN-for-',depVar,'-',method.preProcess,'.hdf5',sep=''))
+      saveRDS(split.data[['Scalar.train']], file = paste(path.model,'1-ScalerX-Model-CNN-for-',depVar,'-',method.preProcess,'.rds',sep=''))
     }
   }
 
@@ -278,6 +282,14 @@ getMLmodel<-function(dataset=NULL, depVar='Cab',model='CNN',optimizer='adam',
             legend.title=element_blank()) +
       labs(title = statsLabel, x=axis_x,y=axis_y, size=10,face="bold") +
       stat_smooth(method = "lm",formula = y ~ x,geom = "smooth",col='red',lty=2,se=T)
+    
+    # Save the scatterplot
+    
+    if (save.model == TRUE){
+      ggsave(paste(path.model,'1-ScatterPLot-',model,'-for_',depVar,'-',method.preProcess,'.png',sep=''),
+             width = 10, height = 10,  dpi = 300,units = "cm")
+    }
+    
 
 
   if (depVar.trans == FALSE) {
