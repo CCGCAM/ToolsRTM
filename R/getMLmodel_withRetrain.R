@@ -5,8 +5,7 @@
 #' @param depVar name of the variable to predict
 #' @param model a ML model. options are: 'CNN','Hidden-layers',
 #' @param optimizer the optimizer for the model. options are: 'adam','adadelta','adagrad', 'adamax', 'nadam', 'msprop', 'sgd'
-#' @param repeat.Model a boolean variable for repeating the model. By default is TRUE with n=3
-#' @param n.times  number of times to repaet the model. By default is 3
+#' @param n.times  number of times to repaet the model. By default is 1
 #' @param batch.size batch size used for each epoch. By default is 125
 #' @param n.epochs  number of epoch. By default is 100
 #' @param save.model a boolean variable for saving ML model, options are: TRUE or FALSE. if TRUE, please use path.model to give a folder for the model
@@ -23,12 +22,14 @@
 #'
 
 getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimizer='adam',
-                    repeat.Model=NULL,n.times=3,
+                     n.times=NULL,
                      batch.size=125,n.epochs=100, save.model=T, path.model=NULL,
                      prop.split=c(0.8,0.2),
                      data.trans='preProcess',method.preProcess='Normalize',
                      depVar.trans=FALSE) {
-
+  
+  
+  
   stopifnot(class(dataset) == 'data.frame')
 
   stopifnot(model != 'CNN' | model != 'Hidden-layers')
@@ -45,13 +46,15 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
     depVar.trans=FALSE
   }
 
-  if (is.null(repeat.Model)) {
-    n.times = 3
-  } else if (repeat.Model == FALSE){
-    n.times = 1
-  } else if (repeat.Model == TRUE) {
-    n.times = n.times
+  if (is.null(n.times)) {
+    N.times = 1
+  } else {
+    N.times = n.times
   }
+
+  
+  
+  
 
   inputs_<-colnames(dataset)
   if(any(inputs_ %in% depVar)){
@@ -86,7 +89,7 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
   ##### Parameters for the models
   ##########################################################################################
 
-  callbacks_ = callback_early_stopping(monitor = 'val_loss', mode='min',patience = 7,restore_best_weights = TRUE)
+  callbacks_ = callback_early_stopping(monitor = 'val_loss', mode='min',patience = 5,restore_best_weights = TRUE)
 
   if (is.null(n.epochs)){
     n.epochs = 100
@@ -95,7 +98,7 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
   }
 
   if (is.null(batch.size)){
-    batch.size = 125
+    batch.size = 32
   } else {
     batch.size = batch.size
   }
@@ -103,6 +106,7 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
   if (exists('optimizer') == FALSE) {
     optimizer = 'adam'
     opt = optimizer_adam(learning_rate = 0.0001,beta_1 = 0.9, beta_2 = 0.999)
+    opt.retrain = optimizer_adam(learning_rate = 0.00001,beta_1 = 0.9, beta_2 = 0.999)
   } else {
     opt = optimizer
   }
@@ -144,10 +148,9 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
   Scalar.to  <-list()
   plot.cor.to <-list()
 
-  #total=n.times
-  #barProgress <- txtProgressBar(min = 1, max = total, style = 3)
+  #barProgress <- txtProgressBar(min = 1, max = N.times, style = 3)
 
-  for (i.times in c(1:n.times)){
+  for (i.times in c(1:N.times)){
     
     message(paste(model,' with N Time :',i.times,sep=''))
     #print(i.times)
@@ -155,7 +158,7 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
     ##########################################################################################
     ##### Split the Dataset
     ##########################################################################################
-
+    set.seed(1234+i.times)
     split.data<-ToolsRTM::getSplitData_noMessages(data=dataset[,inputs_], depVar=depVar,inputs=inputs_[-1],
                                        data.trans=data.trans,prop.split=prop.split,method.preProcess=method.preProcess,
                                        depVar.trans=depVar.trans)
@@ -170,7 +173,7 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
       # sequential ML model ---
       ##############################################################################################################################
 
-
+      
       data.Xtrain.reshape <- array_reshape(split.data[['Xtrain']], c(nrow(split.data[['Xtrain']]), ncol(split.data[['Xtrain']])))
       dim(data.Xtrain.reshape)
       # Create the configuration for the model
@@ -239,7 +242,7 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
       ##############################################################################################################################
 
       data.to.retrain <- dataset[,inputs_]
-      data.to.retrain <-na.omit(data.to.retrain)
+      #data.to.retrain <-na.omit(data.to.retrain)
 
 
       dim(data.to.retrain)
@@ -265,16 +268,16 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
       if (depVar.trans == FALSE) {
 
         df.val.retrain<-ToolsRTM::getPredicts(model=model.dML, type.model='Hidden-layers',
-                                      data=split.retrain[['Xval']], data.trans=data.trans,
-                                      data.Y=split.retrain[['Yval']],
+                                      data=split.data[['Xval']], data.trans=data.trans,
+                                      data.Y=split.data[['Yval']],
                                       depVar=depVar)
         df.val.retrain<- df.val.retrain[, colSums(is.na(df.val.retrain)) != nrow(df.val.retrain)]
         colnames(df.val.retrain) <- c(depVar,paste(depVar,'.predicted',sep=''))
       } else {
         scaler.depVar = split.retrain[['Scalar.Ytrain']]
         df.val.retrain<-ToolsRTM::getPredicts(model=model.dML, type.model='Hidden-layers',
-                                      data=split.retrain[['Xval']], data.trans=data.trans,
-                                      data.Y=split.retrain[['Yval']],
+                                      data=split.data[['Xval']], data.trans=data.trans,
+                                      data.Y=split.data[['Yval']],
                                       depVar=depVar, scaler.depVar= scaler.depVar)
         df.val.retrain <- df.val.retrain[, colSums(is.na(df.val.retrain)) != nrow(df.val.retrain)]
         colnames(df.val.retrain) <- c(depVar,paste(depVar,'.predicted',sep=''))
@@ -388,11 +391,12 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
       ##############################################################################################################################
 
       data.to.retrain <- dataset[,inputs_]
-      data.to.retrain <-na.omit(data.to.retrain)
+      #data.to.retrain <-na.omit(data.to.retrain)
       dim(data.to.retrain)
       split.retrain<-ToolsRTM::getSplitData_noMessages(data=data.to.retrain, depVar=depVar,inputs=inputs_[-1],
-                                            data.trans=data.trans,prop.split=c(0.95,0.05),method.preProcess=method.preProcess,
+                                            data.trans=data.trans,prop.split=c(0.90,0.1),method.preProcess=method.preProcess,
                                             depVar.trans=depVar.trans)
+      
       scaler.train.retrain <-  split.retrain[['Scalar.train']]
 
       data.Xtrain.reshape <- array_reshape(split.retrain[['Xtrain']], c(nrow(split.retrain[['Xtrain']]), ncol(split.retrain[['Xtrain']]), 1))
@@ -413,16 +417,16 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
       if (depVar.trans == FALSE) {
 
         df.val.retrain<-ToolsRTM::getPredicts(model=model.dML, type.model='CNN',
-                                              data=split.retrain[['Xval']], data.trans=data.trans,
-                                              data.Y=split.retrain[['Yval']],
+                                              data=split.data[['Xval']], data.trans=data.trans,
+                                              data.Y=split.data[['Yval']],
                                               depVar=depVar)
         df.val.retrain<- df.val.retrain[, colSums(is.na(df.val.retrain)) != nrow(df.val.retrain)]
         colnames(df.val.retrain) <- c(depVar,paste(depVar,'.predicted',sep=''))
       } else {
         scaler.depVar = split.retrain[['Scalar.Ytrain']]
         df.val.retrain<-ToolsRTM::getPredicts(model=model.dML, type.model='CNN',
-                                              data=split.retrain[['Xval']], data.trans=data.trans,
-                                              data.Y=split.retrain[['Yval']],
+                                              data=split.data[['Xval']], data.trans=data.trans,
+                                              data.Y=split.data[['Yval']],
                                               depVar=depVar, scaler.depVar= scaler.depVar)
         df.val.retrain <- df.val.retrain[, colSums(is.na(df.val.retrain)) != nrow(df.val.retrain)]
         colnames(df.val.retrain) <- c(depVar,paste(depVar,'.predicted',sep=''))
@@ -443,6 +447,7 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
       table.stats.r['R2'] <-  round(MLmetrics::R2_Score(df.val.retrain[,depVar], df.val.retrain[,paste(depVar,'.predicted',sep='')]),3)
 
       table.stats.r<-data.frame(do.call(cbind,table.stats.r))
+      
       table.stats.to.export<-rbind(table.stats,table.stats.r)
 
 
@@ -530,10 +535,10 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
 
   
   #preds.model.to.export<-data.frame(do.call(cbind, preds.model))
-  #colnames(preds.model.to.export) <-c(paste(depVar,'model',method.preProcess,c(1:n.times),sep='.'))
+  #colnames(preds.model.to.export) <-c(paste(depVar,'model',method.preProcess,c(1:N.times),sep='.'))
 
   #preds.model.retrain.to.export<-data.frame(do.call(cbind, preds.model.retrain))
-  #colnames(preds.model.retrain.to.export) <-c(paste(depVar,'retrain',method.preProcess,c(1:n.times),sep='.'))
+  #colnames(preds.model.retrain.to.export) <-c(paste(depVar,'retrain',method.preProcess,c(1:N.times),sep='.'))
 
   if (depVar.trans == FALSE) {
     model.outputs<- list('model' = models.keras,'history' =history.keras,
