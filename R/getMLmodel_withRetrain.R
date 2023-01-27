@@ -260,21 +260,21 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
       model.dML %>% evaluate(split.retrain[['Xval']], split.retrain[['Yval']])
 
       ### skill scores
-      #stats[['Hidden-layers']] <- model.dML %>% evaluate(split.data[['Xval']], split.data[['Yval']])
+      #stats[['Hidden-layers']] <- model.dML %>% evaluate(split.retrain[['Xval']], split.retrain[['Yval']])
 
       if (depVar.trans == FALSE) {
 
         df.val.retrain<-ToolsRTM::getPredicts(model=model.dML, type.model='Hidden-layers',
-                                      data=split.data[['Xval']], data.trans=data.trans,
-                                      data.Y=split.data[['Yval']],
+                                      data=split.retrain[['Xval']], data.trans=data.trans,
+                                      data.Y=split.retrain[['Yval']],
                                       depVar=depVar)
         df.val.retrain<- df.val.retrain[, colSums(is.na(df.val.retrain)) != nrow(df.val.retrain)]
         colnames(df.val.retrain) <- c(depVar,paste(depVar,'.predicted',sep=''))
       } else {
-        scaler.depVar = split.data[['Scalar.Ytrain']]
+        scaler.depVar = split.retrain[['Scalar.Ytrain']]
         df.val.retrain<-ToolsRTM::getPredicts(model=model.dML, type.model='Hidden-layers',
-                                      data=split.data[['Xval']], data.trans=data.trans,
-                                      data.Y=split.data[['Yval']],
+                                      data=split.retrain[['Xval']], data.trans=data.trans,
+                                      data.Y=split.retrain[['Yval']],
                                       depVar=depVar, scaler.depVar= scaler.depVar)
         df.val.retrain <- df.val.retrain[, colSums(is.na(df.val.retrain)) != nrow(df.val.retrain)]
         colnames(df.val.retrain) <- c(depVar,paste(depVar,'.predicted',sep=''))
@@ -408,21 +408,21 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
       model.dML %>% evaluate(data.Xval.reshape, split.retrain[['Yval']])
 
       ### skill scores
-      #stats[['Hidden-layers']] <- model.dML %>% evaluate(split.data[['Xval']], split.data[['Yval']])
+      #stats[['Hidden-layers']] <- model.dML %>% evaluate(split.retrain[['Xval']], split.retrain[['Yval']])
 
       if (depVar.trans == FALSE) {
 
         df.val.retrain<-ToolsRTM::getPredicts(model=model.dML, type.model='CNN',
-                                              data=split.data[['Xval']], data.trans=data.trans,
-                                              data.Y=split.data[['Yval']],
+                                              data=split.retrain[['Xval']], data.trans=data.trans,
+                                              data.Y=split.retrain[['Yval']],
                                               depVar=depVar)
         df.val.retrain<- df.val.retrain[, colSums(is.na(df.val.retrain)) != nrow(df.val.retrain)]
         colnames(df.val.retrain) <- c(depVar,paste(depVar,'.predicted',sep=''))
       } else {
-        scaler.depVar = split.data[['Scalar.Ytrain']]
+        scaler.depVar = split.retrain[['Scalar.Ytrain']]
         df.val.retrain<-ToolsRTM::getPredicts(model=model.dML, type.model='CNN',
-                                              data=split.data[['Xval']], data.trans=data.trans,
-                                              data.Y=split.data[['Yval']],
+                                              data=split.retrain[['Xval']], data.trans=data.trans,
+                                              data.Y=split.retrain[['Yval']],
                                               depVar=depVar, scaler.depVar= scaler.depVar)
         df.val.retrain <- df.val.retrain[, colSums(is.na(df.val.retrain)) != nrow(df.val.retrain)]
         colnames(df.val.retrain) <- c(depVar,paste(depVar,'.predicted',sep=''))
