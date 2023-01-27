@@ -303,7 +303,9 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
 
       # Save the model
       if (save.model == TRUE){
-        model.dML %>% save_model_hdf5(paste(path.model,'Model-3hlayers-for-',depVar,'-',method.preProcess,'-',i.times,'.hdf5',sep=''))
+        model.dML %>% save_model_hdf5(paste(path.model,'Model-3hlayers-for-',depVar,'-',method.preProcess,'-',i.times,'.h5',sep=''))
+        model.dML %>% save_model_weights_hdf5(paste(path.model,'Model-3hlayers-for-',depVar,'-',method.preProcess,'-',i.times,'-weights.h5',sep=''))
+        
         saveRDS(split.retrain[['Scalar.train']], file = paste(path.model,'1-ScalerX-Model-3hlayers-for-',depVar,'-',method.preProcess,'-',i.times,'.rds',sep=''))
         write.table(table.stats.to.export, file = paste(path.model,'1-Statistcal_scores_for_Model-3hlayers-for-',depVar,'-',method.preProcess,'-',i.times,'.csv',sep=''),sep=',',row.names = F)
         
@@ -453,7 +455,8 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
 
       # Save the model
       if (save.model == TRUE){
-        model.dML %>% save_model_hdf5(paste(path.model,'Model-CNN-for-',depVar,'-',method.preProcess,'-',i.times,'.hdf5',sep=''))
+        model.dML %>% save_model_hdf5(paste(path.model,'Model-CNN-for-',depVar,'-',method.preProcess,'-',i.times,'.h5',sep=''))
+        model.dML %>% save_model_weights_hdf5(paste(path.model,'Model-CNN-for-',depVar,'-',method.preProcess,'-',i.times,'-weights.h5',sep=''))
         saveRDS(split.retrain[['Scalar.train']], file = paste(path.model,'1-ScalerX-Model-CNN-for-',depVar,'-',method.preProcess,'-',i.times,'.rds',sep=''))
         
         write.table(table.stats.to.export, file = paste(path.model,'1-Statistcal_scores_for_Model-CNN-for-',depVar,'-',method.preProcess,'-',i.times,'.csv',sep=''),sep=',',row.names = F)
