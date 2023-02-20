@@ -7,8 +7,12 @@ An R packages with tools for simulating canopy reflectance using a set of radiat
 
 Install the package toolsrtm with the following command line in R session:
 >
-> devtools::install_gitlab('caminoccg/toolsrtm')
+> git_url <- 'https://gitlab.com/caminoccg/toolsrtm.git'
+> devtools::install_gitlab(git_url, auth_token = 'Student.Acces.Tokens')
 >
+>  Student.Acces.Tokens is provided by me
+>
+
 
 ( This package is in a private repository for this reason this step doesn't work)
 
