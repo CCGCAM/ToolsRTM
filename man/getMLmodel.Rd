@@ -50,6 +50,3 @@ a list with models and plots
 \description{
 getMLmodel with a prefixed configuration
 }
-\examples{
-
-}

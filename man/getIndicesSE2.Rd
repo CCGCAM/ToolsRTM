@@ -17,7 +17,3 @@ a dataframe with indices and your dataset
 \description{
 extract spectral indices at Sentinel-2 resolution
 }
-\examples{
-
-
-}

@@ -14,12 +14,6 @@ getStacks(rasterFiles = NULL, frequency = "Daily", bands = NULL, output = NULL)
 
 \item{output}{path of the outputs}
 }
-\value{
-
-}
 \description{
 Title
-}
-\examples{
-
 }

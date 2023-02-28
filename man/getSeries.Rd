@@ -20,12 +20,6 @@ getSeries(
 
 \item{factorR}{factor for the reflectance bands}
 }
-\value{
-
-}
 \description{
 get series in a dataframe from rasters
-}
-\examples{
-
 }

@@ -20,12 +20,6 @@ getSpatial_index(
 
 \item{factorR}{numeric. multiplying factor used to write reflectance in image (==10000 for S2)}
 }
-\value{
-
-}
 \description{
 this function produces Spatial maps of the spectral index
-}
-\examples{
-
 }

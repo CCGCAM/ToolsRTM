@@ -26,12 +26,6 @@ getSCOPE_outputs(
 
 \item{radiance}{is TRUE get Radiance}
 }
-\value{
-
-}
 \description{
 Get in a LUT all main outputs from SCOPE model
-}
-\examples{
-
 }

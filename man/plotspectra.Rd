@@ -38,12 +38,6 @@ plotspectra(
 
 \item{...}{}
 }
-\value{
-
-}
 \description{
 for plotting spectra
-}
-\examples{
-
 }

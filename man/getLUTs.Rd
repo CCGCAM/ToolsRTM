@@ -17,6 +17,3 @@ a dataframe with all parameters
 \description{
 Get LUTs for radiative transfer models
 }
-\examples{
-
-}

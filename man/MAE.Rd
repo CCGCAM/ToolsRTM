@@ -13,17 +13,8 @@ MAE(m, o)
 
 \item{o}{}
 }
-\value{
-
-
-
-}
 \description{
 Function that returns Mean Absolute Error
 
 Function that returns Mean Absolute Error
-}
-\examples{
-
-
 }

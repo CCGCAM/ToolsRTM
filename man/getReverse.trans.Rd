@@ -13,9 +13,6 @@ getReverse.trans(preProc = NULL, data = NULL, digits = 10)
 
 \item{digits}{}
 }
-\value{
-
-}
 \description{
 getReverse.trans
 }

@@ -38,12 +38,6 @@ plotspectra_SE(
 
 \item{...}{}
 }
-\value{
-
-}
 \description{
 for plotting spectra adapted to Sentinel bands
-}
-\examples{
-
 }

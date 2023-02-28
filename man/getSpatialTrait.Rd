@@ -40,6 +40,3 @@ a list with: i) a scatter-plot between trait and best indicator, and ii) spatial
 \description{
 function for Spatial mapping of the main traits
 }
-\examples{
-
-}

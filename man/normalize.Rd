@@ -13,12 +13,6 @@ normalize(x, low = 0, high = 1)
 
 \item{high}{}
 }
-\value{
-
-}
 \description{
 Normalize
-}
-\examples{
-
 }

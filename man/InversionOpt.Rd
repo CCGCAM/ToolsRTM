@@ -28,12 +28,6 @@ merit-1stD uses the first derivative in both data.}
 
 \item{nOpt}{Solutions uses by the chosen method}
 }
-\value{
-
-}
 \description{
 LUT inversion using a RTM
-}
-\examples{
-
 }

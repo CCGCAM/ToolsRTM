@@ -15,12 +15,6 @@ getTIFFs(netCDFs = NULL, bands = NULL, output = NULL, pattern = NULL)
 
 \item{pattern}{File pattern to extract the netcdf (Area or studied region)}
 }
-\value{
-
-}
 \description{
 Extract all bands from SE images (adapted to NETCDF dataset)
-}
-\examples{
-
 }

@@ -36,6 +36,3 @@ LUT in data frame
 \description{
 This function generates distribution of biophysical parameters used as input parameters in the RRT model
 }
-\examples{
-
-}

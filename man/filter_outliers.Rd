@@ -17,6 +17,3 @@ a vector
 \description{
 remove outliers
 }
-\examples{
-
-}

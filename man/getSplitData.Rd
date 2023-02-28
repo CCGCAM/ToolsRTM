@@ -35,7 +35,3 @@ the training and testing dataset with plot and scalers
 \description{
 getSplitData for ML models
 }
-\examples{
-
-
-}

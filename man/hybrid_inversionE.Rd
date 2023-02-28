@@ -34,6 +34,3 @@ hybrid_inversionE(
 \description{
 Inversion of  plant traits using ML models
 }
-\examples{
-
-}

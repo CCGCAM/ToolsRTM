@@ -29,12 +29,6 @@ getSpectraIndices(
 
 \item{single.bands}{extract singles_bands, by deault is False}
 }
-\value{
-
-}
 \description{
 this function produces Spatial maps of the spectral indices
-}
-\examples{
-
 }

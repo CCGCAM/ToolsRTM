@@ -9,9 +9,6 @@ get_append(input = NULL)
 \arguments{
 \item{input}{a list of tables}
 }
-\value{
-
-}
 \description{
 Append  tables
 }

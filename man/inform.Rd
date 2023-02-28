@@ -13,14 +13,8 @@ inform(inputLUT = NULL, rsoil = rsoil, PROSPECTversion = "PRO")
 
 \item{PROSPECTversion}{Version of PROSPECT model. 'PRO' or 'D' is accepted. By default 'PRO' is used.}
 }
-\value{
-
-}
 \description{
 The INvertible FOrest Reflectance Model coupled with PROSPECT
-}
-\examples{
-
 }
 \references{
 INFORM (Atzberger, 2000; Schlerf&Atzberger, 2006) simulates the bi-directional reflectance

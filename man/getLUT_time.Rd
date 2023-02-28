@@ -35,6 +35,3 @@ a dataframe with the LUT for Time series
 \description{
 Get LUT table for SCOPE model
 }
-\examples{
-
-}

@@ -13,12 +13,6 @@ getFLD2_SE(values, wavelengths, irradiance)
 
 \item{irradiance}{irradiance}
 }
-\value{
-
-}
 \description{
 Get FLD2
-}
-\examples{
-
 }

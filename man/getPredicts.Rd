@@ -29,9 +29,6 @@ getPredicts(
 
 \item{scaler.depVar}{Scaler for Y}
 }
-\value{
-
-}
 \description{
 getPredicts
 }

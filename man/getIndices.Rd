@@ -22,7 +22,3 @@ the original dataset with the spactral indices
 \description{
 GetIndices a function to estimate most commont spectral indices
 }
-\examples{
-
-
-}
