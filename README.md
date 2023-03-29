@@ -9,11 +9,11 @@ Install the package toolsrtm with the following command line in R session:
 >
 > git_url <- 'https://gitlab.com/caminoccg/toolsrtm.git'
 > 
-> devtools::install_gitlab(git_url, auth_token = 'Student.Acces.Tokens')
+> devtools::install_git(git_url, auth_token = 'Student.Acces.Tokens')
 >
 >
 
-(Student.Acces.Tokens is mandatory)
+(Student.Acces.Tokens is mandatory, and you shoud ask for that)
 
 ## Manual 
 
