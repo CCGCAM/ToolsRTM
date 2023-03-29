@@ -9,7 +9,7 @@ get_data(RTmodel = "PROSPECT-D", nLUT = 100, random.input = 100)
 \arguments{
 \item{RTmodel}{RT model: options are: 'PROSPECT-PRO';'PROSPECT-D'; 'INFORM'; and 'fourSAILH'}
 
-\item{nsamples}{nummber of combinations}
+\item{nLUT}{nummber of combinations}
 
 \item{seed}{the seed number for the  uniform distribution}
 }
