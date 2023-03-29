@@ -1,6 +1,6 @@
 Package: ToolsRTM
 Title: Tools for simulating and spatial trait mappings
-Version: 0.32
+Version: 0.33
 Authors@R: 
     person(given = "Carlos",
            family = "Camino",
