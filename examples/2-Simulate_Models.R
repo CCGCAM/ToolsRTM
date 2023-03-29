@@ -20,6 +20,7 @@ if (!require("expint")) { install.packages("expint"); require("expint") }  ### N
 version<-'Ve_'
 n_sim<-'0.5k'
 model_rtm<-c('INFORM','fourSAIL-PRO') # INFORM
+model_i <- model_rtm[1]
 nSamples<-200
 ID=(1:nSamples)    
 
@@ -59,52 +60,27 @@ registerDoParallel(cl)
 start_time <- Sys.time()
 sim.rfl<-list()
 sims<-foreach(i=1:nSamples) %dopar% {
-  data.inform<-ToolsRTM::inform(inputLUT = LUT[i,],rsoil=rsoil0[[i]],PROSPECTversion = 'PRO')
-  data.foursail_pro<-ToolsRTM::m4SAIL(inputLUT=LUT[i,],rsoil=rsoil0[[i]],PROSPECTversion = 'PRO')
-  rdot<-data.foursail_pro[[1]]
-  rsot<-data.foursail_pro[[2]]
-  rfl.prosail<-ToolsRTM::Compute_BRF(rdot=rdot,rsot=rsot,tts=LUT[i,'tts'],data.light=ToolsRTM::dataSpec_PDB)
-  #data.foursail2_pro<-ToolsRTM::Compute_BRF(rdot=rdot,rsot=rsot,tts=LUT[i,'tts'],data.light=ToolsRTM::dataSpec_PDB)
+  if (model_i == 'INFORM'){
+    data.inform<-ToolsRTM::inform(inputLUT = LUT[i,],rsoil=rsoil0[[i]],LeafModel = 'PRO')
+    sim.rfl[[i]]<-data.inform
+  } else if (model_i == 'fourSAIL-PRO'){
+    data.foursail_pro<-ToolsRTM::m4SAIL(inputLUT=LUT[i,],rsoil=rsoil0[[i]],LeafModel = 'PRO')
+    rdot<-data.foursail_pro[[1]]
+    rsot<-data.foursail_pro[[2]]
+    rfl.prosail<-ToolsRTM::Compute_BRF(rdot=rdot,rsot=rsot,tts=LUT[i,'tts'],data.light=ToolsRTM::dataSpec_PDB)
+    sim.rfl[[i]]<-rfl.prosail
+    #data.foursail2_pro<-ToolsRTM::Compute_BRF(rdot=rdot,rsot=rsot,tts=LUT[i,'tts'],data.light=ToolsRTM::dataSpec_PDB)
+    
   
-  sim.rfl[[i]]<-data.inform[[1]]
-  #sim.rfl[[i]]<-data.foursail-pro
-  #sim.rfl[[i]]<-rfl.prosail
+  }
+
   
   
 } ##end paralle
-
-library(R.matlab)
-
-### soil is quite different for the soil use 
-# read in our data
-soil_inform <- readMat('examples/LUTs/soildata.mat')
-rsoil<-soil_inform$r.soil
-
 stopCluster(cl)
 end_time <- Sys.time()
 print(end_time - start_time)
 
-
-LUT_100k<-read.table('examples/LUTs/INFORM_LUT100k_v22.csv', sep=',',header=T)
-LUT_100k[1,]
-
-
-psoil	 <-  LUT_100k[1,'psoil']
-
-rsoil<- c(psoil*Rsoil1+(1-psoil)*Rsoil2)
-
-data.inform<-ToolsRTM::inform(inputLUT = LUT_100k[1,],rsoil=rsoil,PROSPECTversion = 'PRO')
-plot(data.inform)
-grid()
-
-#soil.matrix<-rbind(soil.matrix,t(soil.scope_2nm), t(soil.scope_3nm))
-Spec.simula<- speclib(data.inform, wave)
-##### From 1nm to Sentinel2a
-Spec.simula.sentinel<-spectralResampling(Spec.simula, "Sentinel2a",response_function = TRUE)
-plot(Spec.simula.sentinel, lwd=2, ylim=c(0,0.5))
-grid()
-par(new=T)
-lines(Spec.simula.sentinel@wavelength,LUT_100k[1,26:38]/10000, col='red',lty=2)
 ##############################################################################################################################
 # 3.1.   Generate Hdar object  ----   
 ##############################################################################################################################
@@ -123,4 +99,18 @@ plot(Spec.simula)
 ##### From 1nm to Sentinel2a
 Spec.simula.sentinel<-spectralResampling(Spec.simula, "Sentinel2a",response_function = TRUE)
 plot(Spec.simula.sentinel)
+
+##############################################################################################################################
+# 4.   Export LUT  ----   
+##############################################################################################################################
+
+rfl.sentineltoExport<-as.data.frame(Spec.simula.sentinel)
+colnames(rfl.sentineltoExport)<-paste('R.',Spec.simula.sentinel@wavelength,sep='')
+head(rfl.sentineltoExport)
+LUT_rfl.sentinel<-cbind(ID=IDs, LUT,rfl.sentineltoExport)
+
+filename=paste('examples/LUTS/1-LUT_',model_i,'_',version,j,'_',n_sim,'.csv',sep='')
+write.table(LUT_rfl.sentinel, file = filename, sep=",", row.names = FALSE, col.names = T,append = F)
+
+
 
