@@ -69,7 +69,7 @@ if (typeLAI == 'understorey') {
 }
   
 # run PROSPECTversion ='D', 
-LRT <- prospect_DB(N,Cab,Car,Anth,Cbrown,EWT,LMA,alpha)
+LRT <- prospect_DB(N,Cab,Car,Cbrown,EWT,LMA,alpha)
 rho	 <- 	LRT[[2]]
 tau	 <- 	LRT[[3]]
 
