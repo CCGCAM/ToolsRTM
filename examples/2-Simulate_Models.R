@@ -29,6 +29,12 @@ LUT<-as.data.frame(getLUT(inputs = inputs, nLUT=nSamples, setseed = 1234))
 head(LUT)
 dim(LUT)
 
+## Alternative 
+
+LUT.prospect.pro <-get_data(RTmodel='PROSPECT-PRO',nLUT=104)
+dim(LUT.prospect.pro)
+head(LUT.prospect.pro)
+
 
 ##############################################################################################################################
 # 1.1. Get Soil reflectance from PROSIAL model -----    
@@ -111,6 +117,5 @@ LUT_rfl.sentinel<-cbind(ID=IDs, LUT,rfl.sentineltoExport)
 
 filename=paste('examples/LUTS/1-LUT_',model_i,'_',version,j,'_',n_sim,'.csv',sep='')
 write.table(LUT_rfl.sentinel, file = filename, sep=",", row.names = FALSE, col.names = T,append = F)
-
 
 
