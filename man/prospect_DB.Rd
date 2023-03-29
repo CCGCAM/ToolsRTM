@@ -13,7 +13,7 @@ prospect_DB(N, Cab, Car, Anth, Brown, EWT, LMA, alpha)
 
 \item{Car}{numeric. Carotenoid content (microg.cm-2)}
 
-\item{Anth}{numeric. Anthocyain content (microg.cm-2)}
+\item{Anth}{numeric. Anthocyanins content (microg.cm-2)}
 
 \item{EWT}{numeric. Equivalent Water Thickness (g.cm-2). Default is 0.009 Default is  0.012}
 

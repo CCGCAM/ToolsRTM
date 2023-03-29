@@ -4,14 +4,15 @@
 \alias{m4SAIL}
 \title{Performs PROSAIL simulation based on a set of combinations of input parameters}
 \usage{
-m4SAIL(inputLUT, rsoil, PROSPECTversion = "PRO")
+m4SAIL(inputLUT, rsoil, LeafModel = "PRO")
 }
 \arguments{
 \item{inputLUT}{LUT table with distribution of biophysical parameters used as input parameters in the model}
 
 \item{rsoil}{numeric. Soil reflectance}
 
-\item{PROSPECTversion}{Version of PROSPECT model. 'PRO' or 'D' is accepted. By default 'PRO' is used.}
+\item{LeafModel}{Version of PROSPECT model or Liberty. For PROSPECT model: 'PRO' or 'D' is accepted. By default 'PRO' is used.
+Liberty model is Leaf radiative transfer model designed for conifer needles. Uses 'Liberty'}
 }
 \value{
 list. rdot,rsot,rddt,rsdt

@@ -4,14 +4,14 @@
 \alias{inform}
 \title{The INvertible FOrest Reflectance Model coupled with PROSPECT}
 \usage{
-inform(inputLUT = NULL, rsoil = rsoil, PROSPECTversion = "PRO")
+inform(inputLUT = NULL, rsoil = rsoil, LeafModel = "PRO")
 }
 \arguments{
 \item{inputLUT}{LUT table with distribution of biophysical parameters used as input parameters in the model}
 
 \item{rsoil}{numeric. Soil reflectance}
 
-\item{PROSPECTversion}{Version of PROSPECT model. 'PRO' or 'D' is accepted. By default 'PRO' is used.}
+\item{LeafModel}{Version of PROSPECT model. 'PRO' or 'D' is accepted. By default 'PRO' is used.}
 }
 \description{
 The INvertible FOrest Reflectance Model coupled with PROSPECT
