@@ -99,7 +99,7 @@ if (is.null(LUT_GB)){
 if (PROSPECTversion == 'PRO') {
   #PROSPECTversion = 'PRO'
   ## Prospect-D
-  N=inputLUT[,'N']; Cab=inputLUT[,'Cab']; Car=inputLUT[,'Car']; Anth=inputLUT[,'Anth']; Cbrown=inputLUT[,'Cbrown']
+  N=inputLUT[,'N']; Cab=inputLUT[,'Cab']; Car=inputLUT[,'Car']; Cbrown=inputLUT[,'Cbrown']
   EWT=inputLUT[,'EWT']; LMA=inputLUT[,'LMA'];alpha=inputLUT[,'alpha']
   ## Prospect-PRO
   ### fixed Cm=0.000 in LUTs 

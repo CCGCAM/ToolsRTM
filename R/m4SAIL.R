@@ -32,8 +32,8 @@
 #' 
 #' @param rsoil numeric. Soil reflectance
 #' @param inputLUT LUT table with distribution of biophysical parameters used as input parameters in the model
-#' @param PROSPECTversion Version of PROSPECT model. 'PRO' or 'D' is accepted. By default 'PRO' is used.
-#'
+#' @param LeafModel Version of PROSPECT model or Liberty. For PROSPECT model: 'PRO' or 'D' is accepted. By default 'PRO' is used.
+#' Liberty model is Leaf radiative transfer model designed for conifer needles. Uses 'Liberty'
 #' @return list. rdot,rsot,rddt,rsdt
 #' 
 #' rdot: hemispherical-directional reflectance factor in viewing direction
@@ -70,7 +70,7 @@
 #' and works more efficiently if only few parameters change.
 
 #' 
-m4SAIL <- function(inputLUT,rsoil, PROSPECTversion='PRO'){
+m4SAIL <- function(inputLUT,rsoil, LeafModel='PRO'){
 
   ## parameters for fourSAIL
   LIDFa=inputLUT[,'LIDFa']; LIDFb=inputLUT[,'LIDFb']; TypeLidf=inputLUT[,'TypeLidf']; lai=inputLUT[,'LAI']
@@ -79,23 +79,33 @@ m4SAIL <- function(inputLUT,rsoil, PROSPECTversion='PRO'){
 ########################################
 #	1.1 Leaf optical properties
 #########################################
-if (PROSPECTversion == 'PRO') {
+if (LeafModel == 'PRO') {
 
   #define alll inputs in the models. retreived from LUT tables
   N=inputLUT[,'N']; Cab=inputLUT[,'Cab']; Car=inputLUT[,'Car']; Anth=inputLUT[,'Anth']; Cbrown=inputLUT[,'Cbrown']
   EWT=inputLUT[,'EWT']; LMA=inputLUT[,'LMA']; alpha=inputLUT[,'alpha']
   Prot=inputLUT[,'Prot'];CBC=inputLUT[,'CBC']
-  # run PROSPECTversion ='PRO'
+  # run LeafModel ='PRO'
   LRT <- prospect_PRO(N,Cab,Car,Anth,Cbrown,EWT,LMA,alpha,Prot,CBC)
   print(message('SAIL with PROSPECT-PRO is processing'))
-}  else{
+} else if (LeafModel == 'Liberty'){
+  #define alll inputs in the models. retreived from LUT tables
+
+  # run LeafModel ='PRO'
+  LRT <- liberty(inputLUT)
+  print(message('SAIL with Liberty model is processing'))
+  
+} else if (LeafModel == 'D') {
   
   #define alll inputs in the models. retreived from LUT tables
   N=inputLUT[,'N']; Cab=inputLUT[,'Cab']; Car=inputLUT[,'Car']; Anth=inputLUT[,'Anth']; Cbrown=inputLUT[,'Cbrown']
   EWT=inputLUT[,'EWT']; LMA=inputLUT[,'LMA']; alpha=inputLUT[,'alpha']
-  # run PROSPECTversion ='D'
+  # run LeafModel ='D'
   LRT <- prospect_DB(N,Cab,Car,Anth,Cbrown,EWT,LMA,alpha)
   print(message('SAIL with PROSPECT-D is processing'))
+} else {
+  stop('a leaf model is needed')
+  
 }
   
 

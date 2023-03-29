@@ -2,7 +2,7 @@
 #'
 #' @param inputLUT LUT table with distribution of biophysical parameters used as input parameters in the model
 #' @param rsoil numeric. Soil reflectance
-#' @param PROSPECTversion Version of PROSPECT model. 'PRO' or 'D' is accepted. By default 'PRO' is used.
+#' @param LeafModel Version of PROSPECT model. 'PRO' or 'D' is accepted. By default 'PRO' is used.
 #'
 #'
 #' @return
@@ -102,7 +102,7 @@
 # Crown transmittance for teta_o        t_o
 # _____________________________________________________________________________________________________________
 
-inform<- function(inputLUT=NULL,rsoil=rsoil, PROSPECTversion='PRO'){
+inform<- function(inputLUT=NULL,rsoil=rsoil, LeafModel='PRO'){
 
 if ((is.null(inputLUT)) | (is.null(rsoil)) ){
   message('Please add the missing parameters')
@@ -128,22 +128,30 @@ skyl=inputLUT[,'skyl']
 refl_soil = rsoil  ### we give refl_soil based on scale factor and rsoil
 
 # Computing of understorey reflectance for dicotyledoneae (ala=45,hotspot=0, N=2, Cab=30, Cw=0.05 CM=0,05)
-#r_understorey <- ToolsRTM::msail_background(inputLUT=inputLUT,rsoil=refl_soil,PROSPECTversion= PROSPECTversion, typeLAI = 'understorey') 
+#r_understorey <- ToolsRTM::msail_background(inputLUT=inputLUT,rsoil=refl_soil,LeafModel= LeafModel, typeLAI = 'understorey') 
 r_understorey <- ToolsRTM::m4SAIL_inform(inputLUT=inputLUT,rsoil=refl_soil, typeLAI = 'understorey') 
 
-if (PROSPECTversion == 'PRO') {
+if (LeafModel == 'PRO') {
   ## Prospect inputs
   N=inputLUT[,'N']; Cab=inputLUT[,'Cab']; Car=inputLUT[,'Car']; Anth=inputLUT[,'Anth']; Cbrown=inputLUT[,'Cbrown']
   EWT=inputLUT[,'EWT']; LMA=inputLUT[,'LMA'];alpha=inputLUT[,'alpha']
   Prot=inputLUT[,'Prot'];CBC=inputLUT[,'CBC']
   
-  #PROSPECTversion = 'PRO'
+  #LeafModel = 'PRO'
   LRT<- ToolsRTM::prospect_PRO(N,Cab,Car,Anth,Cbrown,EWT,LMA,alpha,Prot,CBC)
   # Computing of leaf reflecance and transmittance
   r_leaf <- LRT[[2]] #rho Reflectance
   t_leaf <- LRT[[3]] #tau Transmittance
-} else {
-  #PROSPECTversion ='D'
+} else if (LeafModel == 'Liberty'){
+  #define alll inputs in the models. retreived from LUT tables
+  
+  # run LeafModel ='PRO'
+  LRT <- ToolsRTM::liberty(inputLUT)
+  r_leaf <- LRT[[2]] #rho Reflectance
+  t_leaf <- LRT[[3]] #tau Transmittance
+} else if (LeafModel == 'D'){
+  
+  #LeafModel ='D'
   N=inputLUT[,'N']; Cab=inputLUT[,'Cab']; Car=inputLUT[,'Car']; Anth=inputLUT[,'Anth']; Cbrown=inputLUT[,'Cbrown']
   EWT=inputLUT[,'EWT']; LMA=inputLUT[,'LMA'];alpha=inputLUT[,'alpha']
   
@@ -188,11 +196,13 @@ co <- 1 - exp(-k * sd / cos(tto_) ) # eq 1 from Rosema et al 1992
 # Ground coverage by shadow (cs) under a solar zenith angle teta_s
 cs <- 1 - exp(-k * sd / cos(tts_) )
 # Geometrical factor (g) depending on the illumination and viewing geometry
-g <- ( tan(tto_)^2 + tan(tts_)^2 - (2 * tan(tto_) * tan(tts_) * cos(psi_) ))^(0.5)
+g <- ((tan(tto_)^2 + tan(tts_))^2 - 2 * tan(tto_) * tan(tts_) * cos(psi_))^(0.5)
 
 # Correlation coefficient (p)
 
 p <- exp(-g * h / cd)
+
+
 
 # _____________________________________________________________________________________________________________
 
@@ -247,5 +257,8 @@ C <- Fcd*(1 - t_s * t_o) # Similar to original formula
 
 # Forest reflectance
 r_forest = (r_sail_inf * C) + (r_understorey * G) #*10
+
 return(r_forest)
 }
+
+

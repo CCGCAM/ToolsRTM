@@ -68,7 +68,7 @@
 #' @param N numeric. Leaf structure parameter
 #' @param Cab numeric. Chlorophyll content (microg.cm-2)
 #' @param Car numeric. Carotenoid content (microg.cm-2)
-#' @param Anth numeric. Anthocyain content (microg.cm-2)
+#' @param Anth numeric. Anthocyanins content (microg.cm-2)
 #' @param Cbrown numeric. Brown pigment content (Arbitrary units)
 #' @param EWT numeric. Equivalent Water Thickness (g.cm-2). Default is 0.009 Default is  0.012   
 #' @param LMA numeric. Leaf Mass per Area (g.cm-2). Default is  0.012 
@@ -129,6 +129,7 @@ Kant    <- data[,5]
 KBrown  <- data[,6]
 Kw      <- data[,7]
 Km      <- data[,8]
+
 Kall    <- (Cab * Kab + Car * Kcar + Anth * Kant + Brown * KBrown + EWT * Kw + LMA * Km ) / N
 
 
