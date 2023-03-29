@@ -12,7 +12,7 @@ if (!require("parallel")) { install.packages("parallel"); require("parallel") } 
 if (!require("doParallel")) { install.packages("doParallel"); require("doParallel") }  ### Paralell foreach and caret
 # My packages in R
 if (!require("ToolsRTM")) { install.packages("ToolsRTM"); require("ToolsRTM") }  ### Paralell foreach and caret
-
+if (!require("expint")) { install.packages("expint"); require("expint") }  ### Needed for  INFORM model
 
 ##############################################################################################################################
 #	1. Get spectra from GetLUT ----   
@@ -66,9 +66,9 @@ sims<-foreach(i=1:nSamples) %dopar% {
   rfl.prosail<-ToolsRTM::Compute_BRF(rdot=rdot,rsot=rsot,tts=LUT[i,'tts'],data.light=ToolsRTM::dataSpec_PDB)
   #data.foursail2_pro<-ToolsRTM::Compute_BRF(rdot=rdot,rsot=rsot,tts=LUT[i,'tts'],data.light=ToolsRTM::dataSpec_PDB)
   
-  #sim.rfl[[i]]<-data.inform[[1]]
+  sim.rfl[[i]]<-data.inform[[1]]
   #sim.rfl[[i]]<-data.foursail-pro
-  sim.rfl[[i]]<-rfl.prosail
+  #sim.rfl[[i]]<-rfl.prosail
   
   
 } ##end paralle
