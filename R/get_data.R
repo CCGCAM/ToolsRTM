@@ -77,7 +77,7 @@ get_data <- function(RTmodel='PROSPECT-D', nLUT=100, random.input =100) {
       LAI  = runif(nLUT, min = 0, max = 9),
       TypeLidf = 2,
       LIDFa = runif(nLUT, min = 0, max = 90),
-      LIDFa = 0,
+      LIDFb = 0,
       hspot  = runif(nLUT, min = 0, max = 1),
       tts = runif(nLUT, min = 0, max = 30),
       tto = runif(nLUT, min = 0, max = 55),
@@ -91,7 +91,7 @@ get_data <- function(RTmodel='PROSPECT-D', nLUT=100, random.input =100) {
       LAI  = runif(nLUT, min = 0, max = 9),
       TypeLidf = 2,
       LIDFa = runif(nLUT, min = 0, max = 90),
-      LIDFa = 0,
+      LIDFb = 0,
       hspot  = runif(nLUT, min = 0, max = 1),
       tts = runif(nLUT, min = 0, max = 30),
       tto = runif(nLUT, min = 0, max = 55),
@@ -101,7 +101,7 @@ get_data <- function(RTmodel='PROSPECT-D', nLUT=100, random.input =100) {
       cd = runif(nLUT, min = 0, max = 10),
       sd = runif(nLUT, min = 0, max = 1200),
       h = runif(nLUT, min = 1, max = 40),
-      skyl = runif(nLUT, min = , max = )
+      skyl = runif(nLUT, min = 0, max = 0.2)
     )
  
   } else {
