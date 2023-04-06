@@ -118,10 +118,10 @@ if (PROSPECTversion == 'PRO') {
 }  else {
   #PROSPECTversion ='D'
   ## Prospect-D
-  N=inputLUT[,'N']; Cab=inputLUT[,'Cab']; Car=inputLUT[,'Car']; Anth=inputLUT[,'Anth']; Cbrown=inputLUT[,'Cbrown']
+  N=inputLUT[,'N']; Cab=inputLUT[,'Cab']; Car=inputLUT[,'Car']; Anth=inputLUT[,'Anth']; Brown=inputLUT[,'Cbrown']
   EWT=inputLUT[,'EWT']; LMA=inputLUT[,'LMA'];alpha=inputLUT[,'alpha']
 
-  LRT <- prospect_DB(N,Cab,Car,Anth,Cbrown,EWT,LMA,alpha)
+  LRT <- prospect_DB(N,Cab,Car,Anth,Brown,EWT,LMA,alpha)
   GreenVegetation<-prospect_DB(LUT_GB[1,'N'],LUT_GB[1,'Cab'],LUT_GB[1,'Car'],LUT_GB[1,'Anth'],
                                LUT_GB[1,'Cbrown'],LUT_GB[1,'EWT'],LUT_GB[1,'LMA'],LUT_GB[1,'alpha'])
   

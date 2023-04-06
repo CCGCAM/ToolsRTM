@@ -152,10 +152,10 @@ if (LeafModel == 'PRO') {
 } else if (LeafModel == 'D'){
   
   #LeafModel ='D'
-  N=inputLUT[,'N']; Cab=inputLUT[,'Cab']; Car=inputLUT[,'Car']; Anth=inputLUT[,'Anth']; Cbrown=inputLUT[,'Cbrown']
+  N=inputLUT[,'N']; Cab=inputLUT[,'Cab']; Car=inputLUT[,'Car']; Anth=inputLUT[,'Anth']; Brown=inputLUT[,'Cbrown']
   EWT=inputLUT[,'EWT']; LMA=inputLUT[,'LMA'];alpha=inputLUT[,'alpha']
   
-  LRT <- LRT <- ToolsRTM::prospect_DB(N,Cab,Car,Anth,Cbrown,EWT,LMA,alpha)
+  LRT <- LRT <- ToolsRTM::prospect_DB(N,Cab,Car,Anth,Brown,EWT,LMA,alpha)
   # Computing of leaf reflecance and transmittance
   r_leaf <- LRT[[2]] #rho Reflectance
   t_leaf <- LRT[[3]] #tau Transmittance

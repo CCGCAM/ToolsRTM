@@ -98,10 +98,10 @@ if (LeafModel == 'PRO') {
 } else if (LeafModel == 'D') {
   
   #define alll inputs in the models. retreived from LUT tables
-  N=inputLUT[,'N']; Cab=inputLUT[,'Cab']; Car=inputLUT[,'Car']; Anth=inputLUT[,'Anth']; Cbrown=inputLUT[,'Cbrown']
+  N=inputLUT[,'N']; Cab=inputLUT[,'Cab']; Car=inputLUT[,'Car']; Anth=inputLUT[,'Anth']; Brown=inputLUT[,'Cbrown']
   EWT=inputLUT[,'EWT']; LMA=inputLUT[,'LMA']; alpha=inputLUT[,'alpha']
   # run LeafModel ='D'
-  LRT <- prospect_DB(N,Cab,Car,Anth,Cbrown,EWT,LMA,alpha)
+  LRT <- prospect_DB(N,Cab,Car,Anth,Brown,EWT,LMA,alpha)
   print(message('SAIL with PROSPECT-D is processing'))
 } else {
   stop('a leaf model is needed')
