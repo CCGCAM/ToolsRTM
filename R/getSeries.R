@@ -4,13 +4,14 @@
 #' @param shapefile shapefile file (.shp)
 #' @param band_names names of the bands of the raster
 #' @param factorR factor for the reflectance bands
+#' @param get.indices A boolean is True, get spectral indices pre-define in getIndicesSE2, is not (FALSE) provide only bands
 #'
 #' @return
 #' @export
 #'
 #' @examples
 #' 
-getSeries<-function(pathRaster=NULL, shapefile=NULL, band_names=NULL,factorR=NULL){
+getSeries<-function(pathRaster=NULL, shapefile=NULL, band_names=NULL,factorR=NULL,get.indices = T){
   options(warn=-1) ###avoid warnings
  
   if (is.null(factorR)){
@@ -51,33 +52,16 @@ getSeries<-function(pathRaster=NULL, shapefile=NULL, band_names=NULL,factorR=NUL
         }
         
         #r.extract[is.nan(r.extract)] <- NA
-        
-       
-     
-        if (is.null(band_names) | length(se2.bands) == 12) {
-          #message('B1-8, B8A-B9 and B11-B12 were used')
-          wavelengths.sentinel<-c(442.7,492.4,559.8,664.6,704.1,740.5,782.8,832.8,864.7,945.1,1613.7,2202.4)
-          data.write.sb<-data.write[,se2.bands]
-          colnames(data.write.sb)<-paste('R.',c(442.7,492.4,559.8,664.6,704.1,740.5,782.8,832.8,864.7,945.1,1613.7,2202.4),sep='')
-          
-        } else if(length(se2.bands) == 13) {
-          wavelengths.sentinel<-c(442.7,492.4,559.8,664.6,704.1,740.5,782.8,832.8,864.7,945.1,1313.15,1613.7,2202.4)
-          data.write.sb<-data.write[,se2.bands]
-          colnames(data.write.sb)<-paste('R.',c(442.7,492.4,559.8,664.6,704.1,740.5,782.8,832.8,864.7,945.1,1313.15,1613.7,2202.4),sep='')
-          
-        } else if(length(se2.bands) == 10) { ## For bands without B1 and B9 but with SCL
-          wavelengths.sentinel<-c(492.4,559.8,664.6,704.1,740.5,782.8,832.8,864.7,1613.7,2202.4)
-          data.write.sb<-data.write[,se2.bands]
-          colnames(data.write.sb)<-paste('R.',c(492.4,559.8,664.6,704.1,740.5,782.8,832.8,864.7,1613.7,2202.4),sep='')
-          
-        }
-        
-        else{
-          message('please check the band form Sentinel-2A')
-          stop('number of bands are incorrect')
-        }
       
-        list.indices[[k]]<-ToolsRTM::getIndicesSE2a(data.write.sb,wavelengths.sentinel, data.write,header = F)  
+        if (is.null(get.indices) | get.indices == F){
+          print('Hello')
+          
+          list.indices[[k]]<- data.write
+        }
+        message(cat(' '))
+        
+        message(paste('adding spectral indices for the SE-2 image: ',k,'/',length(files),sep = ''))
+        list.indices[[k]]<-ToolsRTM::getIndicesSE2(df=data.write,sensor='Sentinel-2a', df.data=data.write)  
        
       }
       ##################################################################################
