@@ -8,7 +8,8 @@ getSeries(
   pathRaster = NULL,
   shapefile = NULL,
   band_names = NULL,
-  factorR = NULL
+  factorR = NULL,
+  get.indices = T
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ getSeries(
 \item{band_names}{names of the bands of the raster}
 
 \item{factorR}{factor for the reflectance bands}
+
+\item{get.indices}{A boolean is True, get spectral indices pre-define in getIndicesSE2, is not (FALSE) provide only bands}
 }
 \description{
 get series in a dataframe from rasters
