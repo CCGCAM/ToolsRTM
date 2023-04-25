@@ -1,39 +1,14 @@
-
-
-############################################################################################################
-############################################################################################################
-#       - TypeLidf  = Type of leaf inclination distribution function
-#       - LIDFa = Parameter a.
-#         if TypeLidf ==1, controls the average leaf slope
-#	        LIDF type 		a 		 b
-#	        Planophile 		1		 0
-#	        Erectophile    -1	 	 0
-#	        Plagiophile 	0		-1
-#	        Extremophile 	0		 1
-#	        Spherical 	   -0.35 	-0.15
-#	        Uniform 0 0
-#
-#         if TypeLidf ==2, corresponds to average leaf angle
-#       - LIDFb = Parameter b
-#         if TypeLidf ==1, unused
-#         if TypeLidf ==2, controls the distribution's bimodality
-#         LIDFa	= average leaf angle (degrees) 0 = planophile	/	90 = erectophile
-
-#       - lai = Leaf Area Index
-#       - hot = Hot Spot parameter = ratio of the correlation length of leaf projections in the horizontal plane and the canopy height (doi:10.1016/j.rse.2006.12.013)
-#       - tts = Sun zeith angle
-#       - tto = Observer zeith angle
-#       - psi = Azimuth Sun / Observer
-#       - rsoil = Soil reflectance
-############################################################################################################
-############################################################################################################
-
-#' Performs PROSAIL simulation based on a set of combinations of input parameters
+#' fourSAIL model coupled with several leaf models
+#' 
+#' \code{m4SAIL} fourSAIL simulation based on a set of combinations of input parameters
 #' 
 #' @param rsoil numeric. Soil reflectance
 #' @param inputLUT LUT table with distribution of biophysical parameters used as input parameters in the model
-#' @param LeafModel Version of PROSPECT model or Liberty. For PROSPECT model: 'PRO' or 'D' is accepted. By default 'PRO' is used.
-#' Liberty model is Leaf radiative transfer model designed for conifer needles. Uses 'Liberty'
+#' @param LeafModel Version of PROSPECT model, Liberty model and  fluspect model. For PROSPECT model: 'PRO' or 'D' is accepted. By default 'PRO' is used.
+#'  fluspect model is valid in two options: 'Fluspect-B' and 'Fluspect-B-Cx'. Liberty as 'Liberty'
+#'  
+#' Liberty model is leaf radiative transfer model designed for conifer needles. Uses 'Liberty'
+#' Fluspect-B model is leaf radiative transfer model designed for adding fluorescence emission. Uses 'Fluspect-B' or 'Fluspect-B-Cx'.
 #' @return list. rdot,rsot,rddt,rsdt
 #' 
 #' rdot: hemispherical-directional reflectance factor in viewing direction
@@ -53,14 +28,9 @@
 #' Berger K, Atzberger C, Danner M, D’Urso G, Mauser W, Vuolo F & Hank T 2018. Evaluation of the PROSAIL Model Capabilities for Future Hyperspectral Model Environments: A Review Study. Remote Sensing, 10:85. https://doi.org/10.3390/rs10010085
 #' 
 #' Authors: 
-#' 
-#' Verhoef W.
-#' 
-#' Bach H. 
-#' 
-#' Authors of the R version:
-#' 
-#' Jean-Baptiste Feret
+#' @author Wout Verhoef, Bach H. , JJean-Baptiste Feret (Original version in Matlab) 
+#' This version is also included in prospect package
+#' @author Carlos Camino (Ported version into R wit modification from fourSAIL model in prospect package)
 #' 
 #' The fourSAIL model is based on a version provided by	Wout Verhoef et al. (2007)
 #' 
@@ -80,7 +50,7 @@ m4SAIL <- function(inputLUT,rsoil, LeafModel='PRO'){
 #	1.1 Leaf optical properties
 #########################################
 if (LeafModel == 'PRO') {
-
+  
   #define alll inputs in the models. retreived from LUT tables
   N=inputLUT[,'N']; Cab=inputLUT[,'Cab']; Car=inputLUT[,'Car']; Anth=inputLUT[,'Anth']; Cbrown=inputLUT[,'Cbrown']
   EWT=inputLUT[,'EWT']; LMA=inputLUT[,'LMA']; alpha=inputLUT[,'alpha']
@@ -88,14 +58,26 @@ if (LeafModel == 'PRO') {
   # run LeafModel ='PRO'
   LRT <- prospect_PRO(N,Cab,Car,Anth,Cbrown,EWT,LMA,alpha,Prot,CBC)
   print(message('SAIL with PROSPECT-PRO is processing'))
-} else if (LeafModel == 'Liberty'){
+  
+  } else if (LeafModel == 'Liberty'){
+    
   #define alll inputs in the models. retreived from LUT tables
-
   # run LeafModel ='PRO'
   LRT <- liberty(inputLUT)
   print(message('SAIL with Liberty model is processing'))
   
-} else if (LeafModel == 'D') {
+  } else if (LeafModel == 'Fluspect-B'){
+
+  # run LeafModel ='fluspect-D'
+  LRT <- ToolsRTM::getFluspect.B(inputsLeaf= inputLUT, inputsOptipar =ToolsRTM::optipar, version = 'D')
+  print(message('SAIL with Fluspect-D model is processing'))
+  
+  } else if (LeafModel == 'Fluspect-B-Cx'){
+ 
+  # run LeafModel ='fluspect-Cx'
+  LRT <- ToolsRTM::getFluspect.Cx(inputsLeaf= inputLUT, inputsOptipar =ToolsRTM::optipar, version = 'Cx')
+  print(message('SAIL with Fluspect-PRO model is processing'))
+  } else if (LeafModel == 'D') {
   
   #define alll inputs in the models. retreived from LUT tables
   N=inputLUT[,'N']; Cab=inputLUT[,'Cab']; Car=inputLUT[,'Car']; Anth=inputLUT[,'Anth']; Brown=inputLUT[,'Cbrown']
@@ -103,10 +85,12 @@ if (LeafModel == 'PRO') {
   # run LeafModel ='D'
   LRT <- prospect_DB(N,Cab,Car,Anth,Brown,EWT,LMA,alpha)
   print(message('SAIL with PROSPECT-D is processing'))
-} else {
-  stop('a leaf model is needed')
   
-}
+  } else {
+    
+  stop('a leaf model is needed')
+    
+  }
   
 
 rho	 <- 	LRT[[2]]
@@ -357,7 +341,35 @@ litab <- LeafDistribution$litab
   rsost <- rsos + tsstoo * rsoil
   rsot <- rsost + rsodt
 }
-LSTa<- list(rdot,rsot,rddt,rsdt)
+LSTa<- list(rdot=rdot,rsot=rsot,rddt=rddt,rsdt=rsdt)
 return(LSTa)
+
+############################################################################################################
+############################################################################################################
+#       - TypeLidf  = Type of leaf inclination distribution function
+#       - LIDFa = Parameter a.
+#         if TypeLidf ==1, controls the average leaf slope
+#	        LIDF type 		a 		 b
+#	        Planophile 		1		 0
+#	        Erectophile    -1	 	 0
+#	        Plagiophile 	0		-1
+#	        Extremophile 	0		 1
+#	        Spherical 	   -0.35 	-0.15
+#	        Uniform 0 0
+#
+#         if TypeLidf ==2, corresponds to average leaf angle
+#       - LIDFb = Parameter b
+#         if TypeLidf ==1, unused
+#         if TypeLidf ==2, controls the distribution's bimodality
+#         LIDFa	= average leaf angle (degrees) 0 = planophile	/	90 = erectophile
+
+#       - lai = Leaf Area Index
+#       - hot = Hot Spot parameter = ratio of the correlation length of leaf projections in the horizontal plane and the canopy height (doi:10.1016/j.rse.2006.12.013)
+#       - tts = Sun zeith angle
+#       - tto = Observer zeith angle
+#       - psi = Azimuth Sun / Observer
+#       - rsoil = Soil reflectance
+############################################################################################################
+############################################################################################################
 
 }

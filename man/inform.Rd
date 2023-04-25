@@ -2,7 +2,7 @@
 % Please edit documentation in R/inform.R
 \name{inform}
 \alias{inform}
-\title{The INvertible FOrest Reflectance Model coupled with PROSPECT}
+\title{The INvertible FOrest Reflectance Model coupled with leaf models}
 \usage{
 inform(inputLUT = NULL, rsoil = rsoil, LeafModel = "PRO")
 }
@@ -11,10 +11,11 @@ inform(inputLUT = NULL, rsoil = rsoil, LeafModel = "PRO")
 
 \item{rsoil}{numeric. Soil reflectance}
 
-\item{LeafModel}{Version of PROSPECT model. 'PRO' or 'D' is accepted. By default 'PRO' is used.}
+\item{LeafModel}{Version of PROSPECT model; 'PRO' or 'D' is accepted. By default 'PRO' is used. Liberty model
+and Fluspect-B and Fluspect-B-Cx is also provided. Options are : 'PRO','D', 'Liberty', 'Fluspect-B' and 'Fluspect-B-Cx'.}
 }
 \description{
-The INvertible FOrest Reflectance Model coupled with PROSPECT
+\code{inform} INFORM  simulation based on a set of combinations of inpuparameters
 }
 \references{
 INFORM (Atzberger, 2000; Schlerf&Atzberger, 2006) simulates the bi-directional reflectance
@@ -40,4 +41,9 @@ SAIL model. Remote Sensing of Environment, 16: 125-141.
 
 Basic version of INFORM: Clement Atzberger, 1999
 INFORM modifications and validation: Martin Schlerf, 2004-2007
+}
+\author{
+Clement Atzberger and Martin Schlerf (Original version in Matlab and python)
+
+Carlos Camino (Ported version into R)
 }

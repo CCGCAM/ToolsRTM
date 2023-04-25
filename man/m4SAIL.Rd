@@ -2,7 +2,7 @@
 % Please edit documentation in R/m4SAIL.R
 \name{m4SAIL}
 \alias{m4SAIL}
-\title{Performs PROSAIL simulation based on a set of combinations of input parameters}
+\title{fourSAIL model coupled with several leaf models}
 \usage{
 m4SAIL(inputLUT, rsoil, LeafModel = "PRO")
 }
@@ -11,8 +11,11 @@ m4SAIL(inputLUT, rsoil, LeafModel = "PRO")
 
 \item{rsoil}{numeric. Soil reflectance}
 
-\item{LeafModel}{Version of PROSPECT model or Liberty. For PROSPECT model: 'PRO' or 'D' is accepted. By default 'PRO' is used.
-Liberty model is Leaf radiative transfer model designed for conifer needles. Uses 'Liberty'}
+\item{LeafModel}{Version of PROSPECT model, Liberty model and  fluspect model. For PROSPECT model: 'PRO' or 'D' is accepted. By default 'PRO' is used.
+fluspect model is valid in two options: 'Fluspect-B' and 'Fluspect-B-Cx'. Liberty as 'Liberty'
+
+Liberty model is leaf radiative transfer model designed for conifer needles. Uses 'Liberty'
+Fluspect-B model is leaf radiative transfer model designed for adding fluorescence emission. Uses 'Fluspect-B' or 'Fluspect-B-Cx'.}
 }
 \value{
 list. rdot,rsot,rddt,rsdt
@@ -23,7 +26,7 @@ rsdt: directional-hemispherical reflectance factor for solar incident flux
 rddt: bi-hemispherical reflectance factor
 }
 \description{
-Performs PROSAIL simulation based on a set of combinations of input parameters
+\code{m4SAIL} fourSAIL simulation based on a set of combinations of input parameters
 }
 \references{
 Verhoef W & Bach H, 2007. Coupled soil–leaf-canopy and atmosphere radiative transfer modeling to simulate hyperspectral multi-angular surface reflectance and TOA radiance data. Remote Sensing of Environment, 109:166-182. doi:10.1016/j.rse.2006.12.013
@@ -35,14 +38,12 @@ Jacquemoud S, Verhoef W, Baret F, Bacour C, Zarco-Tejada PJ, Asner GP, François
 Berger K, Atzberger C, Danner M, D’Urso G, Mauser W, Vuolo F & Hank T 2018. Evaluation of the PROSAIL Model Capabilities for Future Hyperspectral Model Environments: A Review Study. Remote Sensing, 10:85. https://doi.org/10.3390/rs10010085
 
 Authors:
+}
+\author{
+Wout Verhoef, Bach H. , JJean-Baptiste Feret (Original version in Matlab)
+This version is also included in prospect package
 
-Verhoef W.
-
-Bach H.
-
-Authors of the R version:
-
-Jean-Baptiste Feret
+Carlos Camino (Ported version into R wit modification from fourSAIL model in prospect package)
 
 The fourSAIL model is based on a version provided by	Wout Verhoef et al. (2007)
 

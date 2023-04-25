@@ -1,9 +1,10 @@
-#' The INvertible FOrest Reflectance Model coupled with PROSPECT
+#' The INvertible FOrest Reflectance Model coupled with leaf models
 #'
+#' \code{inform} INFORM  simulation based on a set of combinations of inpuparameters
 #' @param inputLUT LUT table with distribution of biophysical parameters used as input parameters in the model
 #' @param rsoil numeric. Soil reflectance
-#' @param LeafModel Version of PROSPECT model. 'PRO' or 'D' is accepted. By default 'PRO' is used.
-#'
+#' @param LeafModel Version of PROSPECT model; 'PRO' or 'D' is accepted. By default 'PRO' is used. Liberty model
+#' and Fluspect-B and Fluspect-B-Cx is also provided. Options are : 'PRO','D', 'Liberty', 'Fluspect-B' and 'Fluspect-B-Cx'.
 #'
 #' @return
 #' @export
@@ -36,74 +37,77 @@
 #' Basic version of INFORM: Clement Atzberger, 1999
 #' INFORM modifications and validation: Martin Schlerf, 2004-2007
 #' 
-
-# _____________________________________________________________________________________________________________
-
-# SUBROUTINES
-#
-# M-File                    Function
-# inform_prospect.R         Main INFORM code
-# msail_background.R         SAIL-PROSPECT-SOIL to compute background reflectance (adapted with PRO-D)
-# msail_inf.R                SAIL-PROSPECT-SOIL to compute infinite crown reflectance (adapted with PRO-D)
-# sail_t_s.R                SAIL-PROSPECT-SOIL to compute crown transmittance for sun direction (adapted with PRO-D)
-# sail_t_o.R                SAIL-PROSPECT-SOIL to compute crown transmittance for observation direction (adapted with PRO-D)
-# prospect_PRO.R             Leaf reflecance model PROSPECT-PRO
-# prospect_D.R             Leaf reflecance model PROSPECT-D
-# s13aaf.M                  Integral for PROSPECT no uses in this code
-# calctav                     Refraction index for PROSPECT
-# data                  Absorption coefficients for PROSPECT
-
-# _____________________________________________________________________________________________________________
-
-# INPUT VARIABLES
-
-# PARA_PROSPECT: Leaf Input Parameters
-# Variable	                         Designation	    Unit	    Default value
-# leaf structure parameter              N               -           2
-# chlorophyll a+b content in            Cab             ug/cm-2     60
-# equivalent water thickness            Cw              g/cm-2      0.025
-# dry matter content                    Cm              g/cm-2       0.025
-
-# PARA_INFORM: Canopy Input Parameters
-# Variable	                          Designation       Unit	    Default value
-# Scale factor for soil reflectance     scale                       1
-# Single tree leaf area index           lai             m2 m-2      7
-# Leaf area index of understorey	    laiu	        m2 m-2	    0.1
-# Stem density                          sd              ha-1        650
-# Tree height                           h               m           20
-# Crown diameter                        cd              m           4.5
-# Average leaf angle of tree canopy	    LIDFa	            deg	        55
-
-
-# External Input Parameters
-# Variable	                          Designation       Unit	    Default value
-# Sun zenith angle 	                    tts	        deg	        30
-# Observation zenith angle 	            tto	        deg	        0
-# Azimuth angle	                        phi	            deg	        0
-# Fraction of diffuse radiation	        skyl	        fraction	0.1
-
-# Other Input Data
-# Variable	                          Designation
-# rsoil                                Soil spectrum
-# _____________________________________________________________________________________________________________
-
-# OUTPUT VARIABLES
-# Variable	                          Designation
-# Forest reflectance                    r_forest
-# Soil reflectance                      rsoil
-# Understorey reflectance               r_understorey
-# Infinite canopy reflectance           r_sail_inf
-# Crown closure                         co
-# Crown factor                          C
-# Ground factor                         G
-# Leaf reflectance                      r_leaf
-# Leaf transmittance                    t_leaf
-# Crown transmittance for teta_s        t_s
-# Crown transmittance for teta_o        t_o
-# _____________________________________________________________________________________________________________
+#' @author Clement Atzberger and Martin Schlerf (Original version in Matlab and python)
+#' @author Carlos Camino (Ported version into R)
+#' 
 
 inform<- function(inputLUT=NULL,rsoil=rsoil, LeafModel='PRO'){
-
+  
+  # _____________________________________________________________________________________________________________
+  
+  # SUBROUTINES
+  #
+  # M-File                    Function
+  # inform_prospect.R         Main INFORM code
+  # msail_background.R         SAIL-PROSPECT-SOIL to compute background reflectance (adapted with PRO-D)
+  # msail_inf.R                SAIL-PROSPECT-SOIL to compute infinite crown reflectance (adapted with PRO-D)
+  # sail_t_s.R                SAIL-PROSPECT-SOIL to compute crown transmittance for sun direction (adapted with PRO-D)
+  # sail_t_o.R                SAIL-PROSPECT-SOIL to compute crown transmittance for observation direction (adapted with PRO-D)
+  # prospect_PRO.R             Leaf reflecance model PROSPECT-PRO
+  # prospect_D.R             Leaf reflecance model PROSPECT-D
+  # s13aaf.M                  Integral for PROSPECT no uses in this code
+  # calctav                     Refraction index for PROSPECT
+  # data                  Absorption coefficients for PROSPECT
+  
+  # _____________________________________________________________________________________________________________
+  
+  # INPUT VARIABLES
+  
+  # PARA_PROSPECT: Leaf Input Parameters
+  # Variable	                         Designation	    Unit	    Default value
+  # leaf structure parameter              N               -           2
+  # chlorophyll a+b content in            Cab             ug/cm-2     60
+  # equivalent water thickness            Cw              g/cm-2      0.025
+  # dry matter content                    Cm              g/cm-2       0.025
+  
+  # PARA_INFORM: Canopy Input Parameters
+  # Variable	                          Designation       Unit	    Default value
+  # Scale factor for soil reflectance     scale                       1
+  # Single tree leaf area index           lai             m2 m-2      7
+  # Leaf area index of understorey	    laiu	        m2 m-2	    0.1
+  # Stem density                          sd              ha-1        650
+  # Tree height                           h               m           20
+  # Crown diameter                        cd              m           4.5
+  # Average leaf angle of tree canopy	    LIDFa	            deg	        55
+  
+  
+  # External Input Parameters
+  # Variable	                          Designation       Unit	    Default value
+  # Sun zenith angle 	                    tts	        deg	        30
+  # Observation zenith angle 	            tto	        deg	        0
+  # Azimuth angle	                        phi	            deg	        0
+  # Fraction of diffuse radiation	        skyl	        fraction	0.1
+  
+  # Other Input Data
+  # Variable	                          Designation
+  # rsoil                                Soil spectrum
+  # _____________________________________________________________________________________________________________
+  
+  # OUTPUT VARIABLES
+  # Variable	                          Designation
+  # Forest reflectance                    r_forest
+  # Soil reflectance                      rsoil
+  # Understorey reflectance               r_understorey
+  # Infinite canopy reflectance           r_sail_inf
+  # Crown closure                         co
+  # Crown factor                          C
+  # Ground factor                         G
+  # Leaf reflectance                      r_leaf
+  # Leaf transmittance                    t_leaf
+  # Crown transmittance for teta_s        t_s
+  # Crown transmittance for teta_o        t_o
+  # _____________________________________________________________________________________________________________
+  
 if ((is.null(inputLUT)) | (is.null(rsoil)) ){
   message('Please add the missing parameters')
   stop()
@@ -149,6 +153,24 @@ if (LeafModel == 'PRO') {
   LRT <- ToolsRTM::liberty(inputLUT)
   r_leaf <- LRT[[2]] #rho Reflectance
   t_leaf <- LRT[[3]] #tau Transmittance
+} else if (LeafModel == 'Fluspect-B'){
+  #define alll inputs in the models. retreived from LUT tables
+  
+  # run LeafModel ='Fluspect-B'
+  LRT <- getFluspect.B(inputsLeaf= inputLUT, inputsOptipar =ToolsRTM::optipar,version='D')
+  print(message('SAIL with fluspect model is processing'))
+  r_leaf <- LRT[[2]] #rho Reflectance
+  t_leaf <- LRT[[3]] #tau Transmittance
+  
+} else if (LeafModel == 'Fluspect-B-Cx'){
+  #define alll inputs in the models. retreived from LUT tables
+  
+  # run LeafModel ='Fluspect-Cx'
+  LRT <- getFluspect.Cx(inputsLeaf= inputLUT, inputsOptipar =ToolsRTM::optipar,version='Cx')
+  print(message('SAIL with fluspect model is processing'))
+  r_leaf <- LRT[[2]] #rho Reflectance
+  t_leaf <- LRT[[3]] #tau Transmittance
+  
 } else if (LeafModel == 'D'){
   
   #LeafModel ='D'
