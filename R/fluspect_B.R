@@ -50,7 +50,7 @@ getFluspect.B<-function(inputsLeaf,inputsOptipar, version = 'D' )  {
     version = 'D' 
   }
   if ("Prot" %in% colnames(inputsLeaf)){
-    version = 'PRO' 
+    version = 'Cx' 
   }  else {
     version = 'D' 
   }
@@ -59,14 +59,14 @@ getFluspect.B<-function(inputsLeaf,inputsOptipar, version = 'D' )  {
   ndub = 15;           # number of doublings applied
   # Fluspect parameters
   #inputsLeaf=LUT.flus[1,]
-  #inputsOptipar <- ToolsRTM::optipar
+  #inputsOptipar <-  optipar.2015
   
   #define alll inputs in the models. retreived from LUT tables
   Cab = inputsLeaf[,'Cab'];Car = inputsLeaf[,'Car'];EWT = inputsLeaf[,'EWT']; LMA = inputsLeaf[,'LMA'];
   Cs = inputsLeaf[,'Cs']; N = inputsLeaf[,'N']; fqe_ = inputsLeaf[,'fqe']; 
   fqe <- c(fqe_/5, fqe_)
   Cx = inputsLeaf[,'Cx']  # Violaxanthin - Zeaxanthin transition status [0-1]
-  if (version == 'PRO') {
+  if (version == 'Cx') {
     Prot = inputsLeaf[,'Prot']; CBC = inputsLeaf[,'CBC'];
     Anth =inputsLeaf[,'Anth']
     
@@ -255,8 +255,8 @@ getFluspect.B<-function(inputsLeaf,inputsOptipar, version = 'D' )  {
     dim(sigmoid)
     
     
-    MfI  <- MbI  <- fqe[1] * ((0.5*phiI[Iwlf])*eps) %*% t(as.matrix(kChl[Iwle])) * sigmoid
-    MfII <- MbII <- fqe[2] * ((0.5*phiII[Iwlf])*eps) %*% t(as.matrix(kChl[Iwle])) * sigmoid
+    MfI  <- MbI  <- fqe[1] * ((0.5 * phiI[Iwlf]) * eps) %*% t(as.matrix(kChl[Iwle])) * sigmoid
+    MfII <- MbII <- fqe[2] * ((0.5 * phiII[Iwlf]) * eps) %*% t(as.matrix(kChl[Iwle])) * sigmoid
     
     
     Ih <-  matrix(1, nrow = 1, ncol = length(te))#rep(1, length(te))  # row of ones
@@ -271,11 +271,13 @@ getFluspect.B<-function(inputsLeaf,inputsOptipar, version = 'D' )  {
       xf <- tf / (1 - rf * rf)
       tfn <- tf * xf
       rfn <- rf * (1 + tfn)
+     
       
       A11  <- xf %*% Ih + Iv %*% xe;   
       A12 <- (xf %*% t(xe)) * (rf %*% Ih + Iv %*% re)
-      A21  <- 1+(xf %*% t(xe)) * (1+rf%*%t(re))
-      A22 <- (xf*rf)%*%Ih+Iv%*%(xe*re)
+      A21  <- 1+(xf %*% t(xe)) * (1 + rf %*% t(re))
+      A22 <- (xf * rf) %*% Ih + Iv %*% (xe * re)
+
       
       
       MfnI  <- MfI  * A11 + MbI  * A12
@@ -304,11 +306,11 @@ getFluspect.B<-function(inputsLeaf,inputsOptipar, version = 'D' )  {
     f2 <- MfII
     
     Rb <- rho + tau^2 * r21 / (1 - rho * r21)
-    
-    Xe <- Iv %*% (talf[Iwle] / (1-r21[Iwle] * Rb[Iwle]))
-    Xf <- t21[Iwlf]/(1-r21[Iwlf]*Rb[Iwlf]) %*% Ih
-    Ye <- Iv %*% (tau[Iwle]*r21[Iwle]/(1-rho[Iwle]*r21[Iwle]))
-    Yf <- tau[Iwlf]*r21[Iwlf]/(1-rho[Iwlf]*r21[Iwlf]) %*% Ih
+ 
+    Xe <- Iv %*% (talf[Iwle] / (1- r21[Iwle] * Rb[Iwle]))
+    Xf <- t21[Iwlf] / (1 - r21[Iwlf] * Rb[Iwlf]) %*% Ih
+    Ye <- Iv %*% (tau[Iwle] * r21[Iwle] / (1 - rho[Iwle] * r21[Iwle]))
+    Yf <- tau[Iwlf] * r21[Iwlf] / (1 - rho[Iwlf] * r21[Iwlf]) %*% Ih
     
     A <- Xe * (1 + Ye * Yf) * Xf
     B <- Xe * (Ye + Yf) * Xf
@@ -317,7 +319,7 @@ getFluspect.B<-function(inputsLeaf,inputsOptipar, version = 'D' )  {
     f1n <- A * f1 + B * g1
     g2n <- A * g2 + B * f2
     f2n <- A * f2 + B * g2
-    
+
     # outputs:
     # refl          reflectance
     # tran          transmittance

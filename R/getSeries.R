@@ -23,7 +23,9 @@ getSeries<-function(pathRaster=NULL, shapefile=NULL, band_names=NULL,factorR=NUL
 
   files = list.files(pathRaster,pattern="*.tif$", full.names=TRUE)
   dates = list.files(pathRaster,pattern="*.tif$", full.names=F)
-  dates=substr(dates,6,15)
+  #dates=substr(dates,6,15)
+  dates <- extract_dates_from_tiff_files(dates)
+  
   if  (length(files) == 0){
     message('please provide raster in TIFF format')
     stop('TIF format is needed')
@@ -44,11 +46,11 @@ getSeries<-function(pathRaster=NULL, shapefile=NULL, band_names=NULL,factorR=NUL
         if (class(shapefile)[1] == 'SpatialPointsDataFrame'){
           r.extract <- raster::extract(rs, shapefile, df = T, na.rm = T, cellnumbers = F)
           data.write<-data.frame(ID=r.extract[,'ID'],Date= dates[k],r.extract[,c(2:dim(r.extract)[2])]* factor)
-          se2.bands<-names(data.write[,grep(colnames(data.write),pattern="B",fixed = TRUE)])
+          #sensor.bands<-names(data.write[,grep(colnames(data.write),pattern="B",fixed = TRUE)])
         } else {
           r.extract <- raster::extract(rs, shapefile, df = T, na.rm = T, cellnumbers = T)
-          data.write<-data.frame(ID=r.extract[,'ID'],cell = r.extract[,'cell'],Date= dates[k],r.extract[,c(3:dim(r.extract)[2])]* factor)
-          se2.bands<-names(data.write[,grep(colnames(data.write),pattern="B",fixed = TRUE)])
+          data.write<-data.frame(ID=r.extract[,'ID'],cell = r.extract[,'cells'],Date= dates[k],r.extract[,c(3:dim(r.extract)[2])]* factor)
+          #sensor.bands<-names(data.write[,grep(colnames(data.write),pattern="B",fixed = TRUE)])
         }
 
         #r.extract[is.nan(r.extract)] <- NA
@@ -71,3 +73,43 @@ data.export<-do.call(rbind.data.frame, list.indices)
 return(data.export)
 
 }
+
+
+#' extract date from TiFF files
+#'
+#' @param tiff_files 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' 
+extract_dates_from_tiff_files <- function(tiff_files) {
+  # create an empty vector to store the dates
+  dates <- vector("list", length(tiff_files))
+  
+  # iterate over each file name and extract the date using regular expressions
+  for (i in seq_along(tiff_files)) {
+    # define a regular expression to match both date formats
+    regex <- "\\d{4}-\\d{2}-\\d{2}|\\d{8}"
+    
+    # extract the date from the file name using the regular expression
+    date_str <- stringr::str_extract(tiff_files[i], regex)
+    
+    # print the file name and the extracted date for debugging
+    #cat(sprintf("File: %s, Date: %s\n", tiff_files[i], date_str))
+    
+    # convert the date to Date format if it was found
+    if (!is.na(date_str)) {
+      dates[[i]] <- date_str #as.Date(date_str, format = "%Y-%m-%d", tryFormats = c("%Y%m%d"))
+      #print(dates[[i]])
+    } else {
+      dates[[i]] <- 'missing'
+      stop('files should contained date in this format: %Y-%m-%d or YYYYMMDD')
+    }
+  }
+  
+  # remove any missing dates from the resulting vector and return it
+  return(unlist(dates[!is.na(dates)]))
+}
+

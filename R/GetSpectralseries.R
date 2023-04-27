@@ -111,27 +111,15 @@ GetSpectralseries<-function(netCDFs=NULL, bands=NULL, shapefile=NULL, factorSE =
 
   }
 
-  if ((length(bands) == 12) | (length(bands) == 13)) {
-    wavelengths.sentinel<-c(442.7,492.4,559.8,664.6,704.1,740.5,782.8,832.8,864.7,945.1,1613.7,2202.4)
-    n_bands.points<- c(2:13)
-    n_bands.poly<- c(4:15)
-    } else if (length(bands) == 11) {
-    wavelengths.sentinel <- c(492.4,559.8,664.6,704.1,740.5,782.8,832.8,864.7,1613.7,2202.4)
-    n_bands.points<- c(2:11)
-    n_bands.poly<- c(4:13)
-    } else{
-    message('please check number of bands in the code')
-  }
-
   table.f<-data.frame(do.call(rbind, table.to.save))
 
   if (Indices == T | is.null(Indices)) {
 
     #wavelengths.sentinel<-c(442.7,492.4,559.8,664.6,704.1,740.5,782.8,832.8,864.7,945.1,1613.7,2202.4)
     if (class(shapefile)[1] == 'SpatialPointsDataFrame'){
-      table.f<-ToolsRTM::getIndicesSE2a(table.f[,n_bands.points],wavelengths.sentinel,table.f,header = F)
+      table.f<-ToolsRTM::getIndicesSE2(df=table.f[,n_bands.points],sensor = "Sentinel-2a",df.data=table.f)
     } else {
-      table.f<-ToolsRTM::getIndicesSE2a(table.f[,n_bands.poly],wavelengths.sentinel,table.f,header = F)
+      table.f<-ToolsRTM::getIndicesSE2(df=table.f[,n_bands.points],sensor = "Sentinel-2a",df.data=table.f)
     }
   }
 
