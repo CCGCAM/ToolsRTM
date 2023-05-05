@@ -14,6 +14,8 @@
 #' @examples
 #' 
 getSim_fromLUT<-function(trait='Cab',nmin=0, nmax=100, Interval=10, psoil=0.5,model='PROSAIL', method='ggplot'){
+  
+  
   if (!require("foreach")) { install.packages("foreach"); require("foreach") }  ### 
   
   data <- ToolsRTM::dataSpec_PDB
@@ -35,7 +37,7 @@ getSim_fromLUT<-function(trait='Cab',nmin=0, nmax=100, Interval=10, psoil=0.5,mo
   }
   
   #Inputs by default for Leaf model (PROSPECT)
-  N=2.5;  Cab =40; Car=0; Anth=0; Cbrown=0
+  N=2.5;  Cab =40; Car=15; Anth=0; Cbrown=0.5
   EWT=0.09; LMA=0.012; alpha=40
   Prot=0;CBC=0
   #Inputs by default for canopy model (fourSAIL) 
@@ -144,7 +146,7 @@ getSim_fromLUT<-function(trait='Cab',nmin=0, nmax=100, Interval=10, psoil=0.5,mo
     sim.rfl<-list()
     ### simulations
       sims<-foreach(i=1:nLUT) %dopar% {
-        data.foursail_pro<-ToolsRTM::m4SAIL(inputLUT=LUT[i,],rsoil=rsoil,PROSPECTversion = 'PRO')
+        data.foursail_pro<-ToolsRTM::m4SAIL(inputLUT=LUT[i,],rsoil=rsoil,LeafModel = 'PRO')
         rdot<-data.foursail_pro[[1]]
         rsot<-data.foursail_pro[[2]]
         rfl.prosail<-ToolsRTM::Compute_BRF(rdot=rdot,rsot=rsot,tts=LUT[i,'tts'],data.light=ToolsRTM::dataSpec_PDB)
@@ -261,7 +263,7 @@ getSim_fromLUT<-function(trait='Cab',nmin=0, nmax=100, Interval=10, psoil=0.5,mo
       sim.rfl<-list()
       ### simulations
         sims<-foreach(i=1:nLUT) %dopar% {
-          rfl.inform<-ToolsRTM::inform(inputLUT = LUT[i,],rsoil=rsoil,PROSPECTversion = 'PRO')
+          rfl.inform<-ToolsRTM::inform(inputLUT = LUT[i,],rsoil=rsoil,LeafModel = 'PRO')
           sim.rfl[[i]]<-rfl.inform
           
         } ##end paralle

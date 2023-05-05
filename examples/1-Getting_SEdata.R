@@ -137,7 +137,6 @@ areas<-c(1:5)
 factorSE = 1/10000
 paths.with.shape<-'examples/field-dataset/Shapefiles/Areas_byETRS89/'
 file_shape.Area<- list.files(paths.with.shape,pattern="*.shp$", full.names=TRUE)
-model.nne<-readRDS("examples/outputs/models/Cab_nnet_fourSAIL2_5k.RData")
 
 
 for (j in areas){
@@ -175,8 +174,37 @@ for (j in areas){
 
 
 
+##############################################################################################################################
+#	5. Extract series  directly from NETCDF    -----    
+##############################################################################################################################
 
 
+areas<-c(1:5)
+factorSE = 1/10000
+## Bans for each NetCDF
+SE_20m<-c('B1','B2','B3','B4','B5','B6','B7','B8','B8A','B9','B11','B12') ##all bands
+
+shape<-readOGR(paste('examples/field-dataset/Shapefiles/points/Field_cloudETRS89.shp',sep = ''))
+path_netCDFs <- 'examples/SEdata/Areas_Smaller/'
+
+pattern_names<-paste('Area',areas,sep='')
+
+to_export<-list()
+for (j in areas){
+  print (j)
+  files.nc = list.files(path_netCDFs,pattern=pattern_names[j], full.names=TRUE)
+  shape.sb = subset(shape, Area == j)
+  table.spectra <-ToolsRTM::GetSpectralseries(netCDFs = files.nc, shapefile = shape.sb,bands = SE_20m,factorSE = factorSE)
+  table.spectra$Area <-j
+  to_export[[j]]<-table.spectra
+
+}
+table.to_export<-data.frame(do.call(rbind, to_export))
+# output folder
+paths.outs='examples/SEdata/Series/'
+ifelse(!dir.exists(paths.outs), dir.create(paths.outs), FALSE)
+file.to.export<-paste(paths.outs,'TimeSerie_SE2a_All_AreasfromNetcdf.csv',sep='')
+write.table(table.to_export, file = file.to.export, sep=",", row.names = FALSE, col.names = T,append = F)
 
 
 
