@@ -1,20 +1,28 @@
 
-#' Get TIFF from a folder and generate the stack. This function is for Sentinel-2 data using the names B1,B2 ...and SCL
+#' @title Get TIFF from a folder and generate the stack. 
 #'
 #' @param rasterFiles  path with the Netcdf
 #' @param frequency Daily
 #' @param bands  a vector with the names of the inputs of the NetCDF
 #' @param output  path of the outputs
-#'
+#' 
+#' @description
+#' This function is for Sentinel-2 data using the names B1,B2 ...and SCL
+#' 
 #' @return a stack
 #' @export
-#'
-#' @examples here an example
+#' @examples
+#' # Example usage:
+#' rasterFiles <- "path/to/netcdf/files"
+#' frequency <- "Daily"
+#' bands <- c("B1", "B2", "B3", "SCL")
+#' output <- "path/to/output/folder"
+#' stack <- get_tiff_stack(rasterFiles, frequency, bands, output)
 #'
 
 getStacks<-function(rasterFiles=NULL, frequency='Daily', bands=NULL,output=NULL){
   options(warn=-1) ###avoid warnings
-  getwd()
+  #getwd()
   files = list.files(rasterFiles,pattern="day_*", full.names=F)
   dates<-as.Date(substr(files,5,14))
   dates.unique<-unique(dates)

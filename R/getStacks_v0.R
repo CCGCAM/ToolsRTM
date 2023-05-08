@@ -1,6 +1,6 @@
 
 
-#' Title
+#' @title fist attemp for getStack_
 #'
 #' @param rasterFiles  path with the Netcdf
 #' #' @param frequency Daily
@@ -12,7 +12,7 @@
 #'
 #' @examples here adding examples ....
 #' 
-getStacks<-function(rasterFiles=NULL, frequency='Daily', bands=NULL,output=NULL){
+getStacks_v0<-function(rasterFiles=NULL, frequency='Daily', bands=NULL,output=NULL){
   options(warn=-1) ###avoid warnings
   files = list.files(rasterFiles,pattern="day_*", full.names=F)
   dates<-as.Date(substr(files,5,14))
