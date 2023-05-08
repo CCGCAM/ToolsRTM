@@ -7,27 +7,22 @@
 #' 
 #' @author Wout Verhoef, Christiaan van der Tol, Joris Timmermans, Nastassia Vilfan (Original version in Matlab)
 #' @author Carlos Camino (Ported version into R)
-#' 
-#' Matlab version: Date: 2007-2020
-#' 
-#' Ported in R: Jun-2023
-#' 
+
 #' @param inputsLeaf  a LUT with main plnt traits for Fluspect-B Cx
 #' @param inputsOptipar  internal parameters
 #' @param version  Leaf model uses for Kcal: 'Cx'
+#' @description
+#' The outputs are
+#' refl (reflectance)
+#' tran (transmittance)
+#' Mb (backward scattering fluorescence matrix, I for PSI and II for PSII)
+#' Mf (forward scattering fluorescence matrix,  I for PSI and II for PSII)
+#' 
 #'
-#' @return  a list which contains:
-#' * refl (reflectance)
-#' * tran (transmittance)
-#' * Mb (backward scattering fluorescence matrix, I for PSI and II for PSII)
-#' * Mf (forward scattering fluorescence matrix,  I for PSI and II for PSII)
-#' @export
-#'
-#'# Authors: Wout Verhoef, Christiaan van der Tol, Joris Timmermans, 
 #' Date: 2007
 #' Update from PROSPECT to FLUSPECT: January 2011 (CvdT)
 #'
-#'     Nov 2012 (CvdT) Output EF-matrices separately for PSI and PSII
+#'   Nov 2012 (CvdT) Output EF-matrices separately for PSI and PSII
 #'   31 Jan 2013 (WV)   Adapt to SCOPE v_1.40, using structures for I/O
 #'   30 May 2013 (WV)   Repair bug in s for non-conservative scattering
 #'   24 Nov 2013 (WV)   Simplified doubling routine
@@ -41,8 +36,10 @@
 #'   19 Jan 2015 (WV)   First beta version for simulation of PRI effect
 #'   20 Jan 2021 (CvdT) Include PROSPECT-PRO coefficients
 #'
-#' @examples
-#' 
+
+#' @return a leaf model refl and trans
+#' @export
+#' @examples here adding examples ....
 #' inputs = ToolsRTM::inputsRTM
 #' LUT<-as.data.frame(getLUT(inputs = inputs, nLUT=1, setseed = 1234))
 #' sim <-getFluspect.Cx(inputsLeaf = LUT, inputsOptipar =ToolsRTM::optipar,version='Cx')

@@ -13,6 +13,13 @@ color.gradient(x, colors = c("red", "yellow", "green"), colsteps = 100)
 
 \item{colsteps}{}
 }
+\value{
+a scale
+}
 \description{
 Gradient scale
+}
+\examples{
+here adding examples ....
+
 }

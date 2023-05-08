@@ -7,7 +7,7 @@
 #' @return a dataframe with all parameters
 #' @export
 #'
-#' @examples
+#' @examples here adding examples ....
 #' 
 getLUT<-function(inputs=NULL, nLUT=100, setseed = 123){
   

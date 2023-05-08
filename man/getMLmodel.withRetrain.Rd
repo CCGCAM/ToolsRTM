@@ -53,3 +53,7 @@ a list with models and plots
 \description{
 getMLmodel is a function for retrain a deep model with a prefixed configuration
 }
+\examples{
+here adding examples ....
+
+}

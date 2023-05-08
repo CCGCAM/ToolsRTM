@@ -32,3 +32,7 @@ getSim_fromLUT(
 \description{
 Get LUT with fixed inputs and vary only one
 }
+\examples{
+here adding examples ....
+
+}

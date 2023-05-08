@@ -39,3 +39,7 @@ hybrid_inversion(
 \description{
 Inversion of  plant traits using ML models
 }
+\examples{
+here adding examples ....
+
+}

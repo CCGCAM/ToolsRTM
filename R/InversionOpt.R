@@ -10,10 +10,10 @@
 #' merit-1stD uses the first derivative in both data.
 #' @param nOpt Solutions uses by the chosen method 
 #'
-#' @return
+#' @return get tradtional inversion
 #' @export
 #'
-#' @examples
+#' @examples here adding examples ....
 #' 
 InversionOpt<-function (rfl.sensor=NULL,rfl.rtm=NULL,LUT=NULL,wave=NULL,method=NULL,nOpt=NULL) 
 {

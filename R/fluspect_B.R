@@ -3,20 +3,20 @@
 #' \code{getFluspect.B} calculates reflectance and transmittance spectra of a leaf using FLUSPECT-B, 
 #' calculates reflectance and transmittance spectra of a leaf using FLUSPECT-B, 
 #'plus four excitation-fluorescence matrices
-#' @param inputsLeaf  a LUT for FLUXspect
-#' @param inputsOptipar  internal parameters
-#' @param version  Leaf model uses for Kcal: 'D' refers as PROSPECT-D; 'PRO', refers as PROSPECT-PRO 
-#'
-#' @return  a list which contains:
-#' * refl (reflectance)
-#' * tran (transmittance)
-#' * Mb (backward scattering fluorescence matrix, I for PSI and II for PSII)
-#' * Mf (forward scattering fluorescence matrix,  I for PSI and II for PSII)
-#' @export
-
 #' @author Wout Verhoef, Christiaan van der Tol, Joris Timmermans, Nastassia Vilfan (Original version in Matlab)
 #' @author Carlos Camino (Ported version into R)
 #' 
+#' @param inputsLeaf  a LUT for FLUXspect
+#' @param inputsOptipar  internal parameters
+#' @param version  Leaf model uses for Kcal: 'D' refers as PROSPECT-D; 'PRO', refers as PROSPECT-PRO 
+#' @details
+#' Additional details...
+#' refl (reflectance)
+#' tran (transmittance)
+#' Mb (backward scattering fluorescence matrix, I for PSI and II for PSII)
+#' Mf (forward scattering fluorescence matrix,  I for PSI and II for PSII)
+#' @description
+#'
 #'# Authors: Wout Verhoef, Christiaan van der Tol, Joris Timmermans, 
 #' Date: 2007
 #' Update from PROSPECT to FLUSPECT: January 2011 (CvdT)
@@ -37,6 +37,9 @@
 #'   01 Apr 2014 (WV)   Add carotenoid concentration (Cca and Kca)
 #'   19 Jan 2015 (WV)   First beta version for simulation of PRI effect
 #'
+#' 
+#' @return description
+#' @export
 #' @examples
 #' 
 #' inputs = ToolsRTM::inputsRTM

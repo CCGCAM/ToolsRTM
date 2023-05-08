@@ -76,7 +76,7 @@
 
 #' @return List of lambda with leaf directional-hemisphrical reflectance and transmittance 
 #'
-#' @examples
+#' @examples here an example
 #' 
 #' 
 #' @references

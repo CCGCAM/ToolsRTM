@@ -9,6 +9,13 @@ get_append(input = NULL)
 \arguments{
 \item{input}{a list of tables}
 }
+\value{
+append table
+}
 \description{
 Append  tables
+}
+\examples{
+here adding examples ....
+
 }

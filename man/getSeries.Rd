@@ -23,6 +23,13 @@ getSeries(
 
 \item{get.indices}{A boolean is True, get spectral indices pre-define in getIndicesSE2, is not (FALSE) provide only bands}
 }
+\value{
+a dataframe with values
+}
 \description{
 get series in a dataframe from rasters
+}
+\examples{
+here adding examples ....
+
 }

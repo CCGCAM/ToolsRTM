@@ -1,8 +1,8 @@
 Package: ToolsRTM
+Type:  A package for simulating RT models
 Title: Tools for simulating and spatial trait mappings
-Version: 0.35
-Authors@R: 
-    person(given = "Carlos",
+Version: 0.36.66
+Authors@R: person(given = "Carlos",
            family = "Camino",
            role = c("aut", "cre"),
            email = "carlos.camino-gonzalez@ec.europa.eu",

@@ -6,10 +6,10 @@
 #' @param factorR factor for the reflectance bands
 #' @param get.indices A boolean is True, get spectral indices pre-define in getIndicesSE2, is not (FALSE) provide only bands
 #'
-#' @return
+#' @return a dataframe with values
 #' @export
 #'
-#' @examples
+#' @examples here adding examples ....
 #'
 getSeries<-function(pathRaster=NULL, shapefile=NULL, band_names=NULL,factorR=NULL,get.indices = T){
   options(warn=-1) ###avoid warnings
@@ -79,10 +79,10 @@ return(data.export)
 #'
 #' @param tiff_files 
 #'
-#' @return
+#' @return dates
 #' @export
 #'
-#' @examples
+#' @examples here adding examples ....
 #' 
 extract_dates_from_tiff_files <- function(tiff_files) {
   # create an empty vector to store the dates

@@ -1,19 +1,20 @@
 
-
 #' Get TIFF from a folder and generate the stack. This function is for Sentinel-2 data using the names B1,B2 ...and SCL
 #'
 #' @param rasterFiles  path with the Netcdf
-#' #' @param frequency Daily
+#' @param frequency Daily
 #' @param bands  a vector with the names of the inputs of the NetCDF
 #' @param output  path of the outputs
 #'
-#' @return
+#' @return a stack
 #' @export
 #'
-#' @examples
+#' @examples here an example
 #'
+
 getStacks<-function(rasterFiles=NULL, frequency='Daily', bands=NULL,output=NULL){
   options(warn=-1) ###avoid warnings
+  getwd()
   files = list.files(rasterFiles,pattern="day_*", full.names=F)
   dates<-as.Date(substr(files,5,14))
   dates.unique<-unique(dates)
@@ -26,6 +27,7 @@ getStacks<-function(rasterFiles=NULL, frequency='Daily', bands=NULL,output=NULL)
     setTxtProgressBar(progress_bar, k)
     path_out=paste(rasterFiles,'/day-',dates.unique[k],'',sep='')
     files = list.files(path_out,pattern="*.tif$", full.names=TRUE)
+    #print(files)
     #rs <- stack(files)
     ## by order B1-B2-B3-B4-B5-B6-B7-B8-B8A-B9-B11-B12
     # Extract the pattern from each file name

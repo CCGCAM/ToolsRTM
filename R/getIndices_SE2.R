@@ -2,13 +2,13 @@
 #' extract spectral indices at Sentinel-2 resolution
 #'
 #' @param df a dataframe with reflectance where each rows correspond with an spectrum
-#' @sensor Sensor options: 'Sentinel-2a', or 'Sentinel-2b'
+#' @param sensor Sensor options: 'Sentinel-2a', or 'Sentinel-2b'
 #' @param df.data  dataset with IDs that corresponde with each spectrum, is null is also enable
 #'
 #' @return a dataframe with indices and your dataset
 #' @export
 #'
-#' @examples
+#' @examples here adding examples ....
 #'
 #'
 

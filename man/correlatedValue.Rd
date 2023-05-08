@@ -19,3 +19,8 @@ second variable based on the asigned correlation of the main variable in a vecto
 Corretalion function
 This function generates a new variable that will be correlated with  x variable. The new variable is fixed by a normal distribution function
 }
+\examples{
+here adding examples ....
+
+
+}

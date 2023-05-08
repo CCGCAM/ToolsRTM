@@ -167,7 +167,7 @@ litab <- LeafDistribution$litab
 		#*	w   : Bidirectional scattering coefficient
 		#********************************************************************************
 
-		#	Extinction coefficientsksli
+		#	Extinction coefficients ksli
 		ksli <- chi_s / cts
 		koli <- chi_o / cto
 
@@ -189,12 +189,14 @@ litab <- LeafDistribution$litab
 	#	Geometric factors to be used later with rho and tau
   #####################################################
     
-	sdb	 <-  0.5 * (ks + bf)
-	sdf	 <-  0.5 * (ks - bf)
-	dob	 <-  0.5 * (ko + bf)
-	dof	 <-  0.5 * (ko - bf)
-	ddb	 <-  0.5 * (1.+ bf)
-	ddf	 <-  0.5 * (1.- bf)
+	sdb	 <-  0.5 * (ks + bf) #
+	sdf	 <-  0.5 * (ks - bf) # weight of specular2diffuse     foward  scatter coefficient
+
+	ddb	 <-  0.5 * (1.+ bf) #
+	ddf	 <-  0.5 * (1.- bf) # weight of diffuse2diffuse back scatter coefficient
+	
+	dob	 <-  0.5 * (ko + bf) # weight of diffuse2directional  back    scatter coefficient
+	dof	 <-  0.5 * (ko - bf) # weight of diffuse2directional  forward scatter coefficient
 
 	#	Here rho and tau come in
 	sigb <-  ddb * rho + ddf * tau

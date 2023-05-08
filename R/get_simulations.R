@@ -8,7 +8,7 @@
 #' @return a LUT with all the simulations and the plot
 #' @export
 #'
-#' @examples
+#' @examples here an example
 #' 
 get_simulations<-function(inputLUT = NULL, psoil=0.5, rtm.model = 'PROSAIL'){
   if (!require("foreach")) { install.packages("foreach"); require("foreach") }  ### 

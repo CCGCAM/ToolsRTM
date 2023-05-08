@@ -7,10 +7,11 @@
 #' @param data.Y  the Y variable: Avalaible options are: 'NULL' in real cases or a vector or matrix or data.frame
 #' @param depVar variable name 
 #' @param scaler.depVar Scaler for Y 
-#' @return
-#' @export
+#' @return predictions
+#' @export 
 #'
-#' @examples
+#' @examples here adding examples ....
+#' 
 getPredicts<-function(model=NULL, type.model='CNN',data=NULL,data.trans=NULL ,
                       data.Y=NULL, depVar='Cab', scaler.depVar = NULL) {
   
@@ -134,10 +135,10 @@ getPredicts<-function(model=NULL, type.model='CNN',data=NULL,data.trans=NULL ,
 #' @param data a matrix
 #' @param digits 
 
-#' @return
+#' @return reverse trans
 #' @export
 #'
-#' @examples
+#' @examples here adding examples ....
 
 getReverse.trans <- function(preProc=NULL, data=NULL, digits = 10) {
   

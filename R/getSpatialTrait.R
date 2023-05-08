@@ -12,7 +12,7 @@
 #' @return a list with: i) a scatter-plot between trait and best indicator, and ii) spatial trait mappping mask with the forest map
 #' @export
 #'
-#' @examples
+#' @examples here adding examples ....
 #' 
 
 
@@ -281,7 +281,7 @@ getSpatialTrait<-function(rasterFiles=NULL,ForestLayer=NULL,Sensor=NULL,
 #' @return a vector 
 #' @export
 #'
-#' @examples
+#' @examples here adding examples ....
 #' 
 filter_outliers<-function(df=NULL, input=NULL){
   qnt <- quantile(df[,input], probs=c(.25, .60), na.rm = T)
@@ -301,10 +301,10 @@ filter_outliers<-function(df=NULL, input=NULL){
 #' @param output path to write the forest mask
 #' @param proj projection, by default 3035
 #'
-#' @return
+#' @return a mosaic
 #' @export
 #'
-#' @examples
+#' @examples here adding examples ....
 #' 
 GetMosaics<-function(ForestLayers=NULL, shapeLayer=NULL,
                      output=NULL, proj=3035){

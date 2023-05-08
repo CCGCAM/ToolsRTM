@@ -11,7 +11,7 @@
 #' @return LUT in data frame
 #' @importFrom stats runif rnorm sd
 #' @importFrom ToolsRTM gauss_byMin_Max
-#' @examples 
+#' @examples here adding examples ....
 #' 
 #' @export
 

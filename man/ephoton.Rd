@@ -9,6 +9,13 @@ ephoton(lambda)
 \arguments{
 \item{lambda}{}
 }
+\value{
+e
+}
 \description{
 Fucntion for calculating the energy of a single photon given its wavelength.
+}
+\examples{
+here adding examples ....
+
 }

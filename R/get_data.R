@@ -9,7 +9,7 @@
 #' @return a LUT 
 #' @export
 #'
-#' @examples
+#' @examples here adding examples ....
 #' 
 #' 
 get_data <- function(RTmodel='PROSPECT-D', nLUT=100, random.input =100) {

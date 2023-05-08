@@ -14,7 +14,7 @@
 #' @param acron acronynm for the observation measure: e.g., Cab_obsrv, where acron='_observ' and Cab has same name as input
 #' @export
 #'
-#' @examples
+#' @examples here adding examples ....
 #' 
 hybrid_inversion<-function(LUT=NULL,input=NULL,split=0.8,setseed=NULL,method=NULL,
                            collinearity=NULL, pattern=NULL, trans=NULL,
@@ -382,10 +382,10 @@ if (is.null(Field.data)) {
 #' @param m 
 #' @param o 
 #'
-#' @return
+#' @return a value
 #' @export
 #'
-#' @examples
+#' @examples here an example
 #' 
 MAE <- function(m,o){
   error<-m - o
@@ -396,10 +396,10 @@ MAE <- function(m,o){
 #' @param m 
 #' @param o 
 #'
-#' @return
+#' @return a value
 #' @export
 #'
-#' @examples
+#' @examples here an example
 #' 
 RMSE = function(m, o){
   sqrt(mean((m - o)^2))}

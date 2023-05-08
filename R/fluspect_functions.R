@@ -1,10 +1,9 @@
 
 #' Define constant for FLuxPesp
 #'
-#' @return
+#' @return constants
 #' @export
 #'
-#' @examples
 define_constants <- function() {
   const <- list(
     A = 6.02214E23, # [mol-1]       Constant of Avogadro
@@ -28,10 +27,10 @@ define_constants <- function() {
 
 #' define spectral region
 #'
-#' @return
+#' @return spectral regions
 #' @export
 #'
-#' @examples
+#' @examples here adding examples ....
 define_bands <- function() {
   spectral <- list()
   
@@ -77,19 +76,19 @@ define_bands <- function() {
 
 
 
-#' 
+#' @title num-jacobian function
 #'
 #' @param x 
 #' @param spectral 
 #' @param inputLeaf 
 #' @param optipar 
 #'
-#' @return
-#' @export
-#'Authors: Wout Verhoef, Christiaan van der Tol, Joris Timmermans, 
-#' Adapted to R: Carlos. Camino
+#' @author Wout Verhoef, Christiaan van der Tol, Joris Timmermans, 
+#' @author Ported to R: Carlos. Camino
 #' 
-#' @examples
+#' @return numjacobian  values
+#' @export
+#' @examples here adding examples ....
 numjacobian <- function(x, spectral, inputLeaf, optipar) {
   n <- length(x)
   res <- ToolsRTM::calc_fluspect_bcar(x, spectral, leafbio, optipar)
@@ -108,17 +107,17 @@ numjacobian <- function(x, spectral, inputLeaf, optipar) {
   return(J)
 }
 
-#' 
+#' @title calc_fluspect_bcar function
 #'
 #' @param params 
 #' @param spectral 
 #' @param leafbio 
 #' @param optipar 
 #'
-#' @return
+#' @return rfl and trans
 #' @export
 #'
-#' @examples
+#' @examples here adding examples ....
 #' 
 calc_fluspect_bcar <- function(params, spectral, leafbio, optipar) {
   leafbio$Cab <- params[1]
@@ -138,10 +137,10 @@ calc_fluspect_bcar <- function(params, spectral, leafbio, optipar) {
 #'
 #' @param lambda 
 #'
-#' @return
+#' @return e
 #' @export
 #'
-#' @examples
+#' @examples here adding examples ....
 #' 
 ephoton <- function(lambda) {
   h <- 6.62607004E-34 # Planck constant [J.s]
@@ -150,15 +149,16 @@ ephoton <- function(lambda) {
   return(e)
 }
 
-#' Simpson integration
+#' @title  Simpson integration
 #'
 #' @param y  must be any vector (rows, columns), but of the same length
 #' @param x  must be any vector (rows, columns), but of the same length; must be a monotonically increasing series
 #' develope by WV Jan. 2013, for SCOPE 1.40
-#' @return
+#' @return int
 #' @export
 #'
-#' @examples
+#' @examples here adding examples ....
+#' 
 Sint <- function(y, x) {
 
   nx <- length(x)
@@ -176,6 +176,17 @@ Sint <- function(y, x) {
 
 
 
+#' @title Cost fucntions
+#'
+#' @param params 
+#' @param measurement 
+#' @param input 
+#'
+#' @return rfl and tran resampled
+#' @export
+#'
+#' @examples Here adding examples
+#' 
 COST_4Fluspect <- function(params, measurement, input) {
   
   leafbio <- input[[1]]

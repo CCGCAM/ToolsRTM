@@ -9,6 +9,8 @@ getIndicesSE2(df, sensor = "Sentinel-2a", df.data = NULL)
 \arguments{
 \item{df}{a dataframe with reflectance where each rows correspond with an spectrum}
 
+\item{sensor}{Sensor options: 'Sentinel-2a', or 'Sentinel-2b'}
+
 \item{df.data}{dataset with IDs that corresponde with each spectrum, is null is also enable}
 }
 \value{
@@ -16,4 +18,9 @@ a dataframe with indices and your dataset
 }
 \description{
 extract spectral indices at Sentinel-2 resolution
+}
+\examples{
+here adding examples ....
+
+
 }

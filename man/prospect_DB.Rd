@@ -29,6 +29,11 @@ List of lambda with leaf directional-hemisphrical reflectance and transmittance
 \description{
 PROSPECT-Dynamic with brown pigments
 }
+\examples{
+here an example
+
+
+}
 \references{
 Féret J-B, Gitelson AA, Noble SD & Jacquemoud S, 2017. PROSPECT-D: Towards modeling leaf optical properties through a complete lifecycle. Remote Sensing of Environment, 193, 204–215. https://doi.org/10.1016/j.rse.2017.03.004
 

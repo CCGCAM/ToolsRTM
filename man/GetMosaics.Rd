@@ -15,6 +15,13 @@ GetMosaics(ForestLayers = NULL, shapeLayer = NULL, output = NULL, proj = 3035)
 
 \item{proj}{projection, by default 3035}
 }
+\value{
+a mosaic
+}
 \description{
 Get a Mosaic from TIFFs Tiles from (Forest type 2018 later from COPERNICUS)
+}
+\examples{
+here adding examples ....
+
 }

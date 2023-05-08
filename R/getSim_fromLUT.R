@@ -11,7 +11,7 @@
 #' @param model a dataframe with all parameters
 #' @export
 #'
-#' @examples
+#' @examples here adding examples ....
 #' 
 getSim_fromLUT<-function(trait='Cab',nmin=0, nmax=100, Interval=10, psoil=0.5,model='PROSAIL', method='ggplot'){
   
@@ -324,10 +324,10 @@ return(to_export)
 #' @param ylab 
 #' @param ... 
 #'
-#' @return
+#' @return plot
 #' @export
 #'
-#' @examples
+#' @examples here adding examples ....
 #' 
 plotspectra <- function(df, x=1, y=2, cols=y,
                           xlim=range(df[,x], na.rm = T),
@@ -355,10 +355,10 @@ plotspectra <- function(df, x=1, y=2, cols=y,
 #' @param colors 
 #' @param colsteps 
 #'
-#' @return
+#' @return a scale
 #' @export
 #'
-#' @examples
+#' @examples here adding examples ....
 #' 
 color.gradient <- function(x, colors=c("red","yellow","green"), colsteps=100) {
   

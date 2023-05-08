@@ -13,6 +13,12 @@ getReverse.trans(preProc = NULL, data = NULL, digits = 10)
 
 \item{digits}{}
 }
+\value{
+reverse trans
+}
 \description{
 getReverse.trans
+}
+\examples{
+here adding examples ....
 }

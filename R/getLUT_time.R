@@ -12,7 +12,7 @@
 #' @return a dataframe with the LUT for Time series
 #' @export
 #'
-#' @examples
+#' @examples here adding examples ....
 #' 
 getLUT_time<-function(inputs=NULL, dataICOS= NULL, timeStart='2018-01-01', timeEnd='2018-01-30', freq.hour = 'diurnal', nLUT=100,SetFixedSeed=T){
   

@@ -19,3 +19,8 @@ a LUT
 \description{
 get random plant traits using a uniform distribution
 }
+\examples{
+here adding examples ....
+
+
+}

@@ -14,10 +14,10 @@
 #' @param geo.weight A weighting multiplier indicating the strength of geographic weighting relative to the other variables. A value of 1 gives equal weight.
 
 #'
-#' @return
+#' @return Kmenans
 #' @export
 #'
-#' @examples
+#' @examples here adding examples ....
 #' 
 getKmeans <- function(stack,k=12,iter.max=100,nstart=10,geo=T,geo.weight=1){
   
@@ -67,10 +67,10 @@ getKmeans <- function(stack,k=12,iter.max=100,nstart=10,geo=T,geo.weight=1){
 #' @param low 
 #' @param high 
 #'
-#' @return
+#' @return normalize values
 #' @export
 #'
-#' @examples
+#' @examples here adding examples ....
 #' 
 normalize <- function(x,low=0,high=1){
   low+(x-min(x,na.rm=T))*(high-low)/(max(x,na.rm=T)-min(x,na.rm=T))

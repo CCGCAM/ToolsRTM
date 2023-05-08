@@ -6,6 +6,9 @@
 \usage{
 define_constants()
 }
+\value{
+constants
+}
 \description{
 Define constant for FLuxPesp
 }

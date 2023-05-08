@@ -15,6 +15,13 @@ getCWSI(df, Ta, HR, df.data)
 
 \item{df.data}{datafrma ewith indicators}
 }
+\value{
+CWSI
+}
 \description{
 Get CWSI for almonds
+}
+\examples{
+here adding examples ....
+
 }

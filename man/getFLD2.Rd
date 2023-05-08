@@ -13,6 +13,13 @@ getFLD2(values, wavelengths, irradiance)
 
 \item{irradiance}{irradiance}
 }
+\value{
+get FLD
+}
 \description{
 Get FLD2
+}
+\examples{
+here adding examples ....
+
 }

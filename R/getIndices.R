@@ -9,7 +9,7 @@
 #' @return  the original dataset with the spactral indices  
 #' @export
 #'
-#' @examples
+#' @examples here adding examples ....
 #' 
 #'
 getIndices <- function(data, pattern.rfl='R.', spectral.domain=NULL) {

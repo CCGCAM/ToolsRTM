@@ -3,12 +3,12 @@
 #'
 #' @param inputs  a LUT table with variables with specific ranges.
 #' @param nLUT  the number of rows for the LUT
-#' @dependencies nLUT  the number of rows for the LUT
-#' @setseed setseed  a seed number to contral random process. By default is FALSE or null. Please add the number.
+#' @param dependencies nLUT  the number of rows for the LUT
+#' @param setseed setseed  a seed number to contral random process. By default is FALSE or null. Please add the number.
 #' @return a dataframe with all parameters
 #' @export
 #'
-#' @examples
+#' @examples here adding examples ....
 #'
 getLUTs<-function(inputs=NULL, nLUT=100, dependencies='Car',setseed = 123){
 

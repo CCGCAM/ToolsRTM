@@ -12,6 +12,13 @@ Sint(y, x)
 \item{x}{must be any vector (rows, columns), but of the same length; must be a monotonically increasing series
 develope by WV Jan. 2013, for SCOPE 1.40}
 }
+\value{
+int
+}
 \description{
 Simpson integration
+}
+\examples{
+here adding examples ....
+
 }

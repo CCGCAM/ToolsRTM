@@ -6,10 +6,10 @@
 #' @param HR  relative humidity in %
 #' @param df.data datafrma ewith indicators
 #'
-#' @return
+#' @return CWSI
 #' @export
 #'
-#' @examples
+#' @examples here adding examples ....
 #' 
 getCWSI <- function(df, Ta, HR,df.data) {
 

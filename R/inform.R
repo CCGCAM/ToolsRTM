@@ -6,10 +6,10 @@
 #' @param LeafModel Version of PROSPECT model; 'PRO' or 'D' is accepted. By default 'PRO' is used. Liberty model
 #' and Fluspect-B and Fluspect-B-Cx is also provided. Options are : 'PRO','D', 'Liberty', 'Fluspect-B' and 'Fluspect-B-Cx'.
 #'
-#' @return
+#' @return rfl 
 #' @export
 #'
-#' @examples
+#' @examples here an example
 #' 
 #' @references
 #' 

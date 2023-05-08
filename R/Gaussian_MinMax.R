@@ -9,10 +9,10 @@
 #' @param nnorm  number of cases * a number (numeric format). This value is taken by the function to
 #' take values in the selected range (min-max) upt to have the complete the number of cases
 #'
-#' @return
+#' @return a gaussian dist
 #' @export
 #'
-#' @examples
+#' @examples here adding examples ....
 #' 
 gauss_byMin_Max <- function(n, m, s, lwr, upr, nnorm) {
   #set.seed(42)

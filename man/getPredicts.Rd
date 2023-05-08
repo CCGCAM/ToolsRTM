@@ -29,6 +29,13 @@ getPredicts(
 
 \item{scaler.depVar}{Scaler for Y}
 }
+\value{
+predictions
+}
 \description{
 getPredicts
+}
+\examples{
+here adding examples ....
+
 }

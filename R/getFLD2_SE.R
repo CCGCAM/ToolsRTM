@@ -6,10 +6,10 @@
 #' @param wavelengths  vector with wavelengths
 #' @param irradiance  irradiance
 #'
-#' @return
+#' @return FLD2
 #' @export
 #'
-#' @examples
+#' @examples here adding examples ....
 #' 
 getFLD2_SE <- function(values, wavelengths, irradiance) {
 

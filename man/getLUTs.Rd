@@ -10,10 +10,18 @@ getLUTs(inputs = NULL, nLUT = 100, dependencies = "Car", setseed = 123)
 \item{inputs}{a LUT table with variables with specific ranges.}
 
 \item{nLUT}{the number of rows for the LUT}
+
+\item{dependencies}{nLUT  the number of rows for the LUT}
+
+\item{setseed}{setseed  a seed number to contral random process. By default is FALSE or null. Please add the number.}
 }
 \value{
 a dataframe with all parameters
 }
 \description{
 Get LUTs for radiative transfer models
+}
+\examples{
+here adding examples ....
+
 }

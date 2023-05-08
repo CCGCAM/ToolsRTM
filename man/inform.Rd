@@ -14,8 +14,15 @@ inform(inputLUT = NULL, rsoil = rsoil, LeafModel = "PRO")
 \item{LeafModel}{Version of PROSPECT model; 'PRO' or 'D' is accepted. By default 'PRO' is used. Liberty model
 and Fluspect-B and Fluspect-B-Cx is also provided. Options are : 'PRO','D', 'Liberty', 'Fluspect-B' and 'Fluspect-B-Cx'.}
 }
+\value{
+rfl
+}
 \description{
 \code{inform} INFORM  simulation based on a set of combinations of inpuparameters
+}
+\examples{
+here an example
+
 }
 \references{
 INFORM (Atzberger, 2000; Schlerf&Atzberger, 2006) simulates the bi-directional reflectance

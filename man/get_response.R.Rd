@@ -13,6 +13,13 @@ get_response.R(center, wl, fwhm)
 
 \item{fwhm}{a  vector with the fwhm from each band}
 }
+\value{
+spectral response
+}
 \description{
 spectral response function
+}
+\examples{
+here adding examples ....
+
 }

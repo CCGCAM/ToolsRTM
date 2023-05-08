@@ -8,10 +8,10 @@
 #' @param SpectraltoCompute List with the spectral index to compute. by default 'All'
 #' @param path.export path_to save Bands
 #' @param single.bands extract singles_bands, by deault is False
-#' @return
+#' @return spectral indices
 #' @export
 #'
-#' @examples
+#' @examples here adding examples ....
 #' 
 getSpectraIndices<-function(rasterFiles=NULL,Sensor='Sentinel2a',SpecEq=NULL,SpectraltoCompute= 'All',
                             factorR=NULL, path.export=NULL, single.bands=T){

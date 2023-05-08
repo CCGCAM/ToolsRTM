@@ -13,6 +13,13 @@ normalize(x, low = 0, high = 1)
 
 \item{high}{}
 }
+\value{
+normalize values
+}
 \description{
 Normalize
+}
+\examples{
+here adding examples ....
+
 }

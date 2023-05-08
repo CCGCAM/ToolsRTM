@@ -29,3 +29,7 @@ a dataframe with the selected point  and also show a plot with the seoctral sign
 \description{
 Plot the spectra in points over the image
 }
+\examples{
+here an example
+
+}

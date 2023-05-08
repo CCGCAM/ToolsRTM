@@ -13,8 +13,19 @@ RMSE(m, o)
 
 \item{o}{}
 }
+\value{
+a value
+
+a value
+}
 \description{
 Function that returns Root Mean Square Error
 
 Function that returns Root Mean Square Error
+}
+\examples{
+here an example
+
+here an example
+
 }

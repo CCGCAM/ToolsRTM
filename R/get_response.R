@@ -5,10 +5,10 @@
 #' @param wl  a vector with the wavelength from the simulations
 #' @param fwhm a  vector with the fwhm from each band
 #'
-#' @return
+#' @return spectral response
 #' @export
 #'
-#' @examples
+#' @examples here adding examples ....
 #' 
 get_response.R<-function(center, wl, fwhm)
 {

@@ -7,10 +7,10 @@
 #' @param bands  a vector with the names of the inputs of the NetCDF
 #' @param output  path of the outputs
 #'
-#' @return
+#' @return stacks
 #' @export
 #'
-#' @examples
+#' @examples here adding examples ....
 #' 
 getStacks<-function(rasterFiles=NULL, frequency='Daily', bands=NULL,output=NULL){
   options(warn=-1) ###avoid warnings

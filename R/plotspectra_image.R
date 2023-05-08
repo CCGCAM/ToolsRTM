@@ -8,7 +8,7 @@
 #' @return a dataframe with the selected point  and also show a plot with the seoctral signal of each poin
 #' @export
 #'
-#' @examples
+#' @examples here an example
 #' 
 
 plotspectra_image<-function(Raster = NULL,n_spectra=1, sensor='Sentinel2a', factor=NULL, method='ggplot'){
@@ -87,10 +87,10 @@ plotspectra_image<-function(Raster = NULL,n_spectra=1, sensor='Sentinel2a', fact
 #' @param ylab 
 #' @param ... 
 #'
-#' @return
-#' @export
+#' @return a plot
+#' @export 
 #'
-#' @examples
+#' @examples here an example
 #' 
 plotspectra_SE <- function(df, x=1, y=2, cols=y,
                         xlim=range(df[,x], na.rm = T),

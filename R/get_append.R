@@ -2,10 +2,11 @@
 #'
 #' @param input  a list of tables
 #'
-#' @return
-#' @export
+#' @return append table
+#' @export 
 #'
-#' @examples
+#' @examples here adding examples ....
+#' 
 get_append<-function(input = NULL){
   
   file_list = input

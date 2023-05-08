@@ -6,10 +6,10 @@
 #' @param wl 
 #' @param fwhm 
 #'
-#' @return
+#' @return resample
 #' @export
 #'
-#' @examples
+#' @examples here an example
 #' 
 resample_fun<-function(center, wl, fwhm)
 {

@@ -12,7 +12,7 @@
 #' @return a dataframe with all parameters
 #' @export
 #'
-#' @examples
+#' @examples here adding examples ....
 #' 
 #' 
 getCor<-function(n_inputs=NULL, nLUT=100,  distribution = 'Uniform',setseed = 123, rho=NULL,

@@ -9,10 +9,10 @@
 #' @param output  path of the outputs
 #' @param pattern  File pattern to extract the netcdf (Area or studied region)
 #'
-#' @return
+#' @return tiffs
 #' @export
 #'
-#' @examples
+#' @examples here adding examples ....
 #' 
 getTIFFs<-function(netCDFs=NULL, bands=NULL, output=NULL, pattern=NULL){
   

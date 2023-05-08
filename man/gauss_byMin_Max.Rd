@@ -20,6 +20,13 @@ gauss_byMin_Max(n, m, s, lwr, upr, nnorm)
 \item{nnorm}{number of cases * a number (numeric format). This value is taken by the function to
 take values in the selected range (min-max) upt to have the complete the number of cases}
 }
+\value{
+a gaussian dist
+}
 \description{
 Gaussion distribution
+}
+\examples{
+here adding examples ....
+
 }

@@ -6,6 +6,12 @@
 \usage{
 define_bands()
 }
+\value{
+spectral regions
+}
 \description{
 define spectral region
+}
+\examples{
+here adding examples ....
 }

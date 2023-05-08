@@ -18,7 +18,7 @@
 #' @return a list with models and plots
 #' @export
 #'
-#' @examples
+#' @examples here adding examples ....
 #'
 
 getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimizer='adam',

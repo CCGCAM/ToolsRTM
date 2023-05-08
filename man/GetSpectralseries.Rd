@@ -23,6 +23,13 @@ GetSpectralseries(
 
 \item{Indices}{if TRUE or null, the function estimate the Indices for each date.}
 }
+\value{
+spectral indices
+}
 \description{
 Extract all bands from SE images (adapted to NETCDF dataset)
+}
+\examples{
+here adding examples ....
+
 }

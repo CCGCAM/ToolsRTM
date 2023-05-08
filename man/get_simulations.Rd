@@ -19,3 +19,7 @@ a LUT with all the simulations and the plot
 \description{
 Simulate spectra with RT models
 }
+\examples{
+here an example
+
+}

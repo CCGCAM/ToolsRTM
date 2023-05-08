@@ -11,7 +11,7 @@
 #' @return the training and testing dataset with plot and scalers
 #' @export
 #'
-#' @examples
+#' @examples here adding examples ....
 #' 
 #' 
 

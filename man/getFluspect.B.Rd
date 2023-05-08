@@ -14,31 +14,23 @@ getFluspect.B(inputsLeaf, inputsOptipar, version = "D")
 \item{version}{Leaf model uses for Kcal: 'D' refers as PROSPECT-D; 'PRO', refers as PROSPECT-PRO}
 }
 \value{
-a list which contains:
-\itemize{
-\item refl (reflectance)
-\item tran (transmittance)
-\item Mb (backward scattering fluorescence matrix, I for PSI and II for PSII)
-\item Mf (forward scattering fluorescence matrix,  I for PSI and II for PSII)
-}
+description
 }
 \description{
+Leaf FLUSPECT-B model
+}
+\details{
 \code{getFluspect.B} calculates reflectance and transmittance spectra of a leaf using FLUSPECT-B,
 calculates reflectance and transmittance spectra of a leaf using FLUSPECT-B,
 plus four excitation-fluorescence matrices
+
+Additional details...
+refl (reflectance)
+tran (transmittance)
+Mb (backward scattering fluorescence matrix, I for PSI and II for PSII)
+Mf (forward scattering fluorescence matrix,  I for PSI and II for PSII)
 }
-\examples{
-
-inputs = ToolsRTM::inputsRTM
-LUT<-as.data.frame(getLUT(inputs = inputs, nLUT=1, setseed = 1234))
-sim <-getFluspect.B(inputsLeaf = LUT, inputsOptipar =ToolsRTM::optipar,version='D')
-
-}
-\author{
-Wout Verhoef, Christiaan van der Tol, Joris Timmermans, Nastassia Vilfan (Original version in Matlab)
-
-Carlos Camino (Ported version into R)Authors: Wout Verhoef, Christiaan van der Tol, Joris Timmermans,
-
+\section{Authors: Wout Verhoef, Christiaan van der Tol, Joris Timmermans,}{
 Date: 2007
 Update from PROSPECT to FLUSPECT: January 2011 (CvdT)
 
@@ -59,4 +51,17 @@ and s; a test on a = Inf was included
 20 Jan 2021 (CvdT) Include PROSPECT-PRO coefficients
 01 Apr 2014 (WV)   Add carotenoid concentration (Cca and Kca)
 19 Jan 2015 (WV)   First beta version for simulation of PRI effect
+}
+
+\examples{
+
+inputs = ToolsRTM::inputsRTM
+LUT<-as.data.frame(getLUT(inputs = inputs, nLUT=1, setseed = 1234))
+sim <-getFluspect.B(inputsLeaf = LUT, inputsOptipar =ToolsRTM::optipar,version='D')
+
+}
+\author{
+Wout Verhoef, Christiaan van der Tol, Joris Timmermans, Nastassia Vilfan (Original version in Matlab)
+
+Carlos Camino (Ported version into R)
 }

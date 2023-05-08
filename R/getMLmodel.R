@@ -17,7 +17,7 @@
 #' @return a list with models and plots
 #' @export
 #'
-#' @examples
+#' @examples here adding examples ....
 #'
 
 

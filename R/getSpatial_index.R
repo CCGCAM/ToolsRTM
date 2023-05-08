@@ -4,13 +4,12 @@
 #' @param Sensor character with the sensor 'Sentinel2a'
 #' @param factorR numeric. multiplying factor used to write reflectance in image (==10000 for S2)
 #' @param SpectraltoCompute List with the spectral index to compute. by default 'All'
-
-#' @return
-#' @export
-#'
-#' @examples
 #' 
-
+#' @return a spatial map.
+#' @export
+#' @examples here adding examples ....
+#' 
+#' 
 getSpatial_index<-function(rasterFiles=NULL,Sensor='Sentinel2a',SpectraltoCompute= NULL,
                             factorR=NULL){
   options(warn=-1) ###avoid warnings

@@ -12,12 +12,25 @@ getStacks(rasterFiles = NULL, frequency = "Daily", bands = NULL, output = NULL)
 \item{rasterFiles}{path with the Netcdf
 #' @param frequency Daily}
 
+\item{frequency}{Daily}
+
 \item{bands}{a vector with the names of the inputs of the NetCDF}
 
 \item{output}{path of the outputs}
+}
+\value{
+a stack
+
+stacks
 }
 \description{
 Get TIFF from a folder and generate the stack. This function is for Sentinel-2 data using the names B1,B2 ...and SCL
 
 Title
+}
+\examples{
+here an example
+
+here adding examples ....
+
 }

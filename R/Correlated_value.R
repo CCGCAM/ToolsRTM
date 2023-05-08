@@ -5,8 +5,8 @@
 #'
 #' @return second variable based on the asigned correlation of the main variable in a vector format 
 #' @export
-#'
-#' @examples
+#' @examples here adding examples ....
+#' 
 #' 
 correlatedValue = function(x, r){
   r2 = r**2

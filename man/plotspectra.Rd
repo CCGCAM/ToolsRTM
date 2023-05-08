@@ -38,6 +38,13 @@ plotspectra(
 
 \item{...}{}
 }
+\value{
+plot
+}
 \description{
 for plotting spectra
+}
+\examples{
+here adding examples ....
+
 }

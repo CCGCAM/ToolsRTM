@@ -13,6 +13,13 @@ resample_fun(center, wl, fwhm)
 
 \item{fwhm}{}
 }
+\value{
+resample
+}
 \description{
 resample function
+}
+\examples{
+here an example
+
 }

@@ -5,10 +5,10 @@
 #' @param shapefile  shapefile (point)
 #' @param factorSE  factor to apply in reflectance files (point)
 #' @param Indices  if TRUE or null, the function estimate the Indices for each date.
-#' @return
+#' @return spectral indices
 #' @export
 #'
-#' @examples
+#' @examples here adding examples ....
 #'
 
 GetSpectralseries<-function(netCDFs=NULL, bands=NULL, shapefile=NULL, factorSE = 1/10000, Indices = T){

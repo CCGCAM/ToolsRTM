@@ -9,6 +9,13 @@ extract_dates_from_tiff_files(tiff_files)
 \arguments{
 \item{tiff_files}{}
 }
+\value{
+dates
+}
 \description{
 extract date from TiFF files
+}
+\examples{
+here adding examples ....
+
 }

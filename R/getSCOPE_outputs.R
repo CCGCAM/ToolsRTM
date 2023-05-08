@@ -8,10 +8,10 @@
 #' @param SIF is TRUE estimate the Fluorescence emission based on FLD-2 method, Need radiance parameter
 #' @param radiance  is TRUE get Radiance
 #'
-#' @return
+#' @return outputs from SCOPE model
 #' @export
 #'
-#' @examples
+#' @examples here adding examples ....
 #' 
 getSCOPE_outputs<-function(pathin=NULL,nsamples=100, resampling='Sentinel2a',
                             reflectance ='apparent', SIF=T,
