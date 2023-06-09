@@ -4,7 +4,7 @@
 \alias{prospect_DB}
 \title{PROSPECT-Dynamic with brown pigments}
 \usage{
-prospect_DB(N, Cab, Car, Anth, Brown, EWT, LMA, alpha)
+prospect_DB(N, Cab, Car, Anth, Cbrown, EWT, LMA, alpha)
 }
 \arguments{
 \item{N}{numeric. Leaf structure parameter}
@@ -15,13 +15,13 @@ prospect_DB(N, Cab, Car, Anth, Brown, EWT, LMA, alpha)
 
 \item{Anth}{numeric. Anthocyanins content (microg.cm-2)}
 
+\item{Cbrown}{numeric. Brown pigment content (Arbitrary units)}
+
 \item{EWT}{numeric. Equivalent Water Thickness (g.cm-2). Default is 0.009 Default is  0.012}
 
 \item{LMA}{numeric. Leaf Mass per Area (g.cm-2). Default is  0.012}
 
 \item{alpha}{numeric. Maximum incidence angle defining the solid angle of incident light.By default is 40}
-
-\item{Cbrown}{numeric. Brown pigment content (Arbitrary units)}
 }
 \value{
 List of lambda with leaf directional-hemisphrical reflectance and transmittance

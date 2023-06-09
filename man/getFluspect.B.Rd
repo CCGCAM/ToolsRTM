@@ -4,7 +4,7 @@
 \alias{getFluspect.B}
 \title{Leaf FLUSPECT-B model}
 \usage{
-getFluspect.B(inputsLeaf, inputsOptipar, version = "D")
+getFluspect.B(inputsLeaf, inputsOptipar, version = "PROSPECT-D")
 }
 \arguments{
 \item{inputsLeaf}{a LUT for FLUXspect}

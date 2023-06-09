@@ -4,15 +4,15 @@
 \alias{inform}
 \title{The INvertible FOrest Reflectance Model coupled with leaf models}
 \usage{
-inform(inputLUT = NULL, rsoil = rsoil, LeafModel = "PRO")
+inform(inputLUT = NULL, rsoil = rsoil, LeafModel = "PROSPECT-PRO")
 }
 \arguments{
 \item{inputLUT}{LUT table with distribution of biophysical parameters used as input parameters in the model}
 
 \item{rsoil}{numeric. Soil reflectance}
 
-\item{LeafModel}{Version of PROSPECT model; 'PRO' or 'D' is accepted. By default 'PRO' is used. Liberty model
-and Fluspect-B and Fluspect-B-Cx is also provided. Options are : 'PRO','D', 'Liberty', 'Fluspect-B' and 'Fluspect-B-Cx'.}
+\item{LeafModel}{Version of PROSPECT model; 'PRO' or 'D' is accepted. By default 'PROSPECT-PRO' is used. Liberty model
+and Fluspect-B and Fluspect-B-Cx is also provided. Options are : 'PROSPECT-PRO','PROSPECT-D', 'Liberty', 'Fluspect-B' and 'Fluspect-B-Cx'.}
 }
 \value{
 rfl

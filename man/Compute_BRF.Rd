@@ -4,7 +4,13 @@
 \alias{Compute_BRF}
 \title{Computes bidirectional reflectance factor based on outputs from PRO-4SAIL and sun position}
 \usage{
-Compute_BRF(rdot = NULL, rsot = NULL, tts = NULL, data.light = NULL)
+Compute_BRF(
+  rdot = NULL,
+  rsot = NULL,
+  tts = NULL,
+  data.light = NULL,
+  short.waves = T
+)
 }
 \arguments{
 \item{rdot}{numeric. Hemispherical-directional reflectance factor in viewing direction}
@@ -14,6 +20,8 @@ Compute_BRF(rdot = NULL, rsot = NULL, tts = NULL, data.light = NULL)
 \item{tts}{numeric. Solar zenith angle}
 
 \item{data.light}{list. direct and diffuse radiation for clear conditions, is NULL use default values}
+
+\item{short.waves}{boolean . Is true the outputs is shorted to wave for Fluspect-model.}
 }
 \value{
 BRF numeric. Bidirectional reflectance factor
