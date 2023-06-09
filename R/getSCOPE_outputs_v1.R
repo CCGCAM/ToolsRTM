@@ -15,7 +15,7 @@
 #' 
 getSCOPE_outputs_v1 <- function(pathin=NULL,nsamples=100, resampling,
                             reflectance ='apparent', SIF=T,
-                            radiance =T){
+                            radiance =T) {
   
   if (is.null(pathin)){
     stop('please give a path to find the SCOPE tables ...')

@@ -84,7 +84,7 @@ getFluspect.Cx<-function(inputsLeaf,inputsOptipar, version = 'Cx' )  {
   } else {   # If inputsOptipar is present, continue with the function
     nr = inputsOptipar[['nr']]; Kdm = inputsOptipar[['Kdm']];Kab = inputsOptipar[['Kab']];
     Kca = inputsOptipar[['Kca']];Kw = inputsOptipar[['Kw']]; Ks = inputsOptipar[['Ks']];
-    Kant = ToolsRTM::optipar[['Kant']];
+    Kant = inputsOptipar[['Kant']];
     Kcbc = inputsOptipar[['Kcbc']]; Kp = inputsOptipar[['Kp']];
     phiI = inputsOptipar[['phiI']]; phiII = inputsOptipar[['phiII']];
  

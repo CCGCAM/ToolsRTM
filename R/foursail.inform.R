@@ -36,7 +36,7 @@
 #' and works more efficiently if only few parameters change.
 
 #' 
-m4SAIL_inform <- function(inputLUT,rsoil, typeLAI = 'understorey'){
+foursail.inform <- function(inputLUT,rsoil, typeLAI = 'understorey'){
   
 #options: typeLAI = 'runderstorey', 
 if (typeLAI == 'understorey') {
@@ -69,7 +69,7 @@ if (typeLAI == 'understorey') {
 }
   
 # run PROSPECTversion ='D', 
-LRT <- prospect_DB(N,Cab,Car,Cbrown,EWT,LMA,alpha)
+LRT <- prospect_DB(N,Cab,Car,Anth,Cbrown,EWT,LMA,alpha)
 rho	 <- 	LRT[[2]]
 tau	 <- 	LRT[[3]]
 

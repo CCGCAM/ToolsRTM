@@ -3,8 +3,8 @@
 #' \code{inform} INFORM  simulation based on a set of combinations of inpuparameters
 #' @param inputLUT LUT table with distribution of biophysical parameters used as input parameters in the model
 #' @param rsoil numeric. Soil reflectance
-#' @param LeafModel Version of PROSPECT model; 'PRO' or 'D' is accepted. By default 'PRO' is used. Liberty model
-#' and Fluspect-B and Fluspect-B-Cx is also provided. Options are : 'PRO','D', 'Liberty', 'Fluspect-B' and 'Fluspect-B-Cx'.
+#' @param LeafModel Version of PROSPECT model; 'PRO' or 'D' is accepted. By default 'PROSPECT-PRO' is used. Liberty model
+#' and Fluspect-B and Fluspect-B-Cx is also provided. Options are : 'PROSPECT-PRO','PROSPECT-D', 'Liberty', 'Fluspect-B' and 'Fluspect-B-Cx'.
 #'
 #' @return rfl 
 #' @export
@@ -41,7 +41,7 @@
 #' @author Carlos Camino (Ported version into R)
 #' 
 
-inform<- function(inputLUT=NULL,rsoil=rsoil, LeafModel='PRO'){
+inform<- function(inputLUT=NULL,rsoil=rsoil, LeafModel='PROSPECT-PRO'){
   
   # _____________________________________________________________________________________________________________
   
@@ -129,27 +129,38 @@ skyl=inputLUT[,'skyl']
 
 # Scaling of soil spectrum (to account for effects due to shadow and soil moisture)
 #refl_soil <- scale*rsoil ## individual 
+
 refl_soil = rsoil  ### we give refl_soil based on scale factor and rsoil
 
 # Computing of understorey reflectance for dicotyledoneae (ala=45,hotspot=0, N=2, Cab=30, Cw=0.05 CM=0,05)
 #r_understorey <- ToolsRTM::msail_background(inputLUT=inputLUT,rsoil=refl_soil,LeafModel= LeafModel, typeLAI = 'understorey') 
-r_understorey <- ToolsRTM::m4SAIL_inform(inputLUT=inputLUT,rsoil=refl_soil, typeLAI = 'understorey') 
+if (LeafModel == 'Fluspect-B' | LeafModel == 'Fluspect-B-Cx' ) {
+  
 
-if (LeafModel == 'PRO') {
+  r_understorey <- ToolsRTM::foursail.inform(inputLUT=inputLUT,rsoil=refl_soil, typeLAI = 'understorey') 
+  r_understorey = r_understorey[1:2001]  ### we give refl_soil based on scale factor and rsoil
+} else {
+
+  r_understorey <- ToolsRTM::foursail.inform(inputLUT=inputLUT,rsoil=refl_soil, typeLAI = 'understorey') 
+  
+}
+
+
+if (LeafModel == 'PROSPECT-PRO') {
   ## Prospect inputs
   N=inputLUT[,'N']; Cab=inputLUT[,'Cab']; Car=inputLUT[,'Car']; Anth=inputLUT[,'Anth']; Cbrown=inputLUT[,'Cbrown']
   EWT=inputLUT[,'EWT']; LMA=inputLUT[,'LMA'];alpha=inputLUT[,'alpha']
   Prot=inputLUT[,'Prot'];CBC=inputLUT[,'CBC']
   
   #LeafModel = 'PRO'
-  LRT<- ToolsRTM::prospect_PRO(N,Cab,Car,Anth,Cbrown,EWT,LMA,alpha,Prot,CBC)
+  LRT<- prospect_PRO(N,Cab,Car,Anth,Cbrown,EWT,LMA,alpha,Prot,CBC)
   # Computing of leaf reflecance and transmittance
   r_leaf <- LRT[[2]] #rho Reflectance
   t_leaf <- LRT[[3]] #tau Transmittance
 } else if (LeafModel == 'Liberty'){
   #define alll inputs in the models. retreived from LUT tables
   
-  # run LeafModel ='PRO'
+  # run LeafModel ='Liberty'
   LRT <- ToolsRTM::liberty(inputLUT)
   r_leaf <- LRT[[2]] #rho Reflectance
   t_leaf <- LRT[[3]] #tau Transmittance
@@ -158,7 +169,7 @@ if (LeafModel == 'PRO') {
   
   # run LeafModel ='Fluspect-B'
   LRT <- getFluspect.B(inputsLeaf= inputLUT, inputsOptipar =ToolsRTM::optipar,version='D')
-  print(message('SAIL with fluspect model is processing'))
+  message('SAIL with fluspect model is processing')
   r_leaf <- LRT[[2]] #rho Reflectance
   t_leaf <- LRT[[3]] #tau Transmittance
   
@@ -167,26 +178,31 @@ if (LeafModel == 'PRO') {
   
   # run LeafModel ='Fluspect-Cx'
   LRT <- getFluspect.Cx(inputsLeaf= inputLUT, inputsOptipar =ToolsRTM::optipar,version='Cx')
-  print(message('SAIL with fluspect model is processing'))
+  message('SAIL with fluspect model is processing')
   r_leaf <- LRT[[2]] #rho Reflectance
   t_leaf <- LRT[[3]] #tau Transmittance
   
-} else if (LeafModel == 'D'){
+} else if (LeafModel == 'PROSPECT-D'){
   
-  #LeafModel ='D'
+  #LeafModel ='PROSPECT-D'
   N=inputLUT[,'N']; Cab=inputLUT[,'Cab']; Car=inputLUT[,'Car']; Anth=inputLUT[,'Anth']; Brown=inputLUT[,'Cbrown']
   EWT=inputLUT[,'EWT']; LMA=inputLUT[,'LMA'];alpha=inputLUT[,'alpha']
   
-  LRT <- LRT <- ToolsRTM::prospect_DB(N,Cab,Car,Anth,Brown,EWT,LMA,alpha)
+  LRT <- LRT <- prospect_DB(N,Cab,Car,Anth,Brown,EWT,LMA,alpha)
   # Computing of leaf reflecance and transmittance
   r_leaf <- LRT[[2]] #rho Reflectance
   t_leaf <- LRT[[3]] #tau Transmittance
 }
 
 # Computing of infinitive crown reflectance for a very dense forest canopy (LAI=15, hot=0.04, N=1.5)
+if (LeafModel == 'Fluspect-B' | LeafModel == 'Fluspect-B-Cx' ) {
+  r_sail_inf <- foursail.inf(inputLUT=inputLUT,rsoil=r_understorey[1:2001],rleaf=r_leaf[1:2001],tleaf=t_leaf[1:2001], short.waves=T)
+  r_sail_inf<-r_sail_inf[1:2001]
+} else {
+  r_sail_inf <- ToolsRTM::foursail.inf(inputLUT=inputLUT,rsoil=r_understorey,rleaf=r_leaf,tleaf=t_leaf)
+}
 
-#r_sail_inf <- ToolsRTM::msail_inf(inputLUT=inputLUT,rsoil=r_understorey,rleaf=r_leaf,tleaf=t_leaf)
-r_sail_inf <- ToolsRTM::m4SAIL_inf(inputLUT=inputLUT,rsoil=r_understorey,rleaf=r_leaf,tleaf=t_leaf)
+
 # _____________________________________________________________________________________________________________
 
 # Ground coverage (FLIM model)
@@ -252,11 +268,11 @@ Fos <- (1 - co) * (1 - cs) + p * (co * (1 - co) * cs * (1 - cs) )^(0.5)
 #tto <- tto * 180/pi
 #psi <- psi * 180/pi
 # Crown transmittance in sun direction (t_s)
-t_s <- ToolsRTM::m4SAIL_t_s(inputLUT=inputLUT,rsoil=r_understorey,rleaf=r_leaf,tleaf=t_leaf)
+t_s <- ToolsRTM::foursail_t_s(inputLUT=inputLUT,rsoil=r_understorey,rleaf=r_leaf,tleaf=t_leaf)
 
 
 # Crown transmittance in observation direction (t_o)
-t_o <- ToolsRTM::m4SAIL_t_o(inputLUT=inputLUT,rsoil=r_understorey,rleaf=r_leaf,tleaf=t_leaf)
+t_o <- ToolsRTM::foursail_t_o(inputLUT=inputLUT,rsoil=r_understorey,rleaf=r_leaf,tleaf=t_leaf)
 
 
 # _____________________________________________________________________________________________________________

@@ -107,7 +107,7 @@
 #'
 
 
-prospect_DB<-function(N,Cab,Car,Anth,Brown,EWT,LMA,alpha){
+prospect_DB<-function(N,Cab,Car,Anth,Cbrown,EWT,LMA,alpha){
 # ***********************************************************************
 # Jacquemoud S., Baret F. (1990), PROSPECT: a model of leaf optical
 # properties spectra, Remote Sens. Environ., 34:75-91.
@@ -130,7 +130,7 @@ KBrown  <- data[,6]
 Kw      <- data[,7]
 Km      <- data[,8]
 
-Kall    <- (Cab * Kab + Car * Kcar + Anth * Kant + Brown * KBrown + EWT * Kw + LMA * Km ) / N
+Kall    <- (Cab * Kab + Car * Kcar + Anth * Kant + Cbrown * KBrown + EWT * Kw + LMA * Km ) / N
 
 
 j       <- which(Kall > 0)# Non-conservative scattering (normal case)

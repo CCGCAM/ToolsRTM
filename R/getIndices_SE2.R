@@ -46,6 +46,7 @@ getIndicesSE2 <- function(df,sensor='Sentinel-2a', df.data=NULL) {
   indices.list = list()
   # create progress bar
   total=dim(df)[1]
+
   barProgress <- txtProgressBar(min = 1, max = total, style = 3)
 
 for (i in c(1:dim(df)[1])){

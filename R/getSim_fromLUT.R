@@ -146,7 +146,7 @@ getSim_fromLUT<-function(trait='Cab',nmin=0, nmax=100, Interval=10, psoil=0.5,mo
     sim.rfl<-list()
     ### simulations
       sims<-foreach(i=1:nLUT) %dopar% {
-        data.foursail_pro<-ToolsRTM::m4SAIL(inputLUT=LUT[i,],rsoil=rsoil,LeafModel = 'PRO')
+        data.foursail_pro<-ToolsRTM::foursail(inputLUT=LUT[i,],rsoil=rsoil,LeafModel = 'PROSPECT-PRO')
         rdot<-data.foursail_pro[[1]]
         rsot<-data.foursail_pro[[2]]
         rfl.prosail<-ToolsRTM::Compute_BRF(rdot=rdot,rsot=rsot,tts=LUT[i,'tts'],data.light=ToolsRTM::dataSpec_PDB)
@@ -263,7 +263,7 @@ getSim_fromLUT<-function(trait='Cab',nmin=0, nmax=100, Interval=10, psoil=0.5,mo
       sim.rfl<-list()
       ### simulations
         sims<-foreach(i=1:nLUT) %dopar% {
-          rfl.inform<-ToolsRTM::inform(inputLUT = LUT[i,],rsoil=rsoil,LeafModel = 'PRO')
+          rfl.inform<-ToolsRTM::inform(inputLUT = LUT[i,],rsoil=rsoil,LeafModel = 'PROSPECT-PRO')
           sim.rfl[[i]]<-rfl.inform
           
         } ##end paralle

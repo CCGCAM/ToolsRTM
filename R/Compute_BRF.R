@@ -17,14 +17,16 @@
 #' @param rsot numeric. Bi-directional reflectance factor
 #' @param tts numeric. Solar zenith angle
 #' @param data.light list. direct and diffuse radiation for clear conditions, is NULL use default values
+#' @param short.waves boolean . Is true the outputs is shorted to wave for Fluspect-model.
 #' @return BRF numeric. Bidirectional reflectance factor
 #' @export
 #' 
-Compute_BRF  <- function(rdot=NULL,rsot=NULL,tts=NULL,data.light=NULL){
+Compute_BRF  <- function(rdot=NULL,rsot=NULL,tts=NULL,data.light=NULL,short.waves=T){
   
   ############################## #
   ##	direct / diffuse light	##
   ############################## #
+
   if (is.null(data.light)){
     Es <- ToolsRTM::dataSpec_PDB[,11]
     Ed <- ToolsRTM::dataSpec_PDB[,12]
@@ -36,7 +38,19 @@ Compute_BRF  <- function(rdot=NULL,rsot=NULL,tts=NULL,data.light=NULL){
     rd <- pi / 180
    
   }
-
+  ############################## #
+  ##	Get only waves for direct / diffuse light
+  ## for Fluspect-D and Cx-B
+  ############################## #
+  
+  if (missing(short.waves)){
+    short.waves = FALSE
+  }
+  
+  if (short.waves == T){
+    Es <- Es[1:2001]
+    Ed <- Ed[1:2001]
+  }
   #
   # if (skyl == 0.1){
   #   #  by default skyl = 0.1
@@ -49,6 +63,6 @@ Compute_BRF  <- function(rdot=NULL,rsot=NULL,tts=NULL,data.light=NULL){
   PARdiro <- (1 - skyl) * Es
   PARdifo <- skyl * Ed
   BRF <- (rdot * PARdifo + rsot * PARdiro)/(PARdiro + PARdifo)
-  
+
   return(BRF)
 }

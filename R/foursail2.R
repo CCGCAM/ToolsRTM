@@ -77,7 +77,7 @@
 #' Improved and extended version of SAILH model that avoids numerical singularities
 #' and works more efficiently if only few parameters change.
 
-m4SAIL2 <- function(LUT_GB=NULL, inputLUT,rsoil, PROSPECTversion='PRO',FieldObserv=NULL){
+foursail2 <- function(LUT_GB=NULL, inputLUT,rsoil, PROSPECTversion='PRO',FieldObserv=NULL){
 
 
 #define alll inputs in the models. Retrieved from LUT tables

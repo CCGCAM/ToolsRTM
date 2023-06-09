@@ -63,7 +63,7 @@ get_simulations<-function(inputLUT = NULL, psoil=0.5, rtm.model = 'PROSAIL'){
       sim.rfl<-list()
       ### simulations
         sims<-foreach(i=1:nLUT) %dopar% {
-          data.foursail_pro<-ToolsRTM::m4SAIL(inputLUT=inputLUT[i,],rsoil=rsoil,PROSPECTversion = 'PRO')
+          data.foursail_pro<-ToolsRTM::foursail(inputLUT=inputLUT[i,],rsoil=rsoil,PROSPECTversion = 'PRO')
           rdot<-data.foursail_pro[[1]]
           rsot<-data.foursail_pro[[2]]
           rfl.prosail<-ToolsRTM::Compute_BRF(rdot=rdot,rsot=rsot,tts=inputLUT[i,'tts'],data.light=ToolsRTM::dataSpec_PDB)

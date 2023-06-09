@@ -1,14 +1,20 @@
-#' Performs PROSAIL simulation based on a set of combinations of input parameters
+#' fourSAIL model coupled with several leaf models
 #' 
-#' for estimating Crown transmittance in sun direction (t_s)
+#' \code{foursail} fourSAIL simulation based on a set of combinations of input parameters
 #' 
+#' @param rsoil numeric. Soil reflectance
 #' @param inputLUT LUT table with distribution of biophysical parameters used as input parameters in the model
-#' @param rsoil numeric. Soil reflectance (here the reflectance of understorey)
-#' @param rleaf leaf reflectance  
-#' @param tleaf leaf transmittance 
+#' @param LeafModel Version of PROSPECT model, Liberty model and  fluspect model. For PROSPECT model: 'PROSPECT-PRO' or 'PROSPECT-D' is accepted. By default 'PROSPECT-PRO' is used.
+#'  fluspect model is valid in two options: 'Fluspect-B' and 'Fluspect-B-Cx'. Liberty as 'Liberty'
+#'  
+#' Liberty model is leaf radiative transfer model designed for conifer needles. Uses 'Liberty'
+#' Fluspect-B model is leaf radiative transfer model designed for adding fluorescence emission. Uses 'Fluspect-B' or 'Fluspect-B-Cx'.
+#' @return list. rdot,rsot,rddt,rsdt
 #' 
-#' @return Crown transmittance in sun direction (t_s)
-#' 
+#' rdot: hemispherical-directional reflectance factor in viewing direction
+#' rsot: bi-directional reflectance factor
+#' rsdt: directional-hemispherical reflectance factor for solar incident flux
+#' rddt: bi-hemispherical reflectance factor
 #' @export
 #' 
 #' @references
@@ -22,14 +28,9 @@
 #' Berger K, Atzberger C, Danner M, D’Urso G, Mauser W, Vuolo F & Hank T 2018. Evaluation of the PROSAIL Model Capabilities for Future Hyperspectral Model Environments: A Review Study. Remote Sensing, 10:85. https://doi.org/10.3390/rs10010085
 #' 
 #' Authors: 
-#' 
-#' Verhoef W.
-#' 
-#' Bach H. 
-#' 
-#' Authors of the R version:
-#' 
-#' Jean-Baptiste Feret
+#' @author Wout Verhoef, Bach H. , JJean-Baptiste Feret (Original version in Matlab) 
+#' This version is also included in prospect package
+#' @author Carlos Camino (Ported version into R wit modification from fourSAIL model in prospect package)
 #' 
 #' The fourSAIL model is based on a version provided by	Wout Verhoef et al. (2007)
 #' 
@@ -39,20 +40,69 @@
 #' and works more efficiently if only few parameters change.
 
 #' 
-m4SAIL_t_s<- function(inputLUT,rsoil=r_understorey, rleaf=r_leaf,tleaf=t_leaf){
+foursail <- function(inputLUT,rsoil, LeafModel='PROSPECT-PRO'){
 
-# Crown transmittance in observation direction (t_o)
+  ## parameters for fourSAIL
+  LIDFa=inputLUT[,'LIDFa']; LIDFb=inputLUT[,'LIDFb']; TypeLidf=inputLUT[,'TypeLidf']; lai=inputLUT[,'LAI']
+  hotspot=inputLUT[,'hspot']; tts=inputLUT[,'tts']; tto=inputLUT[,'tto']; psi=inputLUT[,'psi']
   
-lai=inputLUT[,'LAI']
-hotspot=0
-LIDFa=inputLUT[,'LIDFa']; LIDFb=inputLUT[,'LIDFb']; TypeLidf=inputLUT[,'TypeLidf']; 
-tts=inputLUT[,'tts']; tto=inputLUT[,'tto']; psi=inputLUT[,'psi']
-skyl=inputLUT[,'skyl']
+########################################
+#	1.1 Leaf optical properties
+#########################################
+if (LeafModel == 'PROSPECT-PRO') {
+  
+  #define alll inputs in the models. retreived from LUT tables
+  N=inputLUT[,'N']; Cab=inputLUT[,'Cab']; Car=inputLUT[,'Car']; Anth=inputLUT[,'Anth']; Cbrown=inputLUT[,'Cbrown']
+  EWT=inputLUT[,'EWT']; LMA=inputLUT[,'LMA']; alpha=inputLUT[,'alpha']
+  Prot=inputLUT[,'Prot'];CBC=inputLUT[,'CBC']
+  # run LeafModel ='PROSPECT-PRO'
+  LRT <- prospect_PRO(N,Cab,Car,Anth,Cbrown,EWT,LMA,alpha,Prot,CBC)
+  message('SAIL with PROSPECT-PRO is processing')
+  
+  } else if (LeafModel == 'Liberty'){
+    
+  #define alll inputs in the models. retreived from LUT tables
+  # run LeafModel ='PRO'
+  LRT <- liberty(inputLUT)
+  message('SAIL with Liberty model is processing')
+  
+  } else if (LeafModel == 'Fluspect-B'){
 
-# reflectance and transmittance
+  # run LeafModel ='fluspect-D'
+  LRT <- ToolsRTM::getFluspect.B(inputsLeaf= inputLUT, inputsOptipar =ToolsRTM::optipar, version = 'D')
+  message('SAIL with Fluspect-D model is processing')
+  ### reduce the wavelength for r soil
+  rsoil =  rsoil[1:2001]
+    
+  
+  
+  } else if (LeafModel == 'Fluspect-B-Cx'){
+ 
+  # run LeafModel ='fluspect-Cx'
+  LRT <- ToolsRTM::getFluspect.Cx(inputsLeaf= inputLUT, inputsOptipar =ToolsRTM::optipar, version = 'Cx')
+  message('SAIL with Fluspect-PRO model is processing')
+  ### reduce the wavelength for r soil
+  rsoil =  rsoil[1:2001]
+  
+  } else if (LeafModel == 'PROSPECT-D') {
+  
+  #define alll inputs in the models. retreived from LUT tables
+  N=inputLUT[,'N']; Cab=inputLUT[,'Cab']; Car=inputLUT[,'Car']; Anth=inputLUT[,'Anth']; Brown=inputLUT[,'Cbrown']
+  EWT=inputLUT[,'EWT']; LMA=inputLUT[,'LMA']; alpha=inputLUT[,'alpha']
+  # run LeafModel ='PROSPECT-D'
+  LRT <- prospect_DB(N,Cab,Car,Anth,Brown,EWT,LMA,alpha)
+  message('SAIL with PROSPECT-D is processing')
+  
 
-rho	 <- rleaf
-tau	 <- 	tleaf
+  } else {
+    
+  stop('a leaf model is needed')
+    
+  }
+  
+
+rho	 <- 	LRT[[2]]
+tau	 <- 	LRT[[3]]
 
 ########################################
 #	1.2 Geometric quAnthities
@@ -68,26 +118,17 @@ cospsi	 <-  cos(rd * psi)
 dso		 <-  sqrt(tAnths * tAnths + tAntho * tAntho - 2 * tAnths * tAntho * cospsi)
 
 
+
 ###########################################################################################################################
 #	1.3 Generate leaf angle distribution from average leaf angle (ellipsoidal) or (a,b) parameters
 ###########################################################################################################################
 
-if (TypeLidf == 1){
-#LeafDistribution <- dladgen(LIDFa,LIDFb)
-#lidf <- LeafDistribution$lidf
-#litab <- LeafDistribution$litab
+if (TypeLidf==1){
+LeafDistribution <- dladgen(LIDFa,LIDFb)
+lidf <- LeafDistribution$lidf
+litab <- LeafDistribution$litab
 
-lidf = c(0.015192247821401716, 0.04511513125626976, 0.07366721933874043, 0.09998095795183792, 0.12325683701156054, 0.14278760558390557, 0.1579798610972386, 0.16837196070089022, 0.034475081609994906, 0.034644632694447175, 0.03477199446646273, 0.03485697201080851, 0.03489949845644191,
-                      0.00028378419874902573, 0.0020294058823425495, 0.005751638473401871, 0.01200202743766678, 0.02190796087454504, 0.03787410106306353, 0.06589705963563201, 0.12690963854753423, 0.04115845607276447, 0.05181790293362443, 0.06942677499148037, 0.106277087297172, 0.4586641625920237,
-                      0.0011565951416267486, 0.008876829634519247, 0.029891034176080182, 0.09640335028409708, 0.7273443849356243, 0.09640334777606041, 0.029891033573473225, 0.008876829401686992, 0.000569757676969429, 0.0003409834748974161, 0.000173365433308037, 6.345407373831158e-05, 9.034417918662996e-06,
-                      0.42712701495904715, 0.051885576869933114, 0.016954996965587388, 0.003890519113906976, 0.00028378419874897087, 0.0038905192522350474, 0.016954997336226962, 0.05188557794898474, 0.019952583631293264, 0.02655232968560639, 0.0375291397600469, 0.0606223355617268, 0.2824706247166563,
-                      0.03789183438420043, 0.043216944609998746, 0.05490877250501834, 0.07525964096053808, 0.10741859382700167, 0.14983497911429472, 0.1813652598851876, 0.18082510675991648, 0.03458082011568342, 0.03411370192811436, 0.033742780197829614, 0.0334862403361027, 0.033355325376113854,
-                      0.11111111416724702, 0.11111110780104928, 0.11111111416724703, 0.11111110780104927, 0.111111114167247, 0.11111110780104927, 0.11111111416724706, 0.11111110780104927, 0.022222225379928462, 0.022222219013730782, 0.022222225379928573, 0.02222221901373067, 0.022222223339496305)
-tx1 <- c(10,20,30,40,50,60,70,80,82,84,86,88,90)
-tx2 <- c(0,10,20,30,40,50,60,70,80,82,84,86,88)
-litab<- (tx1 + tx2) / 2 
-
-} else if (TypeLidf == 2){
+} else if (TypeLidf==2){
   LeafDistribution <- campbell(LIDFa)
   lidf <- LeafDistribution$lidf
   litab <- LeafDistribution$litab
@@ -113,7 +154,7 @@ litab<- (tx1 + tx2) / 2
 		#	SAIL volume scattering phase function gives interception and portions to be
 		#	multiplied by rho and tau
 
-		chi_s_chi_o_frho_ftau <- volscatt(tts,tto,psi,ttl)
+		chi_s_chi_o_frho_ftau <- ToolsRTM::volscatt(tts,tto,psi,ttl)
 		chi_s<-chi_s_chi_o_frho_ftau[[1]]
 		chi_o<-chi_s_chi_o_frho_ftau[[2]]
 		frho<-chi_s_chi_o_frho_ftau[[3]]
@@ -134,7 +175,7 @@ litab<- (tx1 + tx2) / 2
 		#*	w   : Bidirectional scattering coefficient
 		#********************************************************************************
 
-		#	Extinction coefficientsksli
+		#	Extinction coefficients ksli
 		ksli <- chi_s / cts
 		koli <- chi_o / cto
 
@@ -156,12 +197,14 @@ litab<- (tx1 + tx2) / 2
 	#	Geometric factors to be used later with rho and tau
   #####################################################
     
-	sdb	 <-  0.5 * (ks + bf)
-	sdf	 <-  0.5 * (ks - bf)
-	dob	 <-  0.5 * (ko + bf)
-	dof	 <-  0.5 * (ko - bf)
-	ddb	 <-  0.5 * (1 + bf)
-	ddf	 <-  0.5 * (1 - bf)
+	sdb	 <-  0.5 * (ks + bf) #
+	sdf	 <-  0.5 * (ks - bf) # weight of specular2diffuse     foward  scatter coefficient
+
+	ddb	 <-  0.5 * (1.+ bf) #
+	ddf	 <-  0.5 * (1.- bf) # weight of diffuse2diffuse back scatter coefficient
+	
+	dob	 <-  0.5 * (ko + bf) # weight of diffuse2directional  back    scatter coefficient
+	dof	 <-  0.5 * (ko - bf) # weight of diffuse2directional  forward scatter coefficient
 
 	#	Here rho and tau come in
 	sigb <-  ddb * rho + ddf * tau
@@ -201,7 +244,7 @@ litab<- (tx1 + tx2) / 2
 		rddt	 <-  rsoil
 		rsdt	 <-  rsoil
 		rdot	 <-  rsoil
-		rsodt	 <-  0*rsoil
+		rsodt	 <-  0 * rsoil
 		rsost	 <-  rsoil
 		rsot	 <-  rsoil
 
@@ -262,7 +305,7 @@ litab<- (tx1 + tx2) / 2
   		x1 <- 0
   		y1 <- 0
       f1 <- 1
-      fint <- (1 - exp(-alf)) * 0.05
+      fint <- (1. - exp(-alf)) * 0.05
   		sumint <- 0
 
     		for (i in 1:20){
@@ -308,14 +351,35 @@ litab<- (tx1 + tx2) / 2
   rsost <- rsos + tsstoo * rsoil
   rsot <- rsost + rsodt
 }
-LSTa<- list(rdot,rsot,rddt,rsdt)
+LSTa<- list(rdot=rdot,rsot=rsot,rddt=rddt,rsdt=rsdt)
+return(LSTa)
 
-PARdifo = skyl;
-PARdiro = 1 - skyl;
+############################################################################################################
+############################################################################################################
+#       - TypeLidf  = Type of leaf inclination distribution function
+#       - LIDFa = Parameter a.
+#         if TypeLidf ==1, controls the average leaf slope
+#	        LIDF type 		a 		 b
+#	        Planophile 		1		 0
+#	        Erectophile    -1	 	 0
+#	        Plagiophile 	0		-1
+#	        Extremophile 	0		 1
+#	        Spherical 	   -0.35 	-0.15
+#	        Uniform 0 0
+#
+#         if TypeLidf ==2, corresponds to average leaf angle
+#       - LIDFb = Parameter b
+#         if TypeLidf ==1, unused
+#         if TypeLidf ==2, controls the distribution's bimodality
+#         LIDFa	= average leaf angle (degrees) 0 = planophile	/	90 = erectophile
 
-trans_hemi = (rdot * PARdiro + rsot * PARdifo) / (PARdiro + PARdifo)
-
-
-return(trans_hemi)
+#       - lai = Leaf Area Index
+#       - hot = Hot Spot parameter = ratio of the correlation length of leaf projections in the horizontal plane and the canopy height (doi:10.1016/j.rse.2006.12.013)
+#       - tts = Sun zeith angle
+#       - tto = Observer zeith angle
+#       - psi = Azimuth Sun / Observer
+#       - rsoil = Soil reflectance
+############################################################################################################
+############################################################################################################
 
 }

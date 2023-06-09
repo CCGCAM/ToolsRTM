@@ -47,15 +47,15 @@
 #' sim <-getFluspect.B(inputsLeaf = LUT, inputsOptipar =ToolsRTM::optipar,version='D')
 #' 
 
-getFluspect.B<-function(inputsLeaf,inputsOptipar, version = 'D' )  {
+getFluspect.B<-function(inputsLeaf,inputsOptipar, version = 'PROSPECT-D' )  {
   
   if (is.null(version)){
-    version = 'D' 
+    version = 'PROSPECT-D' 
   }
   if ("Prot" %in% colnames(inputsLeaf)){
     version = 'Cx' 
   }  else {
-    version = 'D' 
+    version = 'PROSPECT-D' 
   }
   
   # fixed parameters for the fluorescence module
@@ -91,7 +91,7 @@ getFluspect.B<-function(inputsLeaf,inputsOptipar, version = 'D' )  {
   } else {   # If inputsOptipar is present, continue with the function
     nr = inputsOptipar[['nr']]; Kdm = inputsOptipar[['Kdm']];Kab = inputsOptipar[['Kab']];
     Kca = inputsOptipar[['Kca']];Kw = inputsOptipar[['Kw']]; Ks = inputsOptipar[['Ks']];
-    Kant = ToolsRTM::optipar[['Kant']];
+    Kant = inputsOptipar[['Kant']];
     Kcbc = inputsOptipar[['Kcbc']]; Kp = inputsOptipar[['Kp']];
     phiI = inputsOptipar[['phiI']]; phiII = inputsOptipar[['phiII']];
  
@@ -109,7 +109,7 @@ getFluspect.B<-function(inputsLeaf,inputsOptipar, version = 'D' )  {
 
   
   
-  if (version == 'D') {
+  if (version == 'PROSPECT-D') {
     #### PROSPECT D calculations
     Kall = (Cab * Kab + Car * Kca + LMA * Kdm + EWT * Kw  + Cs * Ks) / N;   # Compact leaf layer
     
@@ -260,6 +260,7 @@ getFluspect.B<-function(inputsLeaf,inputsOptipar, version = 'D' )  {
     
     MfI  <- MbI  <- fqe[1] * ((0.5 * phiI[Iwlf]) * eps) %*% t(as.matrix(kChl[Iwle])) * sigmoid
     MfII <- MbII <- fqe[2] * ((0.5 * phiII[Iwlf]) * eps) %*% t(as.matrix(kChl[Iwle])) * sigmoid
+    
     
     
     Ih <-  matrix(1, nrow = 1, ncol = length(te))#rep(1, length(te))  # row of ones

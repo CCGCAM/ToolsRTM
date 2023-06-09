@@ -13,7 +13,7 @@
 #'
 #' @examples here adding examples ....
 #' 
-getSCOPE_outputs_v1 <- function(pathin=NULL,nsamples=100, resampling,
+getSCOPE_outputs<-function(pathin=NULL,nsamples=100, resampling='Sentinel2a',
                             reflectance ='apparent', SIF=T,
                             radiance =T){
   
@@ -26,10 +26,11 @@ getSCOPE_outputs_v1 <- function(pathin=NULL,nsamples=100, resampling,
    
   }
   ## get wavelength
+  wl_files<-list.files(pathin,pattern='wlS.txt',full.names =F)
+  data.wlS<-read.table(paste(pathin,'/',wl_files,sep=""),header=F)
+  colnames(data.wlS)<-c('wavelS')
   
-  data.spectral <-SCOPEinR::define.bands()
-  wave<- data.spectral$wlS
-  
+  wave<-c(data.wlS$wavelS)
   inputs<-data.table::fread(paste(pathin,'pars_and_input_short.csv',sep=''),header=F,skip=2,nrows=nsamples,sep=',')
   if (length(colnames(inputs)) == 18){
     colnames(inputs)<-c('n_pars','Cab','Cca','Cdm','Cw','N','Cant','Vcmax25','BallBerrySlope','LAI','LIDFa','Rin','Ta','Rli','u','Ca','tts','tto')
@@ -55,8 +56,6 @@ getSCOPE_outputs_v1 <- function(pathin=NULL,nsamples=100, resampling,
    } else  if (reflectance == 'reflectance'){
      rfl <- as.matrix(data.table::fread(paste(pathin,'reflectance.csv',sep=''), skip=2,nrows = nsamples))
      SpecRefl <- hsdar::speclib(rfl[,c(1:2001)], wave[c(1:2001)])
-     
-   
      #plot(SpecRefl,ylab='radiance with F')
    }
    
@@ -68,16 +67,18 @@ getSCOPE_outputs_v1 <- function(pathin=NULL,nsamples=100, resampling,
      #Rin*(fEsun+fEsky)
      ######################################################################################
      # get diffuse top of canopy irradiance
-     pathIrrad = 'Tables/LUTs/SCOPE/'
-     
-     Esky_ <- as.matrix(data.table::fread(paste(pathIrrad,'Esky.csv',sep=''), skip=2,nrows = nsamples ))
+     Esky_ <- as.matrix(data.table::fread(paste(pathin,'Esky.csv',sep=''), skip=2,nrows = nsamples ))
      # get direct top of canopy irradiance
-     Esun_ <- as.matrix(data.table::fread(paste(pathIrrad,'Esun.csv',sep=''), skip=2,nrows = nsamples))
+     Esun_ <- as.matrix(data.table::fread(paste(pathin,'Esun.csv',sep=''), skip=2,nrows = nsamples))
      Etotal<-(Esky_+Esun_)/cos(0)
      SpecIrrad<- hsdar::speclib(Etotal[,c(1:2001)], wave[c(1:2001)])
      #plot(SpecIrrad,ylab='Irradiance')
      
-  
+     # get hemispherical outgoing radiation spectrum
+     Etotal_ <- as.matrix(data.table::fread(paste(pathin,'Eout_spectrum.csv',sep=''), skip=2,nrows = nsamples))
+     #SpecEtotal_<- hsdar::speclib(Etotal_[,c(1:2001)], wave[c(1:2001)])
+     #plot(SpecEtotal_,ylab='Irradiance')
+     
      #upwelling radiance including fluorescence
      #W m-2 um-1 sr-1
      rad.LoF <- as.matrix(data.table::fread(paste(pathin,'Lo_spectrum_inclF.csv',sep=''), skip=2,nrows = nsamples))
@@ -113,8 +114,13 @@ getSCOPE_outputs_v1 <- function(pathin=NULL,nsamples=100, resampling,
    # colnames(vegetation)<-c('simulation_number','year','DoY','aPAR','aPARbyCab','aPARbyCab(energyunits)','Photosynthesis','Electron_transport','NPQ_energy','LST')
    ## new version
    colnames(vegetation)<-c('simulation_number','year','DoY','Photosynthesis','Electron_transport','NPQ_energy','NPQ_photon','canopy_level_FQE','LST','emis')
-
-   
+    #
+   if (resampling == 'Sentinel2a'){
+     if (radiance == T){
+        SpecLoF.SE<-hsdar::spectralResampling(SpecLoF, "Sentinel2a",response_function = TRUE)
+     }
+        SpecRefl.SE<-hsdar::spectralResampling(SpecRefl, "Sentinel2a",response_function = TRUE)
+   }
    if (SIF == T){
      Vcmax<-c()
      SIF_1nm<-c()
@@ -127,14 +133,14 @@ getSCOPE_outputs_v1 <- function(pathin=NULL,nsamples=100, resampling,
          ### rad at 1nm
          rad.total.i<-SpecLoF@spectra[m][341:451]
          wave_rad<-SpecLoF@wavelength[341:451]
-         #rad.SE.i<-SpecLoF.SE@spectra[m]
-         #wave.SE.rad<-SpecLoF.SE@wavelength
+         rad.SE.i<-SpecLoF.SE@spectra[m]
+         wave.SE.rad<-SpecLoF.SE@wavelength
          
          wave.i<-SpecIrrad@wavelength[341:451]##wave from 740:850
-         irrad.i<-data.frame( wave=wave.i,Eo=SpecIrrad@spectra[1][341:451])
+         irrad.i<-data.frame( wave=wave.i,Eo=SpecIrrad@spectra[m][341:451])
          #print(rad.total.i[c(10,23)])
          SIF_1nm[m]<-ToolsRTM::getFLD2(rad.total.i,wave_rad,irrad.i)
-         #SIF_SE[m]<-ToolsRTM::getFLD2_SE(rad.SE.i,wave.SE.rad,irrad.i)
+         SIF_SE[m]<-ToolsRTM::getFLD2_SE(rad.SE.i,wave.SE.rad,irrad.i)
          setTxtProgressBar(progress_bar, value = m)
        }
    }
@@ -148,21 +154,32 @@ getSCOPE_outputs_v1 <- function(pathin=NULL,nsamples=100, resampling,
    
    if( SIF == T) {
      outputs$SIF_1nm<-SIF_1nm
-     #outputs$SIF_SE<-SIF_SE
+     outputs$SIF_SE<-SIF_SE
    }
    
    LUT<-cbind(inputs,outputs)
  
-   rfl.sim<-raster::as.data.frame(SpecRefl)
-   colnames(rfl.sim)<-paste('R.',SpecRefl@wavelength,sep='')
-   LUT_rfl<-cbind(LUT,rfl.sim)
-   
-   if (radiance == T){
-     rad.sim<-raster::as.data.frame(SpecLoF)
-     colnames(rad.sim)<-paste('L.',SpecLoF@wavelength,sep='')
-     LUT_rfl<-cbind(LUT_rfl,rad.sim)
-   }
-   
+   if (resampling == 'Sentinel2a'){
+  
+      rfl.sim<- raster::as.data.frame(SpecRefl.SE)
+      colnames(rfl.sim)<-paste('R.',SpecRefl.SE@wavelength,sep='')
+      LUT_rfl<-cbind(LUT,rfl.sim)
+     if (radiance == T){
+       rad.sim<-raster::as.data.frame(SpecLoF.SE)
+       colnames(rad.sim)<-paste('L.',SpecLoF.SE@wavelength,sep='')
+       LUT_rfl<-cbind(LUT_rfl,rad.sim)
+     }
+    } else{
+      
+        rfl.sim<-raster::as.data.frame(SpecRefl)
+        colnames(rfl.sim)<-paste('R.',SpecRefl@wavelength,sep='')
+        LUT_rfl<-cbind(LUT,rfl.sim)
+          if (radiance == T){
+            rad.sim<-raster::as.data.frame(SpecLoF)
+            colnames(rad.sim)<-paste('L.',SpecLoF@wavelength,sep='')
+            LUT_rfl<-cbind(LUT_rfl,rad.sim)
+          }
+        }
    
    return(LUT_rfl)
 
