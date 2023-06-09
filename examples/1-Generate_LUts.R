@@ -35,7 +35,7 @@ head(LUt_time)
 #write.table(LUt_time, file = 'examples/outputs/LUT_time.csv',sep=',',row.names = F)
 
 inputs = ToolsRTM::inputsINF
-LUT<-getLUT(inputs = inputs, nLUT=20000, setseed = 1234)
+LUT<-getLUT(inputs = inputs, nLUT=200, setseed = 1234)
 head(LUT)
 ##############################################################################################################################
 # 2. Get LUT matrix in individual steps-----    
@@ -169,7 +169,7 @@ start_time <- Sys.time()
 sim.rfl<-list()
 sims<-foreach(i=1:nSamples) %dopar% {
   #data.inform<-ToolsRTM::inform(inputLUT = LUT[i,], psoil =LUT[i,'psoil'],rsoil=rsoil0[[i]],PROSPECTversion = 'PRO')
-  data.foursail_pro<-ToolsRTM::m4SAIL(inputLUT=LUT[i,],rsoil=rsoil0[[i]],PROSPECTversion = 'PRO')
+  data.foursail_pro<-ToolsRTM::foursail(inputLUT=LUT[i,],rsoil=rsoil0[[i]],LeafModel = 'PRO')
   rdot<-data.foursail_pro[[1]]
   rsot<-data.foursail_pro[[2]]
   rfl.prosail<-ToolsRTM::Compute_BRF(rdot=rdot,rsot=rsot,tts=LUT[i,'tts'],data.light=ToolsRTM::dataSpec_PDB)
@@ -201,7 +201,7 @@ IDs<-c(1:nSamples)
 idSpeclib(Spec.simula) <- as.character(IDs)
 SI(Spec.simula) <- LUT
 #mask(Spec.simula)<-c(801,990,1098,1190,1311,1505,1680,2600)
-#plot(Spec.simula)
+plot(Spec.simula)
 
 ##### From 1nm to Sentinel2a
 Spec.simula.sentinel<-spectralResampling(Spec.simula, "Sentinel2a",response_function = TRUE)
