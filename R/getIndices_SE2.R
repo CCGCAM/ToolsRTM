@@ -4,6 +4,8 @@
 #' @param df a dataframe with reflectance where each rows correspond with an spectrum
 #' @param sensor Sensor options: 'Sentinel-2a', or 'Sentinel-2b'
 #' @param df.data  dataset with IDs that corresponde with each spectrum, is null is also enable
+#' @param fast.process  when the bands are ordered for SE2, please use fast.process = T, otherwise use False or nothing
+#'
 #'
 #' @return a dataframe with indices and your dataset
 #' @export
@@ -12,7 +14,7 @@
 #'
 #'
 
-getIndicesSE2 <- function(df,sensor='Sentinel-2a', df.data=NULL) {
+getIndicesSE2 <- function(df,sensor='Sentinel-2a', df.data=NULL, fast.process=NULL) {
 
   if (class(data)[1] == "matrix"){
     df<-as.data.frame(df)
@@ -38,7 +40,7 @@ getIndicesSE2 <- function(df,sensor='Sentinel-2a', df.data=NULL) {
     bandset.SE<-  bandset.SE2a
   } else if (sensor == 'Sentinel-2a') {
     bandset.SE<-  bandset.SE2a
-  } else if (sensor == 'Sentinel-2a'){
+  } else if (sensor == 'Sentinel-2b'){
     bandset.SE<-  bandset.SE2b
   }
 
@@ -56,9 +58,14 @@ for (i in c(1:dim(df)[1])){
   names(r)<-S2.provided.bands
   list.r<-list(bandset.SE,r)
 
-  # take our list and rbind it into a data.frame, filling in missing values with NA
-  list.r<-plyr::ldply(list.r , rbind)
-  r <- list.r[2,]
+  if (fast.process == F | missing(fast.process) | is.null(fast.process)){
+    # take our list and rbind it into a data.frame, filling in missing values with NA
+    list.r<-plyr::ldply(list.r , rbind)
+    r <- list.r[2,]
+  } else {
+    r <- r
+  }
+
 
   indices = c()
 
