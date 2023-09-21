@@ -362,33 +362,33 @@ getIndices <- function(data, pattern.rfl='R.', spectral.domain=NULL) {
 
       if(any(wavelengths == 865)){
         
-        indices['SIFe1'] <- r['740']  / (r['865'] + (bandsSE['B06'] - bandsSE['B8A']) * (r['782'] - r['865']) / (bandsSE['B07'] - bandsSE['B8A']))
-        indices['SIFe2'] <- r['704']  / (r['782'] + (bandsSE['B05'] - bandsSE['B07']) * (r['740'] - r['782']) / (bandsSE['B06'] - bandsSE['B07']))
-        indices['SIFe3'] <- r['704']  / (r['865'] + (bandsSE['B05'] - bandsSE['B8A']) * (r['740'] - r['865']) / (bandsSE['B06'] - bandsSE['B8A']))
-        indices['SIFe4'] <- r['665']  / (r['865'] + (bandsSE['B04'] - bandsSE['B8A']) * (r['704'] - r['865']) / (bandsSE['B06'] - bandsSE['B8A']))
-        indices['SIFe5'] <- r['740']  / (r['865'] + (bandsSE['B06'] - bandsSE['B8A']) * (r['704'] - r['865']) / (bandsSE['B05'] - bandsSE['B8A']))
-        indices['SIFe6'] <- r['782']  / (r['865'] + (bandsSE['B07'] - bandsSE['B8A']) * (r['704'] - r['865']) / (bandsSE['B05'] - bandsSE['B8A']))
-        indices['SIFe7'] <- r['762']  / (r['865'] + (bandsSE['B.762'] - bandsSE['B8A']) * (r['704'] - r['865']) / (bandsSE['B05'] - bandsSE['B8A']))
+        indices['Red.edge.1'] <- r['740']  / (r['865'] + (bandsSE['B06'] - bandsSE['B8A']) * (r['782'] - r['865']) / (bandsSE['B07'] - bandsSE['B8A']))
+        indices['Red.edge.2'] <- r['704']  / (r['782'] + (bandsSE['B05'] - bandsSE['B07']) * (r['740'] - r['782']) / (bandsSE['B06'] - bandsSE['B07']))
+        indices['Red.edge.3'] <- r['704']  / (r['865'] + (bandsSE['B05'] - bandsSE['B8A']) * (r['740'] - r['865']) / (bandsSE['B06'] - bandsSE['B8A']))
+        indices['Red.edge.4'] <- r['665']  / (r['865'] + (bandsSE['B04'] - bandsSE['B8A']) * (r['704'] - r['865']) / (bandsSE['B06'] - bandsSE['B8A']))
+        indices['Red.edge.5'] <- r['740']  / (r['865'] + (bandsSE['B06'] - bandsSE['B8A']) * (r['704'] - r['865']) / (bandsSE['B05'] - bandsSE['B8A']))
+        indices['Red.edge.6'] <- r['782']  / (r['865'] + (bandsSE['B07'] - bandsSE['B8A']) * (r['704'] - r['865']) / (bandsSE['B05'] - bandsSE['B8A']))
+        indices['Red.edge.7'] <- r['762']  / (r['865'] + (bandsSE['B.762'] - bandsSE['B8A']) * (r['704'] - r['865']) / (bandsSE['B05'] - bandsSE['B8A']))
         
       } else if (any(wavelengths == 835)){
         
-        indices['SIFe1'] <- r['740']  / (r['835'] + (bandsSE['B06'] - bandsSE['B08']) * (r['782'] - r['835']) / (bandsSE['B07'] - bandsSE['B08']))
-        indices['SIFe2'] <- r['704']  / (r['782'] + (bandsSE['B05'] - bandsSE['B07']) * (r['740'] - r['782']) / (bandsSE['B06'] - bandsSE['B07']))
-        indices['SIFe3'] <- r['704']  / (r['835'] + (bandsSE['B05'] - bandsSE['B08']) * (r['740'] - r['835']) / (bandsSE['B06'] - bandsSE['B08']))
-        indices['SIFe4'] <- r['665']  / (r['835'] + (bandsSE['B04'] - bandsSE['B08']) * (r['704'] - r['835']) / (bandsSE['B06'] - bandsSE['B08']))
-        indices['SIFe5'] <- r['740']  / (r['835'] + (bandsSE['B06'] - bandsSE['B08']) * (r['704'] - r['835']) / (bandsSE['B05'] - bandsSE['B08']))
-        indices['SIFe6'] <- r['782']  / (r['835'] + (bandsSE['B07'] - bandsSE['B08']) * (r['704'] - r['835']) / (bandsSE['B05'] - bandsSE['B08']))
-        indices['SIFe7'] <- r['762']  / (r['835'] + (bandsSE['B.762'] - bandsSE['B08']) * (r['704'] - r['835']) / (bandsSE['B05'] - bandsSE['B.800']))
+        indices['Red.edge.1'] <- r['740']  / (r['835'] + (bandsSE['B06'] - bandsSE['B08']) * (r['782'] - r['835']) / (bandsSE['B07'] - bandsSE['B08']))
+        indices['Red.edge.2'] <- r['704']  / (r['782'] + (bandsSE['B05'] - bandsSE['B07']) * (r['740'] - r['782']) / (bandsSE['B06'] - bandsSE['B07']))
+        indices['Red.edge.3'] <- r['704']  / (r['835'] + (bandsSE['B05'] - bandsSE['B08']) * (r['740'] - r['835']) / (bandsSE['B06'] - bandsSE['B08']))
+        indices['Red.edge.4'] <- r['665']  / (r['835'] + (bandsSE['B04'] - bandsSE['B08']) * (r['704'] - r['835']) / (bandsSE['B06'] - bandsSE['B08']))
+        indices['Red.edge.5'] <- r['740']  / (r['835'] + (bandsSE['B06'] - bandsSE['B08']) * (r['704'] - r['835']) / (bandsSE['B05'] - bandsSE['B08']))
+        indices['Red.edge.6'] <- r['782']  / (r['835'] + (bandsSE['B07'] - bandsSE['B08']) * (r['704'] - r['835']) / (bandsSE['B05'] - bandsSE['B08']))
+        indices['Red.edge.7'] <- r['762']  / (r['835'] + (bandsSE['B.762'] - bandsSE['B08']) * (r['704'] - r['835']) / (bandsSE['B05'] - bandsSE['B.800']))
         
       } else if (any(wavelengths == 800)){
           
-          indices['SIFe1'] <- r['740']  / (r['800'] + (bandsSE['B06'] - bandsSE['B.800']) * (r['782'] - r['800']) / (bandsSE['B.762'] - bandsSE['B.800']))
-          indices['SIFe2'] <- r['704']  / (r['782'] + (bandsSE['B05'] - bandsSE['B07']) * (r['740'] - r['782']) / (bandsSE['B06'] - bandsSE['B.762']))
-          indices['SIFe3'] <- r['704']  / (r['800'] + (bandsSE['B05'] - bandsSE['B.800']) * (r['740'] - r['800']) / (bandsSE['B06'] - bandsSE['B.800']))
-          indices['SIFe4'] <- r['665']  / (r['800'] + (bandsSE['B04'] - bandsSE['B.800']) * (r['704'] - r['800']) / (bandsSE['B06'] - bandsSE['B.800']))
-          indices['SIFe5'] <- r['740']  / (r['800'] + (bandsSE['B06'] - bandsSE['B.800']) * (r['704'] - r['800']) / (bandsSE['B05'] - bandsSE['B.800']))
-          indices['SIFe6'] <- r['782']  / (r['800'] + (bandsSE['B07'] - bandsSE['B.800']) * (r['704'] - r['800']) / (bandsSE['B05'] - bandsSE['B.800']))
-          indices['SIFe7'] <- r['762']  / (r['800'] + (bandsSE['B.762'] - bandsSE['B.800']) * (r['704'] - r['800']) / (bandsSE['B05'] - bandsSE['B.800']))
+          indices['Red.edge.1'] <- r['740']  / (r['800'] + (bandsSE['B06'] - bandsSE['B.800']) * (r['782'] - r['800']) / (bandsSE['B.762'] - bandsSE['B.800']))
+          indices['Red.edge.2'] <- r['704']  / (r['782'] + (bandsSE['B05'] - bandsSE['B07']) * (r['740'] - r['782']) / (bandsSE['B06'] - bandsSE['B.762']))
+          indices['Red.edge.3'] <- r['704']  / (r['800'] + (bandsSE['B05'] - bandsSE['B.800']) * (r['740'] - r['800']) / (bandsSE['B06'] - bandsSE['B.800']))
+          indices['Red.edge.4'] <- r['665']  / (r['800'] + (bandsSE['B04'] - bandsSE['B.800']) * (r['704'] - r['800']) / (bandsSE['B06'] - bandsSE['B.800']))
+          indices['Red.edge.5'] <- r['740']  / (r['800'] + (bandsSE['B06'] - bandsSE['B.800']) * (r['704'] - r['800']) / (bandsSE['B05'] - bandsSE['B.800']))
+          indices['Red.edge.6'] <- r['782']  / (r['800'] + (bandsSE['B07'] - bandsSE['B.800']) * (r['704'] - r['800']) / (bandsSE['B05'] - bandsSE['B.800']))
+          indices['Red.edge.7'] <- r['762']  / (r['800'] + (bandsSE['B.762'] - bandsSE['B.800']) * (r['704'] - r['800']) / (bandsSE['B05'] - bandsSE['B.800']))
           
         
         }

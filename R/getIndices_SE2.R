@@ -235,22 +235,22 @@ for (i in c(1:dim(df)[1])){
 
   if (is.na(r['B8A']) != TRUE){
     #### Using Band 8A
-    indices['SIFe1'] <- r['B6']  / (r['B8A'] + (bandset.SE['B6'] - bandset.SE['B8A']) * (r['B7'] - r['B8A']) / (bandset.SE['B7'] - bandset.SE['B8A']))
-    indices['SIFe2'] <- r['B5']  / (r['B7'] + (bandset.SE['B5'] - bandset.SE['B7']) * (r['B6'] - r['B7']) / (bandset.SE['B6'] - bandset.SE['B7']))
-    indices['SIFe3'] <- r['B5']  / (r['B8A'] + (bandset.SE['B5'] - bandset.SE['B8A']) * (r['B6'] - r['B8A']) / (bandset.SE['B6'] - bandset.SE['B8A']))
-    indices['SIFe4'] <- r['B4']  / (r['B8A'] + (bandset.SE['B4'] - bandset.SE['B8A']) * (r['B5'] - r['B8A']) / (bandset.SE['B6'] - bandset.SE['B8A']))
-    indices['SIFe5'] <- r['B6']  / (r['B8A'] + (bandset.SE['B6'] - bandset.SE['B8A']) * (r['B5'] - r['B8A']) / (bandset.SE['B5'] - bandset.SE['B8A']))
-    indices['SIFe6'] <- r['B7']  / (r['B8A'] + (bandset.SE['B7'] - bandset.SE['B8A']) * (r['B5'] - r['B8A']) / (bandset.SE['B5'] - bandset.SE['B8A']))
+    indices['Red.edge.1'] <- r['B6']  / (r['B8A'] + (bandset.SE['B6'] - bandset.SE['B8A']) * (r['B7'] - r['B8A']) / (bandset.SE['B7'] - bandset.SE['B8A']))
+    indices['Red.edge.2'] <- r['B5']  / (r['B7'] + (bandset.SE['B5'] - bandset.SE['B7']) * (r['B6'] - r['B7']) / (bandset.SE['B6'] - bandset.SE['B7']))
+    indices['Red.edge.3'] <- r['B5']  / (r['B8A'] + (bandset.SE['B5'] - bandset.SE['B8A']) * (r['B6'] - r['B8A']) / (bandset.SE['B6'] - bandset.SE['B8A']))
+    indices['Red.edge.4'] <- r['B4']  / (r['B8A'] + (bandset.SE['B4'] - bandset.SE['B8A']) * (r['B5'] - r['B8A']) / (bandset.SE['B6'] - bandset.SE['B8A']))
+    indices['Red.edge.5'] <- r['B6']  / (r['B8A'] + (bandset.SE['B6'] - bandset.SE['B8A']) * (r['B5'] - r['B8A']) / (bandset.SE['B5'] - bandset.SE['B8A']))
+    indices['Red.edge.6'] <- r['B7']  / (r['B8A'] + (bandset.SE['B7'] - bandset.SE['B8A']) * (r['B5'] - r['B8A']) / (bandset.SE['B5'] - bandset.SE['B8A']))
 
 
   } else{
     #### Using Band 8
-    indices['SIFe1'] <- r['B6']  / (r['B8'] + (bandset.SE['B6'] - bandset.SE['B8']) * (r['B7'] - r['B8']) / (bandset.SE['B7'] - bandset.SE['B8']))
-    indices['SIFe2'] <- r['B5']  / (r['B7'] + (bandset.SE['B5'] - bandset.SE['B7']) * (r['B6'] - r['B7']) / (bandset.SE['B6'] - bandset.SE['B7']))
-    indices['SIFe3'] <- r['B5']  / (r['B8'] + (bandset.SE['B5'] - bandset.SE['B8']) * (r['B6'] - r['B8']) / (bandset.SE['B6'] - bandset.SE['B8']))
-    indices['SIFe4'] <- r['B4']  / (r['B8'] + (bandset.SE['B4'] - bandset.SE['B8']) * (r['B5'] - r['B8']) / (bandset.SE['B6'] - bandset.SE['B8']))
-    indices['SIFe5'] <- r['B6']  / (r['B8'] + (bandset.SE['B6'] - bandset.SE['B8']) * (r['B5'] - r['B8']) / (bandset.SE['B5'] - bandset.SE['B8']))
-    indices['SIFe6'] <- r['B7']  / (r['B8'] + (bandset.SE['B7'] - bandset.SE['B8']) * (r['B5'] - r['B8']) / (bandset.SE['B5'] - bandset.SE['B8']))
+    indices['Red.edge.1'] <- r['B6']  / (r['B8'] + (bandset.SE['B6'] - bandset.SE['B8']) * (r['B7'] - r['B8']) / (bandset.SE['B7'] - bandset.SE['B8']))
+    indices['Red.edge.2'] <- r['B5']  / (r['B7'] + (bandset.SE['B5'] - bandset.SE['B7']) * (r['B6'] - r['B7']) / (bandset.SE['B6'] - bandset.SE['B7']))
+    indices['Red.edge.3'] <- r['B5']  / (r['B8'] + (bandset.SE['B5'] - bandset.SE['B8']) * (r['B6'] - r['B8']) / (bandset.SE['B6'] - bandset.SE['B8']))
+    indices['Red.edge.4'] <- r['B4']  / (r['B8'] + (bandset.SE['B4'] - bandset.SE['B8']) * (r['B5'] - r['B8']) / (bandset.SE['B6'] - bandset.SE['B8']))
+    indices['Red.edge.5'] <- r['B6']  / (r['B8'] + (bandset.SE['B6'] - bandset.SE['B8']) * (r['B5'] - r['B8']) / (bandset.SE['B5'] - bandset.SE['B8']))
+    indices['Red.edge.6'] <- r['B7']  / (r['B8'] + (bandset.SE['B7'] - bandset.SE['B8']) * (r['B5'] - r['B8']) / (bandset.SE['B5'] - bandset.SE['B8']))
 
   }
 
