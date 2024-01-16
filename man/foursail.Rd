@@ -4,7 +4,7 @@
 \alias{foursail}
 \title{fourSAIL model coupled with several leaf models}
 \usage{
-foursail(inputLUT, rsoil, LeafModel = "PROSPECT-PRO")
+foursail(inputLUT, rsoil, LeafModel = "PROSPECT-PRO", spectrum.all = T)
 }
 \arguments{
 \item{inputLUT}{LUT table with distribution of biophysical parameters used as input parameters in the model}
@@ -12,8 +12,9 @@ foursail(inputLUT, rsoil, LeafModel = "PROSPECT-PRO")
 \item{rsoil}{numeric. Soil reflectance}
 
 \item{LeafModel}{Version of PROSPECT model, Liberty model and  fluspect model. For PROSPECT model: 'PROSPECT-PRO' or 'PROSPECT-D' is accepted. By default 'PROSPECT-PRO' is used.
-fluspect model is valid in two options: 'Fluspect-B' and 'Fluspect-B-Cx'. Liberty as 'Liberty'
+fluspect model is valid in two options: 'Fluspect-B' and 'Fluspect-B-Cx'. Liberty as 'Liberty'}
 
+\item{spectrum.all}{a boolean value, False is for SPART and Fluspect Models (400-2400 nm), True for the PROSPECT and Liberty models (400-2500 nm)
 Liberty model is leaf radiative transfer model designed for conifer needles. Uses 'Liberty'
 Fluspect-B model is leaf radiative transfer model designed for adding fluorescence emission. Uses 'Fluspect-B' or 'Fluspect-B-Cx'.}
 }

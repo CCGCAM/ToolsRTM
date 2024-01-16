@@ -6,7 +6,7 @@
 #' @param inputLUT LUT table with distribution of biophysical parameters used as input parameters in the model
 #' @param LeafModel Version of PROSPECT model, Liberty model and  fluspect model. For PROSPECT model: 'PROSPECT-PRO' or 'PROSPECT-D' is accepted. By default 'PROSPECT-PRO' is used.
 #'  fluspect model is valid in two options: 'Fluspect-B' and 'Fluspect-B-Cx'. Liberty as 'Liberty'
-#'  
+#' @param spectrum.all a boolean value, False is for SPART and Fluspect Models (400-2400 nm), True for the PROSPECT and Liberty models (400-2500 nm)
 #' Liberty model is leaf radiative transfer model designed for conifer needles. Uses 'Liberty'
 #' Fluspect-B model is leaf radiative transfer model designed for adding fluorescence emission. Uses 'Fluspect-B' or 'Fluspect-B-Cx'.
 #' @return list. rdot,rsot,rddt,rsdt
@@ -40,8 +40,14 @@
 #' and works more efficiently if only few parameters change.
 
 #' 
-foursail <- function(inputLUT,rsoil, LeafModel='PROSPECT-PRO'){
+foursail <- function(inputLUT,rsoil, LeafModel='PROSPECT-PRO',spectrum.all = T){
 
+  
+  ## for using the range 400-2400 nm (FLuspect and SPART models)
+  if (missing(spectrum.all) || spectrum.all) {
+    spectrum.all = T ### when is true is using (400-2500 nm) for PROSPECT and Liberty
+  }
+    
   ## parameters for fourSAIL
   LIDFa=inputLUT[,'LIDFa']; LIDFb=inputLUT[,'LIDFb']; TypeLidf=inputLUT[,'TypeLidf']; lai=inputLUT[,'LAI']
   hotspot=inputLUT[,'hspot']; tts=inputLUT[,'tts']; tto=inputLUT[,'tto']; psi=inputLUT[,'psi']
@@ -58,6 +64,10 @@ if (LeafModel == 'PROSPECT-PRO') {
   # run LeafModel ='PROSPECT-PRO'
   LRT <- prospect_PRO(N,Cab,Car,Anth,Cbrown,EWT,LMA,alpha,Prot,CBC)
   message('SAIL with PROSPECT-PRO is processing')
+  if (spectrum.all == F){
+    ### reduce the wavelength for r soil
+    rsoil =  rsoil[1:2001]
+  }
   
   } else if (LeafModel == 'Liberty'){
     
@@ -65,6 +75,10 @@ if (LeafModel == 'PROSPECT-PRO') {
   # run LeafModel ='PRO'
   LRT <- liberty(inputLUT)
   message('SAIL with Liberty model is processing')
+  if (spectrum.all == F){
+    ### reduce the wavelength for r soil
+    rsoil =  rsoil[1:2001]
+  }
   
   } else if (LeafModel == 'Fluspect-B'){
 
@@ -92,7 +106,10 @@ if (LeafModel == 'PROSPECT-PRO') {
   # run LeafModel ='PROSPECT-D'
   LRT <- prospect_DB(N,Cab,Car,Anth,Brown,EWT,LMA,alpha)
   message('SAIL with PROSPECT-D is processing')
-  
+  if (spectrum.all == F){
+    ### reduce the wavelength for r soil
+    rsoil =  rsoil[1:2001]
+  }
 
   } else {
     
@@ -100,9 +117,14 @@ if (LeafModel == 'PROSPECT-PRO') {
     
   }
   
+if (spectrum.all == T) {
+  rho	 <- 	LRT[[2]]
+  tau	 <- 	LRT[[3]]
+} else {
+  rho	 <- 	LRT[[2]][1:2001]
+  tau	 <- 	LRT[[3]][1:2001]
+}
 
-rho	 <- 	LRT[[2]]
-tau	 <- 	LRT[[3]]
 
 ########################################
 #	1.2 Geometric quAnthities
