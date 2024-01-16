@@ -4,7 +4,7 @@
 \alias{getIndicesSE2}
 \title{extract spectral indices at Sentinel-2 resolution}
 \usage{
-getIndicesSE2(df, sensor = "Sentinel-2a", df.data = NULL)
+getIndicesSE2(df, sensor = "Sentinel-2a", df.data = NULL, fast.process = NULL)
 }
 \arguments{
 \item{df}{a dataframe with reflectance where each rows correspond with an spectrum}
@@ -12,6 +12,8 @@ getIndicesSE2(df, sensor = "Sentinel-2a", df.data = NULL)
 \item{sensor}{Sensor options: 'Sentinel-2a', or 'Sentinel-2b'}
 
 \item{df.data}{dataset with IDs that corresponde with each spectrum, is null is also enable}
+
+\item{fast.process}{when the bands are ordered for SE2, please use fast.process = T, otherwise use False or nothing}
 }
 \value{
 a dataframe with indices and your dataset
