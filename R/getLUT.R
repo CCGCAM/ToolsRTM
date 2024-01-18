@@ -42,7 +42,7 @@ getLUT<-function(inputs=NULL, nLUT=100, setseed = 123){
       trait_dep <-trait
     }
     
-    if (table.sb[,'include'] == 1){
+    if (table.sb[,'use.default'] == 1){
       
       
       

@@ -7,15 +7,13 @@
 #' @param LeafModel 
 #' @param df.irradiance 
 #' @param sensor.i 
-#' @param get.plots 
 #'
 #' @return
 #' @export
 #'
 #' @examples
-SPART <-  function(inputLUT, optipar=NULL, CanopyModel = 'fourSAIL',LeafModel='PROSPECT-PRO',
-                   sensor.i = NULL , df.irradiance=NULL, 
-                   get.plots=T){
+SPART.simN <-  function(inputLUT, optipar=NULL, CanopyModel = 'fourSAIL',LeafModel='PROSPECT-PRO',
+                   sensor.i = NULL , df.irradiance=NULL){
   
   ## Soil-Plant-Atmosphere Radiative Transfer model for top-of-canopy and top-of-atmosphere reflectance 
   # Developed by Peiqi Yang               (p.yang@utwente.nl)
@@ -32,16 +30,6 @@ SPART <-  function(inputLUT, optipar=NULL, CanopyModel = 'fourSAIL',LeafModel='P
   # sensor.i =ToolsRTM::LANDSAT7.ETM; get.plots=T;
 
 
-  
-  ##################################################################################
-  ### 0.1 Check the plots (TRUE or FALSE)
-  ##################################################################################
-  
-  if (missing(get.plots)){
-    get.plots = FALSE
-  } else {
-    get.plots = TRUE
-  }
   
   ##################################################################################
   ### 0.1 Check the model
@@ -96,32 +84,6 @@ SPART <-  function(inputLUT, optipar=NULL, CanopyModel = 'fourSAIL',LeafModel='P
                        Kant = ref.optipar$spA_Atn,
                        Kcbc = ref.optipar$spA_nonPro,
                        wave = ref.optipar$wave)
-  if (get.plots ==  T){
-    
-    plot.optipar<- ggplot2::ggplot(data = df.optipar, aes(x = wave)) +
-      labs(y = "specific absorption coefficient", x = "") + xlim(400, 2500) +
-      geom_line(aes(y = Kp, color = "Proteins")) +
-      geom_line(aes(y = Kcbc, color = "CBC")) +
-      theme_bw() +
-      guides(color = guide_legend(title = "Absorption coefficient"), linetype = guide_legend(title = "Absorption coefficient"), shape = guide_legend(title = "Absorption coefficient")) +
-      
-      theme(legend.position = "right")
-    
-    print(plot.optipar)
-    
-    plot.pigments<- ggplot2::ggplot(data = df.optipar, aes(x = wave)) +
-      labs(y = "specific absorption coefficient", x = "") + xlim(400, 2500) +
-      geom_line(aes(y = Kcab, color = "Cab")) +
-      geom_line(aes(y = Kca, color = "Car")) +
-      geom_line(aes(y = Kant, color = "Anth")) +
-      theme_bw() +
-      guides(color = guide_legend(title = "Absorption coefficient"), linetype = guide_legend(title = "Absorption coefficient"), shape = guide_legend(title = "Absorption coefficient")) +
-      
-      theme(legend.position = "right")
-    
-    print(plot.pigments)
-    
-  }
   
   ##################################################################################
   ### 0.1 Load spectral dataset (optical leaf properties)
@@ -173,19 +135,7 @@ SPART <-  function(inputLUT, optipar=NULL, CanopyModel = 'fourSAIL',LeafModel='P
   db.rsoil <- data.frame(wave=wave.comp, rfl.soil = rfl.comp)
   
   
-  ##::::::::::::::::::::::::::::::::::::::::::
-  # Plot for Soil reflectance using BSM model
-  ##:::::::::::::::::::::::::::::::::::::::::
-  
-  if (get.plots ==  T){
-    
-    plot.soil <- ggplot2::ggplot(data = db.rsoil, aes(x = wave, y = rfl.soil)) +
-      labs(y= "soil reflectance", x = "")+ xlim(400,2400) +
-      geom_line() + theme_bw()
-    
-    print(plot.soil)
-    
-  }
+ 
   
   ##################################################################################
   ### 2. Run the model
@@ -256,19 +206,6 @@ SPART <-  function(inputLUT, optipar=NULL, CanopyModel = 'fourSAIL',LeafModel='P
    stop('please provide a dataframe with wave and Eo ...')
   }
   
-  ##::::::::::::::::::::::::::::::::::::::::::
-  # Plot for Extraterrestrial irradiance 
-  ##:::::::::::::::::::::::::::::::::::::::::
-
-  if (get.plots ==  T){
-    
-    plot.Irrad <- ggplot2::ggplot(data = df.irradiance, aes(x = wave, y = irrad)) +
-      labs(y= " Extraterrestrial irradiance", x = "")+ xlim(400,2450) +
-      geom_line() + theme_bw()
-    
-    print(plot.Irrad)
-    
-  }
   
   La_extra <-  ToolsRTM::get.spectral.convolution(df.irradiance = df.irradiance,sensor.i, get.plots=F)   
   # Calculate TOA radiance
@@ -277,47 +214,12 @@ SPART <-  function(inputLUT, optipar=NULL, CanopyModel = 'fourSAIL',LeafModel='P
   df.rad.toa<- data.frame(wave = La_extra$wave, rad.toa = L_TOA, rfl.toa = R_TOA)
   
   
-  if (get.plots ==  T){
-    
-    plot.rad <- ggplot2::ggplot(data = df.rad.toa, aes(x = wave)) +
-      labs(y= " TOA rfl-rad", x = "") +
-      geom_line(aes(y = rad.toa, color = "Rad")) +
-      geom_line(aes(y = rfl.toa, color = "RFL")) + theme_bw() +
-      guides(color = guide_legend(title = "TOA"), linetype = guide_legend(title = "TOA"), shape = guide_legend(title = "TOA")) 
-      
-    
-    print(plot.rad)
-    
-  }
   
   df.refl <- data.frame(wave = wlSensor,rfl.toa = R_TOA, rad.toa = L_TOA,rfl.toc = R_TOC,rfl.toc.brdf= rfl.canopy.brdf.sensor )
   
   ##::::::::::::::::::::::::::::::::::::::::::
   # Plot for Reflectance at TOA, TOC
   ##:::::::::::::::::::::::::::::::::::::::::
-  
-  if (get.plots ==  T){
-    
-    plot.rfl.toa <- ggplot2::ggplot(data = df.refl, aes(x = wave)) +
-      labs(y = "reflectance", x = "") +
-      geom_point(aes(y = rfl.toa, color = "TOA rfl."), size = 1) +
-      geom_line(aes(y = rfl.toa, color = "TOA rfl.")) +
-      
-      #geom_point(aes(y = rad.toa, color = "TOA (rad.)"), size = 1) +
-      #geom_line(aes(y = rad.toa, color = "TOA (rad.)")) +
-      
-      geom_point(aes(y = rfl.toc, color = "TOC rfl. (SMAC)"), size = 1) +
-      geom_line(aes(y = rfl.toc, color = "TOC rfl. (SMAC)")) +
-      geom_point(aes(y = rfl.toc.brdf, color = "TOC rfl. (BRDF)"), size = 1) +
-      geom_line(aes(y = rfl.toc.brdf, color = "TOC rfl. (BRDF)")) +
-      theme_bw() +
-      guides(color = guide_legend(title = "Reflectance:"), linetype = guide_legend(title = "Reflectance:"), shape = guide_legend(title = "Reflectance:")) +
-      
-      theme(legend.position = "right")
-    
-    print(plot.rfl.toa)
-    
-  }
   
   
   

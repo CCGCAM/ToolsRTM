@@ -19,18 +19,17 @@ get.spectral.convolution <- function(df.irradiance, sensor.i, get.plots=T) {
   sensors.properties = get.coef.SMAC(sensor = sensor.i)
   wlSensor =  sensors.properties[['wl.smac']]
   coefs.SMAC  = sensors.properties[['coefs.SMAC']]
-  Sensor.name = sensors.properties[['Sensor.name']]
+  Sensor.name = sensors.properties[['Sensor.name']] ## this is mission name
   
   bands_df <- data.frame(sensors.properties$wl.srf.smac)
   weights_df <- data.frame(sensors.properties$p.srf.smac)
   
-  if ( Sensor.name == 'Sentinel3B' || Sensor.name =='Sentinel3A'){
+  if ( Sensor.name == 'Sentinel3B' || Sensor.name =='Sentinel3A' || Sensor.name == 'TerraAqua'){
     bands_df <- colMeans(bands_df,na.rm=T)
     bands_df <- round(bands_df, digits = 0)
     weights_df <- colMeans(weights_df,na.rm=T)
   }
 
-  head(bands_df)
   # Function to select wavelengths for each band including weights
   selectWavelengths <- function(band, weights) {
     merged_df <- merge(data.frame(wave = band, weight = weights), df.irradiance, by = "wave", all.x = TRUE)
@@ -57,7 +56,7 @@ get.spectral.convolution <- function(df.irradiance, sensor.i, get.plots=T) {
   
   if (get.plots ==  T){
     
-    plot.conv <- ggplot(data = df.conv, aes(x = wave, y = Eo)) +
+    plot.conv <- ggplot2::ggplot(data = df.conv, aes(x = wave, y = Eo)) +
       labs(y= " Extraterrestrial irradiance", x = "") +
       geom_line() + theme_bw()
     
