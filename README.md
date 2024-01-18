@@ -13,7 +13,7 @@ To install the ToolsRTM package, please follow these instructions in R session:
 ```         
 ## install SCOPEinR
 
-install.packages('pathWithFile/ToolsRTM-main.tar.gz',repos = NULL,type = "source")
+install.packages('pathWithFile/toolsrtm-main.tar.gz',repos = NULL,type = "source")
 ```
 
 2.  Additional package SCOPEinR package is needed for the SCOPE model.
@@ -24,7 +24,7 @@ A R package for running the Soil Canopy Observation, Photochemistry and Energy f
 ## Install additional SCOPEinR package. 
 # SCOPEinR uses inversion method and main RT models at leaf and canopy scales (INFORM, PROSAIL-2, PROSPECT-D and PRO, Liberty)
 
-install.packages('pathWithFile/SCOPEinR-main.tar.gz',repos = NULL,type = "source")
+install.packages('pathWithFile/scopeinr-main.tar.gz',repos = NULL,type = "source")
 ```
 
 ## Manual
