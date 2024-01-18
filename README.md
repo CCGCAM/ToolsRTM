@@ -6,17 +6,31 @@ editor_options:
 
 # ToolsRTM
 
-An R packages with tools for simulating canopy reflectance using a set
-of radiative transfer (RT) models at Sentinel-2 scale
+An R packages with tools for simulating canopy reflectance using a set of radiative transfer (RT) models at several satellite resolutions
 
-## Getting started
 
-Install the package toolsrtm with the following command line in R
-session: \> \> git_url \<- '<https://gitlab.com/caminoccg/toolsrtm.git>'
-\> \> devtools::install_git(git_url, auth_token =
-'Student.Acces.Tokens') \> \>
+### Getting started
 
-(Student.Acces.Tokens is mandatory, and you shoud ask for that)
+To install the ToolsRTM package, please follow these instructions in R session:
+
+1)  Download the ToolsRTM package as .tar.gz file
+
+```         
+## install SCOPEinR
+
+install.packages('pathWithFile/ToolsRTM-main.tar.gz',repos = NULL,type = "source")
+```
+
+2.  Additional package SCOPEinR package is needed for the SCOPE model.
+
+A R package for running the Soil Canopy Observation, Photochemistry and Energy fluxes (SCOPE, Van der Tol at al., 2009, Yang et al., 2020) radiative transfer model developed in MATLAB.
+
+```         
+## Install additional SCOPEinR package. 
+# SCOPEinR uses inversion method and main RT models at leaf and canopy scales (INFORM, PROSAIL-2, PROSPECT-D and PRO, Liberty)
+
+install.packages('pathWithFile/SCOPEinR-main.tar.gz',repos = NULL,type = "source")
+```
 
 ## Manual
 
@@ -149,15 +163,15 @@ Authors:Yang Peiqgiyang
 
 Yang, P., van der Tol, C., Yin, T., & Verhoef, W. (2020). The SPART
 model: A soil-plant-atmosphere radiative transfer model for satellite
-measurements in the solar spectrum. Remote Sensing
-of Environment, 247, 111870.
+measurements in the solar spectrum. Remote Sensing of Environment, 247,
+111870.
 
 For the details of the radiative transfer modelling
 
 Yang, P., Verhoef, W., & van der Tol, C. (2017). The mSCOPE model: A
 simple adaptation to the SCOPE model to describe reflectance,
-fluorescence and photosynthesis of vertically heterogeneous
-canopies. Remote sensing of environment, 201, 1-11.
+fluorescence and photosynthesis of vertically heterogeneous canopies.
+Remote sensing of environment, 201, 1-11.
 
 ## License
 
