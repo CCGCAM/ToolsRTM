@@ -24,7 +24,7 @@ model_i <- model_rtm[1]
 nSamples<-200
 ID=(1:nSamples)    
 
-inputs = ToolsRTM::inputsINF
+inputs = ToolsRTM::inputsINFORM
 LUT<-as.data.frame(getLUT(inputs = inputs, nLUT=nSamples, setseed = 1234))
 head(LUT)
 dim(LUT)
@@ -67,10 +67,10 @@ start_time <- Sys.time()
 sim.rfl<-list()
 sims<-foreach(i=1:nSamples) %dopar% {
   if (model_i == 'INFORM'){
-    data.inform<-ToolsRTM::inform(inputLUT = LUT[i,],rsoil=rsoil0[[i]],LeafModel = 'PRO')
+    data.inform<-ToolsRTM::inform(inputLUT = LUT[i,],rsoil=rsoil0[[i]],LeafModel = 'PROSPECT-PRO')
     sim.rfl[[i]]<-data.inform
   } else if (model_i == 'fourSAIL-PRO'){
-    data.foursail_pro<-ToolsRTM::m4SAIL(inputLUT=LUT[i,],rsoil=rsoil0[[i]],LeafModel = 'PRO')
+    data.foursail_pro<-ToolsRTM::foursail(inputLUT=LUT[i,],rsoil=rsoil0[[i]],LeafModel = 'PROSPECT-PRO')
     rdot<-data.foursail_pro[[1]]
     rsot<-data.foursail_pro[[2]]
     rfl.prosail<-ToolsRTM::Compute_BRF(rdot=rdot,rsot=rsot,tts=LUT[i,'tts'],data.light=ToolsRTM::dataSpec_PDB)
