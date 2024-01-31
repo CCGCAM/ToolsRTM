@@ -28,7 +28,7 @@ getLUT<-function(inputs=NULL, nLUT=100, setseed = 123){
   if (length(missing_columns) > 1) {
     message('Please provide a LUT with these names:')
     message(paste(' - ', missing_columns, collapse='\n'))
-    message('Check default tables in simRTM::inputs; where inputs are: inputsFlUSPECT; inputsSCOPE;, inputsSPART; inputsINFORM; inputsLiberty; inputsPROSAIL; inputsRTMs ')
+    message('Check default tables in ToolsRTM::inputs; where inputs are: inputsFlUSPECT; inputsSCOPE;, inputsSPART; inputsINFORM; inputsLiberty; inputsPROSAIL; inputsRTMs ')
 
     stop()
 
@@ -64,7 +64,7 @@ getLUT<-function(inputs=NULL, nLUT=100, setseed = 123){
 
       } else if (table.sb[,'Distribution'] == 'Gaussian'){
         n_casesNorm= 3 * nLUT
-        var.list[[trait]] <-simRTM::gauss_byMin_Max(n=nLUT, m=as.numeric(table.sb[,'Mean_D']),
+        var.list[[trait]] <-ToolsRTM::gauss_byMin_Max(n=nLUT, m=as.numeric(table.sb[,'Mean_D']),
                                                       s=as.numeric(table.sb[,'Std_D']), lwr=table.sb[,'lower'],
                                                       upr=table.sb[,'upper'], nnorm=n_casesNorm)
       }
@@ -73,7 +73,7 @@ getLUT<-function(inputs=NULL, nLUT=100, setseed = 123){
     }
   }
   ### Get correlation for Car based on Cab
-  var.list[[trait_dep]] <- simRTM::correlatedValue(x=var.list[['Cab']]/4, r=.8)
+  var.list[[trait_dep]] <- ToolsRTM::correlatedValue(x=var.list[['Cab']]/4, r=.8)
   LUT <- do.call(cbind,var.list )
 
 

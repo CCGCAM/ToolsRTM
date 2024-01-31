@@ -52,7 +52,7 @@ getLUT_liberty<-function(inputs=NULL, nLUT=100, setseed = 123){
 
       } else if (table.sb[,'Distribution'] == 'Gaussian'){
         n_casesNorm= 3 * nLUT
-        var.list[[trait]] <-simRTM::gauss_byMin_Max(n=nLUT, m=as.numeric(table.sb[,'Mean_D']),
+        var.list[[trait]] <-ToolsRTM::gauss_byMin_Max(n=nLUT, m=as.numeric(table.sb[,'Mean_D']),
                                                       s=as.numeric(table.sb[,'Std_D']), lwr=table.sb[,'lower'],
                                                       upr=table.sb[,'upper'], nnorm=n_casesNorm)
       }
