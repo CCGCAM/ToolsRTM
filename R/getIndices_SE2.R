@@ -199,6 +199,7 @@ for (i in c(1:dim(df)[1])){
   indices['LWCI'] <- log(1.0 -( r['B8'] - MIDIR)) / -log(1.0 * (r['B8'] - MIDIR))
   #CR_SWIR from J.B.Feret
   indices['CR.SWIR'] <- r['B11']/(r['B8A']+(bandset.SE['B11']-bandset.SE['B8A'])*(r['B12']-r['B8A'])/(bandset.SE['B12']-bandset.SE['B8A']))
+  indices['CR.SWIR.2'] <- r['B11']/(r['B8']+((r['B12']-r['B8'])/(2185.7-832.8))*(1610.4-832.8))
 
   #CIre
   indices['CIre'] <- (r['B7'] / r['B5'])-1
@@ -242,22 +243,22 @@ for (i in c(1:dim(df)[1])){
 
   if (is.na(r['B8A']) != TRUE){
     #### Using Band 8A
-    indices['Red.edge.1'] <- r['B6']  / (r['B8A'] + (bandset.SE['B6'] - bandset.SE['B8A']) * (r['B7'] - r['B8A']) / (bandset.SE['B7'] - bandset.SE['B8A']))
-    indices['Red.edge.2'] <- r['B5']  / (r['B7'] + (bandset.SE['B5'] - bandset.SE['B7']) * (r['B6'] - r['B7']) / (bandset.SE['B6'] - bandset.SE['B7']))
-    indices['Red.edge.3'] <- r['B5']  / (r['B8A'] + (bandset.SE['B5'] - bandset.SE['B8A']) * (r['B6'] - r['B8A']) / (bandset.SE['B6'] - bandset.SE['B8A']))
-    indices['Red.edge.4'] <- r['B4']  / (r['B8A'] + (bandset.SE['B4'] - bandset.SE['B8A']) * (r['B5'] - r['B8A']) / (bandset.SE['B6'] - bandset.SE['B8A']))
-    indices['Red.edge.5'] <- r['B6']  / (r['B8A'] + (bandset.SE['B6'] - bandset.SE['B8A']) * (r['B5'] - r['B8A']) / (bandset.SE['B5'] - bandset.SE['B8A']))
-    indices['Red.edge.6'] <- r['B7']  / (r['B8A'] + (bandset.SE['B7'] - bandset.SE['B8A']) * (r['B5'] - r['B8A']) / (bandset.SE['B5'] - bandset.SE['B8A']))
+    indices['CR.red.nir.1']  <- r['B6']  / (r['B8A'] + ( (r['B7'] - r['B8A']) / (bandset.SE['B6'] - bandset.SE['B8A']) ) * (bandset.SE['B7'] - bandset.SE['B8A']))
+    indices['CR.red.nir.2']  <- r['B5']  / (r['B7'] + ( (r['B6'] - r['B7']) / (bandset.SE['B6'] - bandset.SE['B7']) ) * (bandset.SE['B6'] - bandset.SE['B7']))
+    indices['CR.red.nir.3']  <- r['B5']  / (r['B8A'] + ( (r['B6'] - r['B8A']) / (bandset.SE['B5'] - bandset.SE['B8A']) ) * (bandset.SE['B6'] - bandset.SE['B8A']))
+    indices['CR.red.nir.4']  <- r['B4']  / (r['B8A'] + ( (r['B5'] - r['B8A']) / (bandset.SE['B4'] - bandset.SE['B8A']) ) * (bandset.SE['B5'] - bandset.SE['B8A']))
+    indices['CR.red.nir.5']  <- r['B6']  / (r['B8A'] + ( (r['B5'] - r['B8A']) / (bandset.SE['B6'] - bandset.SE['B8A']) ) * (bandset.SE['B5'] - bandset.SE['B8A']))
+    indices['CR.red.nir.6']  <- r['B7']  / (r['B8A'] + ( (r['B5'] - r['B8A']) / (bandset.SE['B5'] - bandset.SE['B8A']) ) * (bandset.SE['B7'] - bandset.SE['B8A']))
 
 
   } else{
     #### Using Band 8
-    indices['Red.edge.1'] <- r['B6']  / (r['B8'] + (bandset.SE['B6'] - bandset.SE['B8']) * (r['B7'] - r['B8']) / (bandset.SE['B7'] - bandset.SE['B8']))
-    indices['Red.edge.2'] <- r['B5']  / (r['B7'] + (bandset.SE['B5'] - bandset.SE['B7']) * (r['B6'] - r['B7']) / (bandset.SE['B6'] - bandset.SE['B7']))
-    indices['Red.edge.3'] <- r['B5']  / (r['B8'] + (bandset.SE['B5'] - bandset.SE['B8']) * (r['B6'] - r['B8']) / (bandset.SE['B6'] - bandset.SE['B8']))
-    indices['Red.edge.4'] <- r['B4']  / (r['B8'] + (bandset.SE['B4'] - bandset.SE['B8']) * (r['B5'] - r['B8']) / (bandset.SE['B6'] - bandset.SE['B8']))
-    indices['Red.edge.5'] <- r['B6']  / (r['B8'] + (bandset.SE['B6'] - bandset.SE['B8']) * (r['B5'] - r['B8']) / (bandset.SE['B5'] - bandset.SE['B8']))
-    indices['Red.edge.6'] <- r['B7']  / (r['B8'] + (bandset.SE['B7'] - bandset.SE['B8']) * (r['B5'] - r['B8']) / (bandset.SE['B5'] - bandset.SE['B8']))
+    indices['CR.red.nir.1']  <- r['B6']  / (r['B8'] + ( (r['B7'] - r['B8']) / (bandset.SE['B6'] - bandset.SE['B8']) ) * (bandset.SE['B7'] - bandset.SE['B8']))
+    indices['CR.red.nir.2']  <- r['B5']  / (r['B7'] + ( (r['B6'] - r['B7']) / (bandset.SE['B6'] - bandset.SE['B7']) ) * (bandset.SE['B6'] - bandset.SE['B7']))
+    indices['CR.red.nir.3']  <- r['B5']  / (r['B8'] + ( (r['B6'] - r['B8']) / (bandset.SE['B5'] - bandset.SE['B8']) ) * (bandset.SE['B6'] - bandset.SE['B8']))
+    indices['CR.red.nir.4']  <- r['B4']  / (r['B8'] + ( (r['B5'] - r['B8']) / (bandset.SE['B4'] - bandset.SE['B8']) ) * (bandset.SE['B5'] - bandset.SE['B8']))
+    indices['CR.red.nir.5']  <- r['B6']  / (r['B8'] + ( (r['B5'] - r['B8']) / (bandset.SE['B6'] - bandset.SE['B8']) ) * (bandset.SE['B5'] - bandset.SE['B8']))
+    indices['CR.red.nir.6']  <- r['B7']  / (r['B8'] + ( (r['B5'] - r['B8']) / (bandset.SE['B5'] - bandset.SE['B8']) ) * (bandset.SE['B7'] - bandset.SE['B8']))
 
   }
 
@@ -266,6 +267,9 @@ for (i in c(1:dim(df)[1])){
   indices['GVI'] <- -0.2848 * r['B2'] - 0.2435 * r['B3']  - 0.5436 * r['B4'] + 0.7243 * r['B8'] + 0.0840 * r['B11'] - 0.1800 * r['B12']
   indices['WET'] <- 0.1509 * r['B2'] + 0.1973 * r['B3'] + 0.3279 * r['B4'] + 0.3406 * r['B8A'] - 0.7112 * r['B11'] - 0.4572 * r['B12']
 
+  indices['BF.Anth'] <- (r['B3'] - r['B2']) / (r['B3'] + r['B2'])
+  indices['CR.red.nir']  <- r['B7']  / (r['B8'] + ( (r['B6'] - r['B8']) / (740.5- 833) ) * (782.8 - 832.8))
+  
 
   indices.list[[i]] = indices
   setTxtProgressBar(barProgress, i)

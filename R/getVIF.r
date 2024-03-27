@@ -5,6 +5,18 @@
 ###########
 ###########
 
+#' Title
+#'
+#' @param in_frame 
+#' @param thresh 
+#' @param trace 
+#' @param ... 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' 
 getVIF<-function(in_frame,thresh=10,trace=T,...){
 
   if(class(in_frame) != 'data.frame') in_frame<-data.frame(in_frame)
