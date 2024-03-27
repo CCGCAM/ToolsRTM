@@ -1,5 +1,5 @@
 
-#' Gert Keith Arano
+#' Get Simulator  By Arano Keith
 #'
 #' @return
 #' @export
