@@ -10,6 +10,8 @@ getMLmodel.withRetrain(
   model = "CNN",
   optimizer = "adam",
   n.times = NULL,
+  n.neurons = 128,
+  n.layers = 4,
   batch.size = 125,
   n.epochs = 100,
   save.model = T,
@@ -30,6 +32,10 @@ getMLmodel.withRetrain(
 \item{optimizer}{the optimizer for the model. options are: 'adam','adadelta','adagrad', 'adamax', 'nadam', 'msprop', 'sgd'}
 
 \item{n.times}{number of times to repaet the model. By default is 1}
+
+\item{n.neurons}{number of neurons to use by the the model. By default is 128 (only for hidden layer model is implemented)}
+
+\item{n.layers}{number of hidden-layer to use by the the model. By default is 4 (only for hidden layer model is implemented))}
 
 \item{batch.size}{batch size used for each epoch. By default is 125}
 
