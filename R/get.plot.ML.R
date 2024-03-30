@@ -35,7 +35,7 @@ get.plot.ML<-function(model,data.train, data.test, var){
   plot.ind <- ggplot(preds, aes_string(x = var, y = 'Preds')) +
     geom_point(size = 1, alpha = 0.5) + xlim(0,NA) + ylim(0,NA)+
     geom_smooth(method = "lm", se = FALSE, color = "black", linetype = "dashed") +
-    labs(title = paste("ML model: R² =", round(stats[1, 1], digits = 3), ", RMSE =", round(stats[1, 2], digits = 3)),
+    labs(title = paste("ML model: R² =", round(stats[2, 1], digits = 3), ", RMSE =", round(stats[2, 2], digits = 3)),
          x = axis_x, y = axis_y) +
     theme(legend.position = "none",
           plot.title = element_text(hjust = 0.5, size = 12, face = "bold"),
