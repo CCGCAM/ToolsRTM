@@ -2,13 +2,13 @@
 % Please edit documentation in R/get.inversion.R
 \name{get.inversion}
 \alias{get.inversion}
-\title{get.inversion of the plant traits using Partial Least Squares Regression, Support Vector Machine) and Random Forest}
+\title{get.inversion of the plant traits using different machine learning models}
 \usage{
 get.inversion(
   data,
   depVar,
   inputs,
-  ML = "PLSR",
+  algorithm = "PLSR",
   seed = 123,
   save.model = FALSE,
   save.path = NULL
@@ -21,7 +21,9 @@ get.inversion(
 
 \item{inputs}{The independent variables.}
 
-\item{ML}{The type of machine learning model. Options: "PLSR" (Partial Least Squares Regression), "SVM" (Support Vector Machine), "RF" (Random Forest). Default is "PLSR".}
+\item{algorithm}{The type of machine learning model. Options: "PLSR" (Partial Least Squares Regression), "SVM" (Support Vector Machine),
+"RF" (Random Forest); "NN" (Neural Network); "GB" (Gradient boosting); "Ensemble" (Stacking Ensemble models)
+Default is "PLSR".}
 
 \item{seed}{The seed for reproducibility. Default is 123.}
 
@@ -33,7 +35,7 @@ get.inversion(
 A list containing predictions, statistics, and plots for the specified machine learning model.
 }
 \description{
-get.inversion of the plant traits using Partial Least Squares Regression, Support Vector Machine) and Random Forest
+get.inversion of the plant traits using different machine learning models
 }
 \examples{
 get.inversion(data = my_data, depVar = "Cab", inputs = c("NDVI", "TCARI"), ML = "SVM", seed = 123)
