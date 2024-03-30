@@ -6,6 +6,9 @@
 #' @param model a ML model. options are: 'CNN','Hidden-layers',
 #' @param optimizer the optimizer for the model. options are: 'adam','adadelta','adagrad', 'adamax', 'nadam', 'msprop', 'sgd'
 #' @param n.times  number of times to repaet the model. By default is 1
+#' @param n.neurons  number of neurons to use by the the model. By default is 128 (only for hidden layer model is implemented)
+#' @param n.layers  number of hidden-layer to use by the the model. By default is 4 (only for hidden layer model is implemented))
+
 #' @param batch.size batch size used for each epoch. By default is 125
 #' @param n.epochs  number of epoch. By default is 100
 #' @param save.model a boolean variable for saving ML model, options are: TRUE or FALSE. if TRUE, please use path.model to give a folder for the model
@@ -23,13 +26,15 @@
 
 getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimizer='adam',
                      n.times=NULL,
-                     batch.size=125,n.epochs=100, save.model=T, path.model=NULL,
+                     n.neurons=128,n.layers=4,
+                     batch.size=125,n.epochs=100,
+                     save.model=T, path.model=NULL,
                      prop.split=c(0.8,0.2),
                      data.trans='preProcess',method.preProcess='Normalize',
                      depVar.trans=FALSE) {
-  
-  
-  
+
+
+
   stopifnot(class(dataset) == 'data.frame')
 
   stopifnot(model != 'CNN' | model != 'Hidden-layers')
@@ -52,9 +57,20 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
     N.times = n.times
   }
 
-  
-  
-  
+  if (is.null(n.neurons)) {
+    neurons = 128
+  } else {
+    neurons = n.neurons
+  }
+
+  if (is.null(n.layers)) {
+    n.layers = 4
+  } else {
+    n.layers = n.layers
+  }
+
+
+
 
   inputs_<-colnames(dataset)
   if(any(inputs_ %in% depVar)){
@@ -151,7 +167,7 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
   #barProgress <- txtProgressBar(min = 1, max = N.times, style = 3)
 
   for (i.times in c(1:N.times)){
-    
+
     message(paste(model,' with N Time :',i.times,sep=''))
     #print(i.times)
     #setTxtProgressBar(barProgress, i.times)
@@ -173,19 +189,35 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
       # sequential ML model ---
       ##############################################################################################################################
 
-      
+
       data.Xtrain.reshape <- array_reshape(split.data[['Xtrain']], c(nrow(split.data[['Xtrain']]), ncol(split.data[['Xtrain']])))
       dim(data.Xtrain.reshape)
       # Create the configuration for the model
-      model.dML <- keras_model_sequential() %>%
-        layer_dense(units=64,activation="relu",
-                    input_shape=c(dim(data.Xtrain.reshape)[2]))  %>%
-        #layer_dropout(rate=0.1) %>%
-        layer_dense(units = 32, activation = 'relu') %>%
-        #layer_dropout(rate=0.1) %>%
-        layer_dense(units = 16, activation = 'relu') %>%
-        #layer_dropout(rate=0.1) %>%
-        layer_dense(units = 1, activation = 'relu')
+      n.units= neurons
+      n.layers = n.layers
+
+      create_model <- function(neurons, n.layers) {
+        model <- keras_model_sequential()
+
+        # Input layer
+        model <- model %>%
+          layer_dense(units = neurons, activation = "relu", input_shape = c(dim(data.Xtrain.reshape)[2]))
+
+        # Hidden layers
+        for (i in 1:n.layers) {
+          units <- max(1, round(neurons / (2^i), 0)) # Calculate units dynamically
+          model <- model %>%
+            #layer_dropout(rate=0.1) %>%
+            layer_dense(units = units, activation = 'relu')
+        }
+
+        # Output layer
+        model <- model %>%
+          layer_dense(units = 1, activation = 'relu')
+
+        return(model)
+      }
+      model.dML <- create_model(neurons = n.units, n.layers = n.layers)
 
       # Compile the configuration for the model
       model.dML %>% compile(loss = "mse",
@@ -298,17 +330,17 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
       table.stats.r['R2'] <-  round(MLmetrics::R2_Score(df.val.retrain[,depVar], df.val.retrain[,paste(depVar,'.predicted',sep='')]),3)
 
       table.stats.r<-data.frame(do.call(cbind,table.stats.r))
-      
+
       table.stats.to.export<-rbind(table.stats,table.stats.r)
 
       # Save the model
       if (save.model == TRUE){
         model.dML %>% save_model_hdf5(paste(path.model,'Model-3hlayers-for-',depVar,'-',method.preProcess,'-',i.times,'.h5',sep=''))
         model.dML %>% save_model_weights_hdf5(paste(path.model,'Model-3hlayers-for-',depVar,'-',method.preProcess,'-',i.times,'-weights.h5',sep=''))
-        
+
         saveRDS(split.retrain[['Scalar.train']], file = paste(path.model,'1-ScalerX-Model-3hlayers-for-',depVar,'-',method.preProcess,'-',i.times,'.rds',sep=''))
         write.table(table.stats.to.export, file = paste(path.model,'1-Statistcal_scores_for_Model-3hlayers-for-',depVar,'-',method.preProcess,'-',i.times,'.csv',sep=''),sep=',',row.names = F)
-        
+
       }
 
     } else if (model == 'CNN'){
@@ -325,21 +357,38 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
 
       # Create the configuration for the model
       dataset.dim=data.Xtrain.CNN
-      model.dML <- keras_model_sequential() %>%
-        layer_conv_1d(filters=64, kernel_size=4, activation="relu",
-                      ### The input shape doesn't look correct; instead of
-                      ### `c(ncol(dataTrain_x), nrow(dataTrain_x))` (354, 13)
-                      ### I believe you want `dim(dataTest_x)` (13, 1)
-                      input_shape=c(ncol(dataset.dim), 1)) %>%
-        layer_max_pooling_1d(pool_size=2) %>%
-        layer_conv_1d(filters=32, kernel_size=2, activation="relu") %>%
-        layer_max_pooling_1d(pool_size=2) %>%
-        #layer_dropout(rate=0.4) %>%
-        layer_flatten() %>%
-        layer_dense(units=16, activation="relu") %>%
-        #layer_dropout(rate=0.1) %>%
-        layer_dense(units=1, activation="relu")
+      n.units = neurons
 
+      #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+      # CNN model by function
+      #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+      create_cnn_model <- function(neurons, n.layers) {
+        model <- keras_model_sequential()
+
+        # Input layer
+        model <- model %>%
+          layer_conv_1d(filters = neurons, kernel_size = 4, activation = "relu", input_shape = c(ncol(dataset.dim), 1)) %>%
+          layer_max_pooling_1d(pool_size = 2) %>%
+          layer_conv_1d(filters = n.units, kernel_size = 2, activation = "relu") %>%
+          layer_flatten()
+        # Subsequent hidden-layers
+        for (i in 1:(n.layers - 1)) {
+          units <- max(1, round(neurons / (2^i), 0)) # Calculate filters dynamically
+          model <- model %>%
+            #layer_dropout(rate=0.1) %>%
+            layer_dense(units = units, activation = 'relu')
+        }
+
+        # Dense layers
+        model <- model %>%
+          layer_dense(units = 1, activation = "relu")
+
+        return(model)
+      }
+      model.dML <- create_cnn_model(neurons = n.units, n.layers = n.layers)
+      # Summary the CNN model
+       summary(model.dML)
       # Compile the configuration for the model
 
       model.dML %>% compile(loss = "mse",
@@ -398,7 +447,7 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
       split.retrain<-ToolsRTM::getSplitData_noMessages(data=data.to.retrain, depVar=depVar,inputs=inputs_[-1],
                                             data.trans=data.trans,prop.split=c(0.90,0.1),method.preProcess=method.preProcess,
                                             depVar.trans=depVar.trans)
-      
+
       scaler.train.retrain <-  split.retrain[['Scalar.train']]
 
       data.Xtrain.reshape <- array_reshape(split.retrain[['Xtrain']], c(nrow(split.retrain[['Xtrain']]), ncol(split.retrain[['Xtrain']]), 1))
@@ -449,7 +498,7 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
       table.stats.r['R2'] <-  round(MLmetrics::R2_Score(df.val.retrain[,depVar], df.val.retrain[,paste(depVar,'.predicted',sep='')]),3)
 
       table.stats.r<-data.frame(do.call(cbind,table.stats.r))
-      
+
       table.stats.to.export<-rbind(table.stats,table.stats.r)
 
 
@@ -458,10 +507,10 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
         model.dML %>% save_model_hdf5(paste(path.model,'Model-CNN-for-',depVar,'-',method.preProcess,'-',i.times,'.h5',sep=''))
         model.dML %>% save_model_weights_hdf5(paste(path.model,'Model-CNN-for-',depVar,'-',method.preProcess,'-',i.times,'-weights.h5',sep=''))
         saveRDS(split.retrain[['Scalar.train']], file = paste(path.model,'1-ScalerX-Model-CNN-for-',depVar,'-',method.preProcess,'-',i.times,'.rds',sep=''))
-        
+
         write.table(table.stats.to.export, file = paste(path.model,'1-Statistcal_scores_for_Model-CNN-for-',depVar,'-',method.preProcess,'-',i.times,'.csv',sep=''),sep=',',row.names = F)
-        
-        
+
+
       }
     }
     ##############################################################################################################################
@@ -510,33 +559,33 @@ getMLmodel.withRetrain<-function(dataset=NULL, depVar='Cab',model='CNN',optimize
       labs(title = statsLabel, x=axis_x,y=axis_y, size=8,face="bold") +
       stat_smooth(method = "lm",formula = y ~ x,geom = "smooth",col='#C1CDC1',lty=2,se=T)
     print(scatter.model)
-    
+
     # Save the scatterplot
     if (save.model == TRUE){
       ggsave(paste(path.model,'1-ScatterPLot-',model,'-for_',depVar,'-',method.preProcess,'-',i.times,'.png',sep=''),
              width = 10, height = 10,  dpi = 300,units = "cm")
     }
 
-    
+
     ####
-    
+
     scatters[[i.times]] <- scatter.model
     models.keras[[i.times]]<- model.dML
     history.keras[[i.times]] <- history.model.dML
-    
+
     Scalar.train<-split.retrain[['Scalar.train']]
     Scalar.to[[i.times]] <- Scalar.train
-    
+
     plot.cor <-split.retrain[['plot.train']]
-    
+
     plot.cor.to[[i.times]] <- plot.cor
-    
+
 
 
   }
   stats.to.export<-data.frame(do.call(rbind, stats))
 
-  
+
   #preds.model.to.export<-data.frame(do.call(cbind, preds.model))
   #colnames(preds.model.to.export) <-c(paste(depVar,'model',method.preProcess,c(1:N.times),sep='.'))
 
