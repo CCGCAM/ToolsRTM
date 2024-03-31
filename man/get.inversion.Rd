@@ -9,6 +9,7 @@ get.inversion(
   depVar,
   inputs,
   algorithm = "PLSR",
+  method.resampling = NULL,
   seed = 123,
   n.samples = 500,
   save.model = FALSE,
@@ -23,7 +24,9 @@ get.inversion(
 \item{inputs}{The independent variables.}
 
 \item{algorithm}{The type of machine learning model. Options: "PLSR" (Partial Least Squares Regression), "SVM" (Support Vector Machine),
-"RF" (Random Forest); "NN" (Neural Network); "GB" (Gradient boosting); "Ensemble" (Stacking Ensemble models)
+"RF" (Random Forest); "NN" (Neural Network); "GB" (Gradient boosting); "xGB" (eXtreme Gradient Boosting (XGBoost) with linear base learners);
+'Bayesian' ( Bayesian Additive Regression Trees); 'AdaBag' ( Bagged AdaBoost); "qLASSO" (Quantile Regression with LASSO penalty); "RVM" (Relevance Vector Machines (RVM) with linear kernel);
+'BRNN' (Bayesian Regularized Neural Networks); "Ensemble" (Stacking Ensemble models)
 Default is "PLSR".}
 
 \item{seed}{The seed for reproducibility. Default is 123.}
@@ -33,6 +36,10 @@ Default is "PLSR".}
 \item{save.model}{Logical indicating whether to save the trained models. Default is FALSE.}
 
 \item{save.path}{Path to save the trained models. Required if save_models is TRUE.}
+
+\item{method.control}{The resampling method for controlling tht ML: Options are: "boot" (Bootstrapping); "boot632" (Bootstrapping-632);
+"optimism_boot"; "boot_all"; "cv" (cross-Validation); "repeatedcv" (repeats k-fold cross-validation with 3 times);
+"LOOCV" (Leave-One-Out Cross-Validation with 3 times); "LGOCV"}
 }
 \value{
 A list containing predictions, statistics, and plots for the specified machine learning model.

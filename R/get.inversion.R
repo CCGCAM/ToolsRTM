@@ -4,8 +4,13 @@
 #' @param depVar The dependent variable.
 #' @param inputs The independent variables.
 #' @param algorithm The type of machine learning model. Options: "PLSR" (Partial Least Squares Regression), "SVM" (Support Vector Machine),
-#' "RF" (Random Forest); "NN" (Neural Network); "GB" (Gradient boosting); "Ensemble" (Stacking Ensemble models)
+#' "RF" (Random Forest); "NN" (Neural Network); "GB" (Gradient boosting); "xGB" (eXtreme Gradient Boosting (XGBoost) with linear base learners);
+#' 'Bayesian' ( Bayesian Additive Regression Trees); 'AdaBag' ( Bagged AdaBoost); "qLASSO" (Quantile Regression with LASSO penalty); "RVM" (Relevance Vector Machines (RVM) with linear kernel);
+#' 'BRNN' (Bayesian Regularized Neural Networks); "Ensemble" (Stacking Ensemble models)
 #' Default is "PLSR".
+#' @param method.control The resampling method for controlling tht ML: Options are: "boot" (Bootstrapping); "boot632" (Bootstrapping-632);
+#' "optimism_boot"; "boot_all"; "cv" (cross-Validation); "repeatedcv" (repeats k-fold cross-validation with 3 times);
+#' "LOOCV" (Leave-One-Out Cross-Validation with 3 times); "LGOCV"
 #' @param seed The seed for reproducibility. Default is 123.
 #' @param n.samples A integer with the number of samples used for tunning search (nsample/2) and create the ML model (n.sample)
 #' @param save.model Logical indicating whether to save the trained models. Default is FALSE.
@@ -17,8 +22,12 @@
 #' @examples
 #' get.inversion(data = my_data, depVar = "Cab", inputs = c("NDVI", "TCARI"), ML = "SVM", seed = 123)
 
-get.inversion <- function(data, depVar, inputs, algorithm='PLSR',seed=123, n.samples=500, save.model = FALSE, save.path = NULL) {
+get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampling=NULL,
+                          seed=123, n.samples=500, save.model = FALSE, save.path = NULL) {
 
+  #https://topepo.github.io/caret/available-models.html
+  #https://topepo.github.io/caret/model-training-and-tuning.html#model-training-and-parameter-tuning
+  #https://topepo.github.io/caret/train-models-by-tag.html#gaussian-process
   # Set the seed for reproducibility
   if(is.null(seed)) {
     seed <- 123  # Default seed value
@@ -27,6 +36,13 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',seed=123, n.sam
     set.seed(seed)
   }
 
+
+  # Set the seed the resampling method in the Model
+  if(is.null(method.resampling)) {
+    method.resampling <- 'boot'  # Default method
+  } else{
+    method.resampling <- method.resampling
+  }
 
 
 
@@ -65,11 +81,11 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',seed=123, n.sam
     clusters <- parallel::makeCluster(detectCores() - 1)
     doParallel::registerDoParallel(clusters)
 
-    myfolds <- createMultiFolds(df.train[,depVar], k = 10, times = 10)
-    control <- trainControl("repeatedcv", index = myfolds, selectionFunction = "oneSE")
+    myfolds <- createMultiFolds(df.train[rows.model,depVar], k = 10, times = 10)
+    control <- trainControl(method= method.resampling, index = myfolds, selectionFunction = "oneSE")
 
     # Train PLS model
-    model_ <- train(fmla.n, data = df.train,
+    model_ <- train(fmla.n, data = df.train[rows.model,],
                    method = "pls",
                    metric = "RMSE",
                    tuneLength = 20,
@@ -79,6 +95,8 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',seed=123, n.sam
     k=model_$bestTune
 
     parallel::stopCluster(clusters)
+    # estimate variable importance
+    importance <- caret::varImp(model_, scale=FALSE)
 
   } else if(algorithm == "SVM") {
 
@@ -103,6 +121,13 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',seed=123, n.sam
 
     parallel::stopCluster(clusters)
 
+    # estimate variable importance
+    # Get the coefficients
+    coefficients <- model_$coefs
+    # Calculate the magnitude of coefficients
+    importance <- apply(coefficients, 1, function(x) sqrt(sum(x^2)))
+    importance <- NA
+
   } else if(algorithm == "RF") {
 
     print('processing hybrid approach using Random Forest ...')
@@ -123,7 +148,7 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',seed=123, n.sam
     n.trees <- ncol(df.train[, inputs])/3
 
     # Define training control
-    fit.control <- caret::trainControl(method = "repeatedcv", number = 3,
+    fit.control <- caret::trainControl(method = method.resampling, number = 3,
                  search = "grid", repeats = 3, allowParallel = TRUE)
     # Random Forest
     model_ <- caret::train(fmla.n, data = df.train[rows.model, ], method = "rf", metric = metric,
@@ -131,6 +156,8 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',seed=123, n.sam
 
     parallel::stopCluster(clusters)
 
+    # estimate variable importance
+    importance <- caret::varImp(model_, scale=FALSE)
 
   } else if (algorithm == 'GB'){
     print('processing hybrid approach using Gradient Boosting ...')
@@ -142,7 +169,7 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',seed=123, n.sam
     doParallel::registerDoParallel(clusters)
 
     # Define training control
-    fit.control <- caret::trainControl(method="repeatedcv", allowParallel=T,
+    fit.control <- caret::trainControl(method=method.resampling, allowParallel=T,
                                        returnResamp = "all",
                                        savePredictions = "all",
                                        number=3, repeats=3, search="random")
@@ -158,6 +185,8 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',seed=123, n.sam
                          trControl = fit.control, tuneGrid =tune.grid,verbose = F)
 
     parallel::stopCluster(clusters)
+    # estimate variable importance
+    importance <- NA #caret::varImp(model_, scale=FALSE)
 
   }  else if (algorithm == 'NN'){
 
@@ -170,7 +199,7 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',seed=123, n.sam
     doParallel::registerDoParallel(clusters)
 
     # Define training control
-    fit.control <- caret::trainControl(method="repeatedcv", allowParallel=T,
+    fit.control <- caret::trainControl(method=method.resampling, allowParallel=T,
                                        number=3, repeats=3, search="random",
                                        index = createFolds(df.train[rows.r,inputs], 5),
                                        returnResamp = "all",
@@ -193,9 +222,203 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',seed=123, n.sam
     decay<-getElement(model_,"bestTune")$decay
 
     parallel::stopCluster(clusters)
+    # estimate variable importance
+    importance <- caret::varImp(model_, scale=FALSE)
 
 
-  }  else if (algorithm == 'Ensemble') {
+  }  else if (algorithm == 'Bayesian') {
+    print('processing Bayesian Additive Regression Trees ...')
+
+    fmla.n <- as.formula(paste(depVar," ~ ", paste(inputs, collapse= "+")))
+
+    # Parallelize tuning process
+    clusters <- parallel::makeCluster(detectCores() - 1)
+    doParallel::registerDoParallel(clusters)
+
+   # Define training control
+    fit.control <- caret::trainControl(method=method.resampling, allowParallel=F,
+                                       returnResamp = "all",
+                                       savePredictions = "all",
+                                       number=3, repeats=3, search="random")
+    # Define tuning grid
+    tune.grid <- expand.grid(num_trees = c(50),
+                             k = c(0.5, 1),
+                             alpha = c(0.95, 0.99),
+                             beta = c(1.0, 2.0),
+                             nu = c(3,5,7))
+
+    ## Bayesian Generalized Linear Model
+    model_ <- caret::train(fmla.n, data = df.train[rows.model,], method = "bartMachine", metric='RMSE',
+                           trControl = fit.control, tuneGrid = tune.grid,verbose = FALSE)
+
+    parallel::stopCluster(clusters)
+    # estimate variable importance
+    importance <- caret::varImp(model_, scale=FALSE)
+
+  } else if (algorithm == 'AdaBag') {
+    print('processing Bagged AdaBoost ...')
+
+    # Define formula
+    fmla.n <- as.formula(paste(depVar," ~ ", paste(inputs, collapse= "+")))
+
+    # Parallelize tuning process
+    clusters <- parallel::makeCluster(detectCores() - 1)
+    doParallel::registerDoParallel(clusters)
+
+    # Define training control
+    fit.control <- caret::trainControl(method = method.resampling,
+                                       number = 3, repeats = 3,
+                                       search = "random",
+                                       allowParallel = TRUE)
+
+    # Define tuning grid
+    tune.grid <- expand.grid(mfinal = c(50, 100, 200),
+                             maxdepth = c(1, 3, 5))
+
+    ## Bagged AdaBoost
+    model_ <- caret::train(fmla.n, data = df.train[rows.model,],
+                           method = "AdaBag",
+                           trControl = fit.control,
+                           tuneGrid = tune.grid,
+                           metric = 'RMSE',  # Use RMSE as the evaluation metric
+                           verbose = FALSE)
+
+    parallel::stopCluster(clusters)
+
+    # estimate variable importance
+    importance <- caret::varImp(model_, scale=FALSE)
+
+  } else if (algorithm == 'BRNN') {
+    print('processing Bayesian Regularized Neural Networks ...')
+
+    # Define formula
+    fmla.n <- as.formula(paste(depVar, " ~ ", paste(inputs, collapse = "+")))
+
+    # Parallelize tuning process
+    clusters <- parallel::makeCluster(detectCores() - 1)
+    doParallel::registerDoParallel(clusters)
+
+    # Define training control
+    fit.control <- caret::trainControl(method = method.resampling,
+                                       number = 3, repeats = 3,
+                                       search = "random",
+                                       allowParallel = TRUE)
+
+    # Define tuning grid
+    tune.grid <- expand.grid(neurons = c(5, 10, 20, 30))
+
+    ## Bayesian Regularized Neural Networks (BRNN)
+    model_ <- caret::train(fmla.n, data = df.train[rows.model,],
+                           method = "brnn",
+                           trControl = fit.control,
+                           tuneGrid = tune.grid,
+                           metric = 'RMSE',  # Use RMSE as the evaluation metric
+                           verbose = FALSE)
+
+    parallel::stopCluster(clusters)
+
+    # estimate variable importance
+    importance <- caret::varImp(model_, scale=FALSE)
+
+  } else if (algorithm == 'xGB') {
+    print('processing eXtreme Gradient Boosting (XGBoost) with linear base learners ...')
+
+    # Define formula
+    fmla.n <- as.formula(paste(depVar, " ~ ", paste(inputs, collapse = "+")))
+
+    # Parallelize tuning process
+    clusters <- parallel::makeCluster(detectCores() - 1)
+    doParallel::registerDoParallel(clusters)
+
+    # Define training control
+    fit.control <- caret::trainControl(method = method.resampling,
+                                       number = 3, repeats = 3,
+                                       search = "random",
+                                       allowParallel = TRUE)
+
+    # Define tuning grid
+    tune.grid <- expand.grid(nrounds = c(50, 100, 200),
+                             lambda = c(0, 0.01, 0.1),
+                             alpha = c(0, 0.01, 0.1),
+                             eta = c(0.01, 0.05, 0.1))
+
+    ## eXtreme Gradient Boosting (XGBoost) with linear base learners
+    model_ <- caret::train(fmla.n, data = df.train[rows.model,],
+                           method = "xgbLinear",
+                           trControl = fit.control,
+                           tuneGrid = tune.grid,
+                           metric = 'RMSE',  # Use RMSE as the evaluation metric
+                           verbose = FALSE)
+
+    parallel::stopCluster(clusters)
+
+    # estimate variable importance
+    importance <- NA
+
+
+  } else if (algorithm == 'RVM') {
+    print('processing Relevance Vector Machines (RVM) with linear kernel ...')
+
+    # Define formula
+    fmla.n <- as.formula(paste(depVar, " ~ ", paste(inputs, collapse = "+")))
+
+    # Parallelize training process if applicable
+    clusters <- parallel::makeCluster(detectCores() - 1)
+    doParallel::registerDoParallel(clusters)
+
+    # Define training control
+    fit.control <- caret::trainControl(method = method.resampling,
+                                       number = 3, repeats = 3,
+                                       search = "random",
+                                       allowParallel = TRUE)
+
+    ## Relevance Vector Machines (RVM) with linear kernel
+    model_ <- caret::train(fmla.n, data = df.train[rows.model,],
+                           method = "rvmLinear",
+                           trControl = fit.control,
+                           metric = 'RMSE',  # Use RMSE as the evaluation metric
+                           verbose = FALSE)
+
+
+
+    parallel::stopCluster(clusters)
+    # estimate variable importance
+    importance <- caret::varImp(model_, scale=FALSE)
+
+
+  } else if (algorithm == 'qLASSO') {
+    print('processing Quantile Regression with LASSO penalty ...')
+
+    # Define formula
+    fmla.n <- as.formula(paste(depVar, " ~ ", paste(inputs, collapse = "+")))
+
+    # Parallelize training process if applicable
+    clusters <- parallel::makeCluster(detectCores() - 1)
+    doParallel::registerDoParallel(clusters)
+
+    # Define training control
+    fit.control <- caret::trainControl(method = method.resampling,
+                                       number = 3, repeats = 3,
+                                       search = "random",
+                                       allowParallel = TRUE)
+
+    # Define tuning grid
+    tune.grid <- expand.grid(lambda = c(0.01, 0.1, 1, 10))
+
+    ## Quantile Regression with LASSO penalty
+    model_ <- caret::train(fmla.n, data = df.train[rows.model,],
+                           method = "rqlasso",
+                           trControl = fit.control,
+                           tuneGrid = tune.grid,
+                           metric = 'RMSE',  # Use RMSE as the evaluation metric
+                           verbose = FALSE)
+
+    parallel::stopCluster(clusters)
+
+    # estimate variable importance
+    importance <- caret::varImp(model_, scale=FALSE)
+
+  } else if (algorithm == 'Ensemble') {
     print('processing Ensemble approach by stacking 3 models ....')
     print('list of models: SVM,Gradient Boosting and Neural Network ')
 
@@ -236,8 +459,8 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',seed=123, n.sam
                                              tuneGrid=tune.grid.nne,
                                              maxit = 1000, linout = 1, trace=F))
 
-    fit.control<- trainControl(method="repeatedcv",
-                               number=10,
+    fit.control<- trainControl(method=method.resampling,
+                               number=3,
                                savePredictions=TRUE,
                                #index = createFolds(data.train[,input], 5),
                                repeats=3,
@@ -249,8 +472,8 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',seed=123, n.sam
                                        tuneList = models.ensemble,
                                        methodList=algorithmList)
     # Combine Predictions from multiple models
-    stackControl <- trainControl(method="repeatedcv",
-                                 number=10,
+    stackControl <- trainControl(method=method.resampling,
+                                 number=3,
                                  repeats=3,
                                  index = createFolds(df.train[rows.model,], 5),
                                  savePredictions = "all",
@@ -261,8 +484,11 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',seed=123, n.sam
 
     parallel::stopCluster(clusters)
 
+    # estimate variable importance
+    importance <- NA
+
   } else {
-    stop("Invalid model type. Choose from 'PLSR', 'SVM', 'RF', 'GB', 'NN' or 'Ensemble.")
+    stop("Invalid model type. Choose from 'PLSR', 'SVM', 'RF', 'GB',  'xGB', 'NN', 'qLASSO','Bayesian','AdaBag','BRNN', 'RVM', or 'Ensemble.")
   }
 
 
@@ -298,7 +524,8 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',seed=123, n.sam
     model= model_,
     predictions = list(train = pred.train, test = pred.test),
     statistics = stats,
-    plot = plot.result
+    plot = plot.result,
+    importance = importance
   )
 
   return(results)

@@ -40,3 +40,6 @@ carspls(X, y)
 carspls(X, y, nLV = 3, fold = 5, scale.pretreat = 0)
 
 }
+\author{
+Ported by Carlos Camino; orignal code oin matlab by Yizeng Liang, and Hongdong Li
+}

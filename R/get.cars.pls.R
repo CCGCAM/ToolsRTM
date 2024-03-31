@@ -9,7 +9,7 @@
 #' @param scale.pretreat Whether to scale the variables. 1 for scaling, 0 for no scaling (only centered). Default is 1.
 #' @param iteration The number of Monte Carlo samplings in CARS. Default is 50.
 #' @param PartitionType The partition type for cross-validation: "random", "consecutive", or "interleaved". Default is "interleaved".
-#'
+#' @author Ported by Carlos Camino; orignal code oin matlab by Yizeng Liang, and Hongdong Li
 #' @return A list containing the results of the CARSPLS analysis.
 #' @export
 #'
@@ -17,26 +17,9 @@
 #' carspls(X, y)
 #' carspls(X, y, nLV = 3, fold = 5, scale.pretreat = 0)
 #'
-get.cars.pls<-function(X,y,nLV=2,fold=10,scale.pretreat=1,iteration=50,PartitionType="interleaved")
-{
-#+++ CARS: Competitive Adaptive Reweighted Sampling method for
-#+++ X: Sample matrix, sample in row and variable in column.
-#+++ y: The response value.
-#+++ nLV:   the number of latent variables in PLS.
-#+++ fold: The number of segments for cross validation, defalut 5.
-#+++ scale.pretreat: Whether divided by the standard deviation for each variable.
-#+++              1: scale
-#+++              0: no scale(only centered)
-#+++ iteration: the number of Monte Carlo samplings in CARS.
-#+++ PartitionType: The partition type for cross validation:"random", "consecutive", "interleaved"
-#+++ Advisor: Yizeng Liang, yizeng_liang@263.net.
-#+++ Hongdong Li, May.25, 2009 in R 2.8.1.
-#+++ Contact: lhdcsu@gmail.com
-#+++ Central South University in Changsha, P.R. China
+get.cars.pls<-function(X,y,nLV=2,fold=10,scale.pretreat=1,iteration=50,PartitionType="interleaved") {
 
 
-
-#+++ Initial settings
 Num_row<-nrow(X)
 Num_col<-ncol(X)
 
@@ -49,28 +32,29 @@ RMSECV<-rep(0,iteration)
 NumLV<-rep(0,iteration)
 VarIndex<-1:Num_col
 
-#+++ Some predifined data for CARS
-subsetVariable<-1:Num_col     #+++ selected variables for PLS modelling
-Coef<-matrix(rep(0,Num_col*iteration),Num_col) #+++ Coefficient matrix in CARS
+#Some predifined data for CARS
+subsetVariable<-1:Num_col     #elected variables for PLS modelling
+Coef<-matrix(rep(0,Num_col*iteration),Num_col) #Coefficient matrix in CARS
 Nvar<-rep(0,iteration)
 ycal<-y
 
-#+++ Parameter of exponentially decreasing function.
+#Parameter of exponentially decreasing function.
 ratio0<-1
 ratio1<-2/Num_col
 b=log(ratio0/ratio1)/(iteration-1)
 a=ratio0*exp(b)
-#+++ Main Loop for CARS Algorithm
+#Main Loop for CARS Algorithm
 for (iter in 1:iteration){
      Xcal<-X[,subsetVariable]
      #+++ PLS modeling
-     data.CARS.cal<-data.frame(indepdent=Xcal,response=ycal)  #+++ Convert into dataframe
+     data.CARS.cal<-data.frame(indepdent=Xcal,response=ycal)  #Convert into dataframe
      nLV<-min(c(nLV,dim(Xcal)))
      ncomp=nLV
      ncomp
      if (scale.pretreat==1) {plsr.fit<- mvr(response~.,ncomp,data = data.CARS.cal,method = "simpls",scale=TRUE)}
      else{plsr.fit<- mvr(response~.,ncomp,data = data.CARS.cal,method = "simpls",scale=FALSE)}
-     #+++ Model selection by cross validation
+
+     #Model selection by cross validation
      CV<-crossval(plsr.fit, segments =fold,data=data.CARS.cal,segment.type=PartitionType)
 
      validation<-CV$validation
@@ -80,28 +64,28 @@ for (iter in 1:iteration){
      NumLV[iter]<-which.min(RMSECV.temp)
 
 
-     #+++ Extract the coefficients and store them into the matrix: Coef.
+     #xtract the coefficients and store them into the matrix: Coef.
      coef0<-rep(0,Num_col)
      coef.iter<-plsr.fit$coefficients[,,nLV]
      coef0[subsetVariable]<-coef.iter
      Coef[,iter]<-coef0
 
-     #+++ Weights of each variable
+     #Weights of each variable
      weight<-abs(coef0)
      weight.order<-order(weight,decreasing=TRUE)
 
-     #+++ Calculate the ratio of variables to be retained by EDF in CARS.
+     #Calculate the ratio of variables to be retained by EDF in CARS.
      ratioVariable<-a*exp(-b*(iter+1))
      Nvar[iter]<-length(which(coef0!=0))
      K<-ceil(Num_col*ratioVariable)
 
-     #+++ Eliminate the variables of small regression coefficients by force.
+     #Eliminate the variables of small regression coefficients by force.
      weight[weight.order[K+1:Num_col]]<-0
 
-     #+++ Retained variables
+     #Retained variables
      subsetVariable<-which(weight!=0)
 
-     #+++ screen print
+     #screen print
      screen.output<-paste("The",iter,"th CARS-PLS iteration finished.")
      print(screen.output)
 }
@@ -114,12 +98,11 @@ SelectedVariables<-which(Coef[,OPT.iter]!=0)
 CARS<-list(Coef=Coef,Nvar=Nvar,RMSECV=RMSECV,
       NumLV=NumLV,Optimal.iteration=OPT.iter,MinError=MinError,
       SelectedVariables=SelectedVariables)
-return(CARS)  #+++ Returned list data for CARS program
-}         #+++ END for function
+return(CARS)
+}
 
 
- #+++ END END END END END END. Put your heart into it.
- #+++ I know where I am.
+
 
 
 
