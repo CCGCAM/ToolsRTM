@@ -1,5 +1,5 @@
 
-#' Get Simulator  By Arano Keith
+#' Get Simulator  By Carlos Camino
 #'
 #' @return
 #' @export

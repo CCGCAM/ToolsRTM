@@ -7,6 +7,7 @@
 #' "RF" (Random Forest); "NN" (Neural Network); "GB" (Gradient boosting); "Ensemble" (Stacking Ensemble models)
 #' Default is "PLSR".
 #' @param seed The seed for reproducibility. Default is 123.
+#' @param n.samples A integer with the number of samples used for tunning search (nsample/2) and create the ML model (n.sample)
 #' @param save.model Logical indicating whether to save the trained models. Default is FALSE.
 #' @param save.path Path to save the trained models. Required if save_models is TRUE.
 
@@ -16,7 +17,7 @@
 #' @examples
 #' get.inversion(data = my_data, depVar = "Cab", inputs = c("NDVI", "TCARI"), ML = "SVM", seed = 123)
 
-get.inversion <- function(data, depVar, inputs, algorithm='PLSR',seed=123, save.model = FALSE, save.path = NULL) {
+get.inversion <- function(data, depVar, inputs, algorithm='PLSR',seed=123, n.samples=500, save.model = FALSE, save.path = NULL) {
 
   # Set the seed for reproducibility
   if(is.null(seed)) {
@@ -26,12 +27,28 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',seed=123, save.
     set.seed(seed)
   }
 
+
+
+
   # Create train-test split indices based on the 'Anth' column
   indices <- caret::createDataPartition(data[, depVar], p = 0.8, list = FALSE)
 
   # Split the data into training and testing sets
   df.train <- data[indices, ]
   df.test <- data[-indices, ]
+
+
+  if(is.null(n.samples)) {
+    # Reduce sample size for tuning
+    rows.r <- sample(nrow(df.train), 500)
+    n.model <-round(dim(df.train)[1]/10,0)
+  } else {
+    # Reduce sample size for tuning
+    rows.r <- sample(nrow(df.train), n.samples)
+    n.model <- n.samples
+    rows.model <- sample(nrow(df.train), n.model)
+  }
+
 
   # Force to run PLSR if ML is null or empty
   if(is.null(algorithm) || algorithm == "") {
@@ -63,16 +80,11 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',seed=123, save.
 
     parallel::stopCluster(clusters)
 
-
-
   } else if(algorithm == "SVM") {
 
     print('processing hybrid approach using Support Vector Machine ...')
 
     fmla.n <- as.formula(paste(depVar," ~ ", paste(inputs, collapse= "+")))
-
-    # Reduce sample size for tuning
-    rows.r <- sample(nrow(df.train), 500)
 
     # Parallelize tuning process
     clusters <- parallel::makeCluster(detectCores() - 1)
@@ -85,24 +97,17 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',seed=123, save.
     cc <- as.numeric(tobj2$best.parameters[2])
     gg <- as.numeric(tobj2$best.parameters[1])
 
-    n.model <-round(dim(df.train)[1]/10,0)
-    rows.model <- sample(nrow(df.train), n.model)
     # SVM
     model_ <- svm(fmla.n, kernel = "radial", data = df.train[rows.model, ], gamma = gg, cost = cc,
                      type = "eps-regression", probability = FALSE)
 
     parallel::stopCluster(clusters)
 
-
-
   } else if(algorithm == "RF") {
-
 
     print('processing hybrid approach using Random Forest ...')
 
     fmla.n <- as.formula(paste(depVar," ~ ", paste(inputs, collapse= "+")))
-    # Reduce sample size for tuning
-    rows.r <- sample(nrow(df.train), 500)
 
     # Parallelize tuning process
     clusters <- parallel::makeCluster(detectCores() - 1)
@@ -116,9 +121,6 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',seed=123, save.
     metric <- "RMSE"
     tunegrid <- expand.grid(.mtry = best.m)
     n.trees <- ncol(df.train[, inputs])/3
-
-    n.model <-round(dim(df.train)[1]/10,0)
-    rows.model <- sample(nrow(df.train), n.model)
 
     # Define training control
     fit.control <- caret::trainControl(method = "repeatedcv", number = 3,
@@ -134,12 +136,6 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',seed=123, save.
     print('processing hybrid approach using Gradient Boosting ...')
 
     fmla.n <- as.formula(paste(depVar," ~ ", paste(inputs, collapse= "+")))
-
-    # Reduce sample size for tuning
-    rows.r <- sample(nrow(df.train), 500)
-
-    n.model <- round(dim(df.train)[1] / 10 / 2, 0)
-    rows.model <- sample(nrow(df.train), n.model)
 
     # Parallelize tuning process
     clusters <- parallel::makeCluster(detectCores() - 1)
@@ -173,8 +169,6 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',seed=123, save.
     clusters <- parallel::makeCluster(detectCores() - 1)
     doParallel::registerDoParallel(clusters)
 
-    # Reduce sample size for tuning
-    rows.r <- sample(nrow(df.train), 500)
     # Define training control
     fit.control <- caret::trainControl(method="repeatedcv", allowParallel=T,
                                        number=3, repeats=3, search="random",
@@ -184,9 +178,6 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',seed=123, save.
     # Define tuning grid with reduced search space
     nnet.grid <- expand.grid(.decay = seq(0,0.1,by=0.01),
                              .size = seq(1,10,by=1))#, .bag=F) for vNNet
-
-    n.model <-round(dim(df.train)[1]/10,0)
-    rows.model <- sample(nrow(df.train), n.model)
 
     ##Neural-Network Model
     model_<- caret::train(fmla.n, data = df.train[rows.model,],
@@ -217,9 +208,6 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',seed=123, save.
                        'svmRadial', #SVM with RBF Kernel
                        'nnet') #neural network
 
-    # Reduce sample size for tuning
-    n.model <-round(dim(df.train)[1]/10,0)
-    rows.model <- sample(nrow(df.train), n.model)
     ### tuning parameters for each model
 
     # gmb

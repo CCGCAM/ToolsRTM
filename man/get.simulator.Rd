@@ -2,10 +2,10 @@
 % Please edit documentation in R/get.simulator.R
 \name{get.simulator}
 \alias{get.simulator}
-\title{Get Simulator  By Arano Keith}
+\title{Get Simulator  By Carlos Camino}
 \usage{
 get.simulator()
 }
 \description{
-Get Simulator  By Arano Keith
+Get Simulator  By Carlos Camino
 }
