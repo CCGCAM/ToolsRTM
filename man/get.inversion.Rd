@@ -10,6 +10,7 @@ get.inversion(
   inputs,
   algorithm = "PLSR",
   seed = 123,
+  n.samples = 500,
   save.model = FALSE,
   save.path = NULL
 )
@@ -26,6 +27,8 @@ get.inversion(
 Default is "PLSR".}
 
 \item{seed}{The seed for reproducibility. Default is 123.}
+
+\item{n.samples}{A integer with the number of samples used for tunning search (nsample/2) and create the ML model (n.sample)}
 
 \item{save.model}{Logical indicating whether to save the trained models. Default is FALSE.}
 
