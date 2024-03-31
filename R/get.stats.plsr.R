@@ -1,6 +1,6 @@
 #' Get Statistical Scores for PLSR Model
 #'
-#' This function calculates statistical scores such as R-squared, RMSE, MNBE,FGE, and MAE
+#' This function calculates statistical scores such as R-squared, RMSE, MNMB,MB, FGE and MAE.
 #' for both training and testing datasets based on predictions from a Partial Least Squares
 #' Regression (PLSR) model.
 #'
@@ -58,17 +58,17 @@ pred.test<-predict(object = model,ncomp = k,newdata=test)
 r2.train<-round(cor(pred.train,train[,var],use='pairwise.complete.obs')^2,2)
 rmse.train<-round(RMSE(pred.train,train[,var]),2)
 mae.train<-round(MAE(pred.train,train[,var]),2)
-mnmb.train<-round(MAE(pred.train,train[,var]),2)
-mb.train<-round(MAE(pred.train,train[,var]),2)
-fge.train<-round(MAE(pred.train,train[,var]),2)
+mnmb.train<-round(MNMB(pred.train,train[,var]),2)
+mb.train<-round(MB(pred.train,train[,var]),2)
+fge.train<-round(FGE(pred.train,train[,var]),2)
 
 #### Skill scores for testing data
 r2.test<-round(cor(pred.test,test[,var],use='pairwise.complete.obs')^2,2)
 rmse.test<-round(RMSE(pred.test,test[,var]),2)
 mae.test<-round(MAE(pred.test,test[,var]),2)
-mnmb.test<-round(MAE(pred.test,train[,var]),2)
-mb.test<-round(MAE(pred.test,train[,var]),2)
-fge.test<-round(MAE(pred.test,train[,var]),2)
+mnmb.test<-round(MNMB(pred.test,train[,var]),2)
+mb.test<-round(MB(pred.test,train[,var]),2)
+fge.test<-round(FGE(pred.test,train[,var]),2)
 
 stats<-data.frame(r2=c(r2.train,r2.test),
                   rmse=c(rmse.train,rmse.test),

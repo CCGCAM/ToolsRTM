@@ -20,6 +20,6 @@ A data frame containing the statistical scores (R-squared, RMSE, MAE)
 for both training and testing datasets.
 }
 \description{
-This function calculates statistical scores such as R-squared, RMSE, MNBE,FGE, and MAE
+This function calculates statistical scores such as R-squared, RMSE, MNMB,MB, FGE and MAE.
 for both training and testing datasets based on predictions from a ML model.
 }
