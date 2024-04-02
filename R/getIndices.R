@@ -47,8 +47,14 @@ getIndices <- function(data, pattern.rfl='R.', spectral.domain=NULL) {
     } else {
       
       df = data[,rfl_bands]
-      wavelengths = as.numeric(gsub(".*?([0-9]+).*", "\\1", rfl_bands))
-      range2interpo <-  c((min(wavelengths)+10):max(wavelengths)+10)
+      as.numeric(gsub("R\\.(\\d+\\.\\d+)", "\\1",rfl_bands))
+      #wavelengths = as.numeric(gsub(".*?([0-9]+).*", "\\1", rfl_bands))
+      # Extract wavelengths with decimal points
+      wavelengths <- as.numeric(gsub(".*?([0-9]+\\.[0-9]+).*", "\\1", rfl_bands))
+      
+      min_ <-round(min(wavelengths)+10,0)
+      max_ <-round(max(wavelengths)+10,0)
+      range2interpo <-  c(min_:max_)
       
       indices.list = list()
     }
@@ -359,49 +365,49 @@ getIndices <- function(data, pattern.rfl='R.', spectral.domain=NULL) {
       ########################################################
       
       ##original conf form J.B Feret for CR_SWIR
-      waves_ <- c('w02'=497, 'w03'=560.0, 'w04'=665, 'B05'=704, 'B06'=740,
-                  'w07' = 782, 'w08' = 835, 'w8A' = 865, 'w11' = 1614, 'w12' = 2202,'B.800'=800,'B.762'=762)
+      waves_ <- c('w02'=497, 'w03'=560.0, 'w04'=665, 'w05'=704, 'w06'=740,
+                  'w07' = 782, 'w08' = 835, 'w8A' = 865, 'w11' = 1614, 'w12' = 2202,'w.800'=800,'w.762'=762)
       
       if(any(wavelengths == 865)){
         
-        indices['CR.red.nir.1'] <- r['740']  / (r['865'] + (waves_['B06'] - waves_['B8A']) * (r['782'] - r['865']) / (waves_['B07'] - waves_['B8A']))
-        indices['CR.red.nir.2'] <- r['704']  / (r['782'] + (waves_['B05'] - waves_['B07']) * (r['740'] - r['782']) / (waves_['B06'] - waves_['B07']))
-        indices['CR.red.nir.3'] <- r['704']  / (r['865'] + (waves_['B05'] - waves_['B8A']) * (r['740'] - r['865']) / (waves_['B06'] - waves_['B8A']))
-        indices['CR.red.nir.4'] <- r['665']  / (r['865'] + (waves_['B04'] - waves_['B8A']) * (r['704'] - r['865']) / (waves_['B06'] - waves_['B8A']))
-        indices['CR.red.nir.5'] <- r['740']  / (r['865'] + (waves_['B06'] - waves_['B8A']) * (r['704'] - r['865']) / (waves_['B05'] - waves_['B8A']))
-        indices['CR.red.nir.6'] <- r['782']  / (r['865'] + (waves_['B07'] - waves_['B8A']) * (r['704'] - r['865']) / (waves_['B05'] - waves_['B8A']))
-        indices['CR.red.nir.7'] <- r['762']  / (r['865'] + (waves_['B.762'] - waves_['B8A']) * (r['704'] - r['865']) / (waves_['B05'] - waves_['B8A']))
+        indices['CR.red.nir.1'] <- r['740']  / (r['865'] + (waves_['w06'] - waves_['w8A']) * (r['782'] - r['865']) / (waves_['w07'] - waves_['w8A']))
+        indices['CR.red.nir.2'] <- r['704']  / (r['782'] + (waves_['w05'] - waves_['w07']) * (r['740'] - r['782']) / (waves_['w06'] - waves_['w07']))
+        indices['CR.red.nir.3'] <- r['704']  / (r['865'] + (waves_['w05'] - waves_['w8A']) * (r['740'] - r['865']) / (waves_['w06'] - waves_['w8A']))
+        indices['CR.red.nir.4'] <- r['665']  / (r['865'] + (waves_['w04'] - waves_['w8A']) * (r['704'] - r['865']) / (waves_['w06'] - waves_['w8A']))
+        indices['CR.red.nir.5'] <- r['740']  / (r['865'] + (waves_['w06'] - waves_['w8A']) * (r['704'] - r['865']) / (waves_['w05'] - waves_['w8A']))
+        indices['CR.red.nir.6'] <- r['782']  / (r['865'] + (waves_['w07'] - waves_['w8A']) * (r['704'] - r['865']) / (waves_['w05'] - waves_['w8A']))
+        indices['CR.red.nir.7'] <- r['762']  / (r['865'] + (waves_['w.762'] - waves_['w8A']) * (r['704'] - r['865']) / (waves_['w05'] - waves_['w8A']))
         
       } else if (any(wavelengths == 835)){
         
-        indices['CR.red.nir.1'] <- r['740']  / (r['835'] + (waves_['B06'] - waves_['B08']) * (r['782'] - r['835']) / (waves_['B07'] - waves_['B08']))
-        indices['CR.red.nir.2'] <- r['704']  / (r['782'] + (waves_['B05'] - waves_['B07']) * (r['740'] - r['782']) / (waves_['B06'] - waves_['B07']))
-        indices['CR.red.nir.3'] <- r['704']  / (r['835'] + (waves_['B05'] - waves_['B08']) * (r['740'] - r['835']) / (waves_['B06'] - waves_['B08']))
-        indices['CR.red.nir.4'] <- r['665']  / (r['835'] + (waves_['B04'] - waves_['B08']) * (r['704'] - r['835']) / (waves_['B06'] - waves_['B08']))
-        indices['CR.red.nir.5'] <- r['740']  / (r['835'] + (waves_['B06'] - waves_['B08']) * (r['704'] - r['835']) / (waves_['B05'] - waves_['B08']))
-        indices['CR.red.nir.6'] <- r['782']  / (r['835'] + (waves_['B07'] - waves_['B08']) * (r['704'] - r['835']) / (waves_['B05'] - waves_['B08']))
-        indices['CR.red.nir.7'] <- r['762']  / (r['835'] + (waves_['B.762'] - waves_['B08']) * (r['704'] - r['835']) / (waves_['B05'] - waves_['B.800']))
+        indices['CR.red.nir.1'] <- r['740']  / (r['835'] + (waves_['w06'] - waves_['w08']) * (r['782'] - r['835']) / (waves_['w07'] - waves_['w08']))
+        indices['CR.red.nir.2'] <- r['704']  / (r['782'] + (waves_['w05'] - waves_['w07']) * (r['740'] - r['782']) / (waves_['w06'] - waves_['w07']))
+        indices['CR.red.nir.3'] <- r['704']  / (r['835'] + (waves_['w05'] - waves_['w08']) * (r['740'] - r['835']) / (waves_['w06'] - waves_['w08']))
+        indices['CR.red.nir.4'] <- r['665']  / (r['835'] + (waves_['w04'] - waves_['w08']) * (r['704'] - r['835']) / (waves_['w06'] - waves_['w08']))
+        indices['CR.red.nir.5'] <- r['740']  / (r['835'] + (waves_['w06'] - waves_['w08']) * (r['704'] - r['835']) / (waves_['w05'] - waves_['w08']))
+        indices['CR.red.nir.6'] <- r['782']  / (r['835'] + (waves_['w07'] - waves_['w08']) * (r['704'] - r['835']) / (waves_['w05'] - waves_['w08']))
+        indices['CR.red.nir.7'] <- r['762']  / (r['835'] + (waves_['w.762'] - waves_['w08']) * (r['704'] - r['835']) / (waves_['w05'] - waves_['w.800']))
         
       } else if (any(wavelengths == 800)){
           
-          indices['CR.red.nir.1'] <- r['740']  / (r['800'] + (waves_['B06'] - waves_['B.800']) * (r['782'] - r['800']) / (waves_['B.762'] - waves_['B.800']))
-          indices['CR.red.nir.2'] <- r['704']  / (r['782'] + (waves_['B05'] - waves_['B07']) * (r['740'] - r['782']) / (waves_['B06'] - waves_['B.762']))
-          indices['CR.red.nir.3'] <- r['704']  / (r['800'] + (waves_['B05'] - waves_['B.800']) * (r['740'] - r['800']) / (waves_['B06'] - waves_['B.800']))
-          indices['CR.red.nir.4'] <- r['665']  / (r['800'] + (waves_['B04'] - waves_['B.800']) * (r['704'] - r['800']) / (waves_['B06'] - waves_['B.800']))
-          indices['CR.red.nir.5'] <- r['740']  / (r['800'] + (waves_['B06'] - waves_['B.800']) * (r['704'] - r['800']) / (waves_['B05'] - waves_['B.800']))
-          indices['CR.red.nir.6'] <- r['782']  / (r['800'] + (waves_['B07'] - waves_['B.800']) * (r['704'] - r['800']) / (waves_['B05'] - waves_['B.800']))
-          indices['CR.red.nir.7'] <- r['762']  / (r['800'] + (waves_['B.762'] - waves_['B.800']) * (r['704'] - r['800']) / (waves_['B05'] - waves_['B.800']))
+          indices['CR.red.nir.1'] <- r['740']  / (r['800'] + (waves_['w06'] - waves_['w.800']) * (r['782'] - r['800']) / (waves_['w.762'] - waves_['w.800']))
+          indices['CR.red.nir.2'] <- r['704']  / (r['782'] + (waves_['w05'] - waves_['w07']) * (r['740'] - r['782']) / (waves_['w06'] - waves_['w.762']))
+          indices['CR.red.nir.3'] <- r['704']  / (r['800'] + (waves_['w05'] - waves_['w.800']) * (r['740'] - r['800']) / (waves_['w06'] - waves_['w.800']))
+          indices['CR.red.nir.4'] <- r['665']  / (r['800'] + (waves_['w04'] - waves_['w.800']) * (r['704'] - r['800']) / (waves_['w06'] - waves_['w.800']))
+          indices['CR.red.nir.5'] <- r['740']  / (r['800'] + (waves_['w06'] - waves_['w.800']) * (r['704'] - r['800']) / (waves_['w05'] - waves_['w.800']))
+          indices['CR.red.nir.6'] <- r['782']  / (r['800'] + (waves_['w07'] - waves_['w.800']) * (r['704'] - r['800']) / (waves_['w05'] - waves_['w.800']))
+          indices['CR.red.nir.7'] <- r['762']  / (r['800'] + (waves_['w.762'] - waves_['w.800']) * (r['704'] - r['800']) / (waves_['w05'] - waves_['w.800']))
           
         
       } else {
         
-        indices['CR.red.nir.1'] <- r['740']  / (r['800'] + (waves_['B06'] - waves_['B.800']) * (r['782'] - r['800']) / (waves_['B.762'] - waves_['B.800']))
-        indices['CR.red.nir.2'] <- r['704']  / (r['782'] + (waves_['B05'] - waves_['B07']) * (r['740'] - r['782']) / (waves_['B06'] - waves_['B.762']))
-        indices['CR.red.nir.3'] <- r['704']  / (r['800'] + (waves_['B05'] - waves_['B.800']) * (r['740'] - r['800']) / (waves_['B06'] - waves_['B.800']))
-        indices['CR.red.nir.4'] <- r['665']  / (r['800'] + (waves_['B04'] - waves_['B.800']) * (r['704'] - r['800']) / (waves_['B06'] - waves_['B.800']))
-        indices['CR.red.nir.5'] <- r['740']  / (r['800'] + (waves_['B06'] - waves_['B.800']) * (r['704'] - r['800']) / (waves_['B05'] - waves_['B.800']))
-        indices['CR.red.nir.6'] <- r['782']  / (r['800'] + (waves_['B07'] - waves_['B.800']) * (r['704'] - r['800']) / (waves_['B05'] - waves_['B.800']))
-        indices['CR.red.nir.7'] <- r['762']  / (r['800'] + (waves_['B.762'] - waves_['B.800']) * (r['704'] - r['800']) / (waves_['B05'] - waves_['B.800']))
+        indices['CR.red.nir.1'] <- r['740']  / (r['800'] + (waves_['w06'] - waves_['w.800']) * (r['782'] - r['800']) / (waves_['w.762'] - waves_['w.800']))
+        indices['CR.red.nir.2'] <- r['704']  / (r['782'] + (waves_['w05'] - waves_['w07']) * (r['740'] - r['782']) / (waves_['w06'] - waves_['w.762']))
+        indices['CR.red.nir.3'] <- r['704']  / (r['800'] + (waves_['w05'] - waves_['w.800']) * (r['740'] - r['800']) / (waves_['w06'] - waves_['w.800']))
+        indices['CR.red.nir.4'] <- r['665']  / (r['800'] + (waves_['w04'] - waves_['w.800']) * (r['704'] - r['800']) / (waves_['w06'] - waves_['w.800']))
+        indices['CR.red.nir.5'] <- r['740']  / (r['800'] + (waves_['w06'] - waves_['w.800']) * (r['704'] - r['800']) / (waves_['w05'] - waves_['w.800']))
+        indices['CR.red.nir.6'] <- r['782']  / (r['800'] + (waves_['w07'] - waves_['w.800']) * (r['704'] - r['800']) / (waves_['w05'] - waves_['w.800']))
+        indices['CR.red.nir.7'] <- r['762']  / (r['800'] + (waves_['w.762'] - waves_['w.800']) * (r['704'] - r['800']) / (waves_['w05'] - waves_['w.800']))
         
         
       }
@@ -500,9 +506,9 @@ getIndices <- function(data, pattern.rfl='R.', spectral.domain=NULL) {
 
       if(any(wavelengths >= 2202)){
         #CR_SWIR from J.B.Feret
-        waves_2 <- c('B02'=497, 'B03'=560.0, 'B04'=665, 'B05'=704, 'B06'=740,
-                      'B07' = 782, 'B08' = 835, 'B8A' = 865, 'B11' = 1614, 'B12' = 2202)
-        indices['CR.SWIR'] <- r['1614']/(r['865']+(waves_2['B11']-waves_2['B8A'])*(r['2202']-r['865'])/(waves_2['B12']-waves_2['B8A']))
+        waves_swir <- c('w02'=497, 'w03'=560.0, 'w04'=665, 'w05'=704, 'w06'=740,
+                      'w07' = 782, 'w08' = 835, 'w8A' = 865, 'w11' = 1614, 'w12' = 2202)
+        indices['CR.SWIR'] <- r['1614']/(r['865']+(waves_swir['w11']-waves_swir['w8A'])*(r['2202']-r['865'])/(waves_swir['w12']-waves_swir['w8A']))
         
       }
      
