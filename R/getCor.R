@@ -7,7 +7,7 @@
 #' @param setseed  the number of rows for the LUT
 #' @param rho  the correlate value for Uniform distribution
 #' @param Varnames  the number of rows for the LUT
-#' @param MinRage  the number of rows for the LUT
+#' @param MinRange  the number of rows for the LUT
 #' @param MaxRange  the number of rows for the LUT
 #' @return a dataframe with all parameters
 #' @export
@@ -17,7 +17,7 @@
 #' 
 getCor<-function(n_inputs=NULL, nLUT=100,  distribution = 'Uniform',setseed = 123, rho=NULL,
                          Varnames = NULL,
-                         MinRage = NULL,
+                         MinRange = NULL,
                          MaxRange = NULL){
   
   if (is.null(rho)){
@@ -74,8 +74,8 @@ getCor<-function(n_inputs=NULL, nLUT=100,  distribution = 'Uniform',setseed = 12
    
     for (i in c(1:dim(df.matrix)[2])){
       
-      df.matrix[,i]<-scales::rescale(df.matrix[,i], to = c(MinRage[i], MaxRange[i]))   
-      df.matrix[,i]<-abs(jitter(df.matrix[,i], factor=2, amount = NULL))
+      df.matrix[,i]<-scales::rescale(df.matrix[,i], to = c(MinRange[i], MaxRange[i]))   
+      df.matrix[,i]<-(jitter(df.matrix[,i], factor=2, amount = NULL))
        
     }
     
@@ -101,9 +101,19 @@ getCor<-function(n_inputs=NULL, nLUT=100,  distribution = 'Uniform',setseed = 12
   
   if ( distribution == 'Uniform'){
     message('Generating a Uniform distribution for all correlated inputs ...')
-    norm.cop <- copula::normalCopula(rho,dim=n); 
-    df.uniform <- copula::rCopula(n.samples, norm.cop)
+    #norm.cop <- copula::normalCopula(rho,dim=n); 
+    #df.uniform <- copula::rCopula(n.samples, norm.cop)
     
+    # Generating uncorrelated uniform random variables
+    df.uniform <- matrix(runif(n.samples * n), ncol = n)
+    # If rho is provided, make them correlated
+    if (!is.null(rho) && rho != 0) {
+      Sigma <- matrix(rho, nrow = n, ncol = n)
+      diag(Sigma) <- 1
+      df.uniform <- t(t(chol(Sigma)) %*% t(df.uniform))
+    }
+    
+
     ## convert to uniform
     #df.uniform = pnorm(df.uniform) 
     #df.uniform = sapply(1:n, FUN = function(i) list_distributions[[2]](df.uniform[,i]))
@@ -111,8 +121,8 @@ getCor<-function(n_inputs=NULL, nLUT=100,  distribution = 'Uniform',setseed = 12
     
     for (i in c(1:dim(df.uniform)[2])){
       
-      df.uniform[,i]<-scales::rescale(df.uniform[,i], to = c(MinRage[i], MaxRange[i]))   
-      df.uniform[,i]<-abs(jitter(df.uniform[,i], factor=2, amount = NULL))
+      df.uniform[,i]<-scales::rescale(df.uniform[,i], to = c(MinRange[i], MaxRange[i]))   
+      df.uniform[,i]<-(jitter(df.uniform[,i], factor=2, amount = NULL))
       
     }
     

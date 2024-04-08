@@ -11,7 +11,7 @@ getCor(
   setseed = 123,
   rho = NULL,
   Varnames = NULL,
-  MinRage = NULL,
+  MinRange = NULL,
   MaxRange = NULL
 )
 }
@@ -28,7 +28,7 @@ getCor(
 
 \item{Varnames}{the number of rows for the LUT}
 
-\item{MinRage}{the number of rows for the LUT}
+\item{MinRange}{the number of rows for the LUT}
 
 \item{MaxRange}{the number of rows for the LUT}
 }

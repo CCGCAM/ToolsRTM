@@ -239,6 +239,24 @@ getIndices <- function(data, pattern.rfl='R.', spectral.domain=NULL) {
       # Lichtenhaler et al. (1996)
       indices['LIC3'] <- r['440'] / r['740']
       
+      ## Red-edge Indices
+      ##original conf form J.B Feret for CR_SWIR
+      waves_ <- c('w02'=497, 'w03'=560.0, 'w04'=665, 'w05'=704, 'w06'=740,
+                  'w07' = 782, 'w08' = 835, 'w8A' = 865, 'w11' = 1614, 'w12' = 2202,'w.800'=800,'w.762'=762)
+      #
+      indices['CIre'] <- (r['782'] / r['705'])-1
+      indices['CIrededge'] <- (r['800'] / r['705'])-1
+      indices['CIgreen'] <- (r['800'] / r['B3'])-1
+      indices['Chlred.edge'] <- (r['780'] / r['705']) ** (-1)
+      indices['CVI'] <- (r['800'] * r['665']) / r['665']**2
+      indices['IRECI'] <- (r['780'] - r['665']) / (r['705'] / r['740'])
+      indices['REP'] <- 700 + 40* (((r['665'] + r['780'])/2) -  r['705'])/ (r['740'] - r['705'])
+      indices['RVI'] <-  (r['800'] / r['665'])
+      
+      indices['RedEg1'] <- r['705'] / r['665']
+      indices['RedEg2'] <- (r['705'] - r['665']) / (r['705'] + r['665'])
+
+      
       # ##########################################
       ## PRIs Indices
       ##########################################

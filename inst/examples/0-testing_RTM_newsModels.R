@@ -5,7 +5,6 @@ rm(list= ls())
 #	0. load main Libraries   -----    
 ##############################################################################################################################
 
-if (!require("hsdar")) { install.packages("hsdar"); require("hsdar") }  ### hsdar for PROSAIL
 if (!require("RColorBrewer")) { install.packages("RColorBrewer"); require("RColorBrewer") }  ### colors
 if (!require("ggplot2")) { install.packages("ggplot2"); require("ggplot2") }  ### Paralell foreach and caret
 
