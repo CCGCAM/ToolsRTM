@@ -175,7 +175,7 @@ server <-shinyServer(function(input, output, session) {
     LUT_ <- lut_scope.sim()[[1]]
 
     db.sim <- get.SCOPE(LUT=LUT_,options.SCOPE = data.opts,path.out = 'www/outs/',
-                                  optipar=optipar2021.Pro.CX,
+                                  optipar=SCOPEinR::optipar2021.Pro.CX,
                                   leaf.model='fluspect-CX',canopy.model='fourSAIL',
                                   get.outputs = 'Main', get.plots = F)
 
@@ -421,7 +421,7 @@ server <-shinyServer(function(input, output, session) {
 
   ########### 2) SPART -------------------------------
 
-  ### Define table for SPART model ---------------------------------------------------
+  ## Define table for SPART model ---------------------------------------------------
 
 
   output$spart_table <- renderTable({
@@ -567,7 +567,7 @@ server <-shinyServer(function(input, output, session) {
 
     }
 
-    data.spart<- SPART(inputLUT = LUT_[1,],optipar=optipar2021.Pro.CX,
+    data.spart<- SPART(inputLUT = LUT_[1,],optipar=SCOPEinR::optipar2021.Pro.CX,
                                       CanopyModel = 'fourSAIL',
                                       LeafModel='PROSPECT-PRO',
                                       df.irradiance = NULL,

@@ -14,17 +14,7 @@ SPART.simN(
 )
 }
 \arguments{
-\item{inputLUT}{}
-
-\item{optipar}{}
-
-\item{CanopyModel}{}
-
-\item{LeafModel}{}
-
 \item{sensor.i}{}
-
-\item{df.irradiance}{}
 }
 \description{
 Title

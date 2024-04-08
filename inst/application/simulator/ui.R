@@ -305,8 +305,15 @@ ui <- navbarPage("Online reflectance simulator",theme = shinytheme("cosmo"),
                                          br(),
                                          code('install.packages("toolsrtm-main.tar.gz",repos = NULL,type = "source")'),
                                          br(),
-
-
+                                         
+                                         h3("Install SCOPEinR"),
+                                         p('SCOPEinR is avalaible on gitlab, so you can install using the R console:'),
+                                         
+                                         br(),
+                                         code('install.packages("scopeinr-main.tar.gz",repos = NULL,type = "source")'),
+                                         br(),
+                                         p('To run SPART and SCOPE model is needed the SCOPEinR, plase ask to Carlos Camino to get SCOPEinR:'),
+                                         
                                          h3("Citation"),
                                          p('If you use ToolSRTM, please cite the following references:'),
                                          p('Camino et al., (2024). Monitoring physiological plant traits linked to GPP by combining Sentinel-2 imagery with a biophysical model for forest disturbance detection.'),
