@@ -41,11 +41,11 @@ getCor<-function(n_inputs=NULL, nLUT=100,  distribution = 'Uniform',setseed = 12
     set.seed(1234)
   }
   
-  if (length(MinRage) != length(MinRage) ){
+  if (length(MinRange) != length(MinRange) ){
     message('Min and Max vectors should have same lengths')
     stop()
   }
-  if (is.null(MinRage) | is.null(MinRage)){
+  if (is.null(MinRange) | is.null(MinRange)){
     message('please some inputs is missing')
     stop()
   }
