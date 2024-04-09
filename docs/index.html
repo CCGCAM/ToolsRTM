@@ -5,14 +5,14 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="A series of tools for simulating spectra with radiative transfer models  and Sentinel-2 data.">
-<title>Tools for simulating and spatial trait mappings • ToolsRTM</title>
+<meta name="description" content="A series of tools for simulating spectra with radiative transfer modelsand Sentinel-2 data.">
+<title>A package for deriving plant traits using radiative transfer models • ToolsRTM</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="deps/bootstrap-5.1.0/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.1.0/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Tools for simulating and spatial trait mappings">
-<meta property="og:description" content="A series of tools for simulating spectra with radiative transfer models  and Sentinel-2 data.">
+<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="A package for deriving plant traits using radiative transfer models">
+<meta property="og:description" content="A series of tools for simulating spectra with radiative transfer modelsand Sentinel-2 data.">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="index.html">ToolsRTM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.52</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -60,21 +60,35 @@
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header"><h1 id="toolsrtm">ToolsRTM<a class="anchor" aria-label="anchor" href="#toolsrtm"></a>
 </h1></div>
-<p>An R packages with tools for simulating canopy reflectance using a set of radiative transfer (RT) models at Sentinel-2 scale</p>
-<div class="section level2">
-<h2 id="getting-started">Getting started<a class="anchor" aria-label="anchor" href="#getting-started"></a>
-</h2>
-<p>Install the package prospect with the following command line in R session: &gt; &gt; devtools::install_gitlab(‘caminoccg/toolsrtm’) &gt;</p>
+<p>An R packages with tools for simulating canopy reflectance using a set of radiative transfer (RT) models at several satellite resolutions</p>
+<div class="section level3">
+<h3 id="getting-started">Getting started<a class="anchor" aria-label="anchor" href="#getting-started"></a>
+</h3>
+<p>To install the ToolsRTM package, please follow these instructions in R session:</p>
+<ol style="list-style-type: decimal">
+<li>Download the ToolsRTM package as .tar.gz file</li>
+</ol>
+<pre><code><span><span class="co">## install SCOPEinR</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">'pathWithFile/toolsrtm-main.tar.gz'</span>,repos <span class="op">=</span> <span class="cn">NULL</span>,type <span class="op">=</span> <span class="st">"source"</span><span class="op">)</span></span></code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>Additional package SCOPEinR package is needed for the SCOPE model.</li>
+</ol>
+<p>A R package for running the Soil Canopy Observation, Photochemistry and Energy fluxes (SCOPE, Van der Tol at al., 2009, Yang et al., 2020) radiative transfer model developed in MATLAB.</p>
+<pre><code><span><span class="co">## Install additional SCOPEinR package. </span></span>
+<span><span class="co"># SCOPEinR uses inversion method and main RT models at leaf and canopy scales (INFORM, PROSAIL-2, PROSPECT-D and PRO, Liberty)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">'pathWithFile/scopeinr-main.tar.gz'</span>,repos <span class="op">=</span> <span class="cn">NULL</span>,type <span class="op">=</span> <span class="st">"source"</span><span class="op">)</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="manual">Manual<a class="anchor" aria-label="anchor" href="#manual"></a>
 </h2>
-<p>Manual is available at ReadTheDocs <a href="https://toolsrtm-tutorial.readthedocs.io/en/latest/" class="external-link uri">https://toolsrtm-tutorial.readthedocs.io/en/latest/</a></p>
+<p>Manual is available at ReadTheDocs <a href="https://toolsrtm-tutorial.readthedocs.io/en/latest/" class="external-link uri">https://toolsrtm-tutorial.readthedocs.io/en/latest/</a> (in progress)</p>
 </div>
 <div class="section level2">
 <h2 id="description">Description<a class="anchor" aria-label="anchor" href="#description"></a>
 </h2>
-<p>This package integrates the main radiative transfer (RT) models for simulating canopy reflectance with remote sensing tools for estimating plant traits at Sentinel-2 scales.</p>
+<p>This package integrates the main radiative transfer (RT) models for simulating canopy reflectance at hyperspectral and Sentinel-2 scales. This package uses several functions for estimating plant traits, spectral indices and useful functions for generating time series, validation of the predictions with field observations ….</p>
 </div>
 <div class="section level2">
 <h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
@@ -92,10 +106,9 @@
 <p>More info: <a href="http://teledetection.ipgp.fr/prosail/" class="external-link uri">http://teledetection.ipgp.fr/prosail/</a></p>
 <p>Basic version of PROSPECT-D and PROSPECT-PRO: Féret J.-B., 2021</p>
 </div>
-</div>
-<div class="section level1">
-<h1 id="foursail--foursail-2-models">fourSAIL &amp; fourSAIL-2 models<a class="anchor" aria-label="anchor" href="#foursail--foursail-2-models"></a>
-</h1>
+<div class="section level2">
+<h2 id="foursail--foursail-2-models">fourSAIL &amp; fourSAIL-2 models<a class="anchor" aria-label="anchor" href="#foursail--foursail-2-models"></a>
+</h2>
 <p>Authors: Verhoef W &amp; Bach H</p>
 <p>Verhoef W &amp; Bach H, 2007. Coupled soil–leaf-canopy and atmosphere radiative transfer modeling to simulate hyperspectral multi-angular surface reflectance and TOA radiance data. Remote Sensing of Environment, 109:166-182. <a href="doi:10.1016/j.rse.2006.12.013" class="uri">doi:10.1016/j.rse.2006.12.013</a></p>
 <p>Verhoef W, Jia L, Xiao Q &amp; Su Z, 2007. Unified optical-thermal four-stream radiative transfer theory for homogeneous vegetation canopies. IEEE Transactions in Geosciences and Remote Sensing, 45:1808–1822. <a href="https://doi.org/10.1109/TGRS.2007.895844" class="external-link uri">https://doi.org/10.1109/TGRS.2007.895844</a> PROSAIL</p>
@@ -103,9 +116,15 @@
 <p>Berger K, Atzberger C, Danner M, D’Urso G, Mauser W, Vuolo F &amp; Hank T 2018. Evaluation of the PROSAIL Model Capabilities for Future Hyperspectral Model Environments: A Review Study. Remote Sensing, 10:85. <a href="https://doi.org/10.3390/rs10010085" class="external-link uri">https://doi.org/10.3390/rs10010085</a></p>
 <p>More info: <a href="http://teledetection.ipgp.fr/prosail/" class="external-link uri">http://teledetection.ipgp.fr/prosail/</a></p>
 <p>Basic version of fourSAIL and fourSAIL2: Verhoef W., Bach. H. fourSAILs modifications: Féret J.-B., 2021</p>
-<p>#FLUSPECT model</p>
+</div>
+<div class="section level2">
+<h2 id="fluspect-model">FLUSPECT model<a class="anchor" aria-label="anchor" href="#fluspect-model"></a>
+</h2>
 <p>Vilfan, N., van der Tol, C., Muller, O., Rascher, U., Verhoef, W., 2016. Fluspect-B: A model for leaf fluorescence, reflectance and transmittance spectra. Remote Sens. Environ. 186, 596?615. <a href="doi:10.1016/j.rse.2016.09.017" class="uri">doi:10.1016/j.rse.2016.09.017</a></p>
-<p>#Invertible Forest Reflectance Model</p>
+</div>
+<div class="section level2">
+<h2 id="invertible-forest-reflectance-model">Invertible Forest Reflectance Model<a class="anchor" aria-label="anchor" href="#invertible-forest-reflectance-model"></a>
+</h2>
 <p>Authors:Atzberger, C.; Schlerf, M.</p>
 <p>Atzberger, C., 2000. Development of an Invertible Forest Reflectance Model: The INFOR- model.</p>
 <p>Schlerf, M., Atzberger, C., 2006. Inversion of a forest reflectance model to estimate structural canopy variables from hyperspectral remote sensing data. Remote Sens. Environ. 100, 281–294. <a href="https://doi.org/10.1016/j.rse.2005.10.006" class="external-link uri">https://doi.org/10.1016/j.rse.2005.10.006</a>.</p>
@@ -115,34 +134,15 @@
 <p>Verhoef, W. 1984: Light scattering by leaf layers with application to canopy reflectance modeling: The SAIL model. Remote Sensing of Environment, 16: 125-141.</p>
 <p>Basic version of INFORM: Clement Atzberger, 1999 INFORM modifications and validation: Martin Schlerf, 2004-2007</p>
 </div>
-<div class="section level1">
-<h1 id="soil-canopy-observation-photochemistry-and-energy-fluxes-model-scope">Soil Canopy Observation, Photochemistry and Energy fluxes model (SCOPE)<a class="anchor" aria-label="anchor" href="#soil-canopy-observation-photochemistry-and-energy-fluxes-model-scope"></a>
-</h1>
-<p>Authors:Christiaan van der Tol</p>
-<p>G.James Collatz, J.Timothy Ball, Cyril Grivet, and Joseph A Berry. Physiological and environmental regulation of stomatal conductance, photosynthesis and transpiration: a model that includes a laminar boundary layer. Agric. For. Meteorol., 54(2-4):107–136, apr 1991. URL: <a href="https://www.sciencedirect.com/science/article/pii/0168192391900028" class="external-link uri">https://www.sciencedirect.com/science/article/pii/0168192391900028</a>, <a href="doi:10.1016/0168-1923(91)90002-8" class="uri">doi:10.1016/0168-1923(91)90002-8</a>.</p>
-<p>GJ Collatz, M Ribas-Carbo, and JA Berry. Coupled Photosynthesis-Stomatal Conductance Model for Leaves of C sub4/subPlants. Aust. J. Plant Physiol., 19(5):519, 1992. URL: <a href="http://www.publish.csiro.au/?paper=PP9920519" class="external-link uri">http://www.publish.csiro.au/?paper=PP9920519</a>, <a href="doi:10.1071/PP9920519" class="uri">doi:10.1071/PP9920519</a>.</p>
-<p>Albert Porcar-Castell. A high-resolution portrait of the annual dynamics of photochemical and non-photochemical quenching in needles of Pinus sylvestris. Physiol. Plant., 143(2):139–153, oct 2011. URL: <a href="http://www.ncbi.nlm.nih.gov/pubmed/21615415" class="external-link uri">http://www.ncbi.nlm.nih.gov/pubmed/21615415</a> <a href="http://doi.wiley.com/10.1111/j.1399-3054.2011.01488.x" class="external-link uri">http://doi.wiley.com/10.1111/j.1399-3054.2011.01488.x</a>, <a href="doi:10.1111/j.1399-3054.2011.01488.x" class="uri">doi:10.1111/j.1399-3054.2011.01488.x</a>.</p>
-<p>G. Schaepman-Strub, M. E. Schaepman, T. H. Painter, S. Dangel, and J. V. Martonchik. Reflectance quantities in optical remote sensing-definitions and case studies. Remote Sens. Environ., 103(1):27–42, 2006. <a href="doi:10.1016/j.rse.2006.03.002" class="uri">doi:10.1016/j.rse.2006.03.002</a>.</p>
-<p>Christiaan van der Tol, Micol Rossini, Sergio Cogliati, Wouter Verhoef, Roberto Colombo, Uwe Rascher, and Gina Mohammed. A model and measurement comparison of diurnal cycles of sun-induced chlorophyll fluorescence of crops. Remote Sens. Environ., 186:663–677, dec 2016. URL: <a href="https://www.sciencedirect.com/science/article/pii/S0034425716303649" class="external-link uri">https://www.sciencedirect.com/science/article/pii/S0034425716303649</a>, <a href="doi:10.1016/j.rse.2016.09.021" class="uri">doi:10.1016/j.rse.2016.09.021</a>.</p>
-<p>Wout. Verhoef and Nationaal Lucht- en Ruimtevaartlaboratorium (Netherlands). Theory of radiative transfer models applied in optical remote sensing of vegetation canopies. [publisher not identified], 1998. ISBN 9054858044. URL: <a href="https://library.wur.nl/WebQuery/wda/945481" class="external-link uri">https://library.wur.nl/WebQuery/wda/945481</a>.</p>
-<p>Wouter Verhoef, Christiaan van der Tol, and Elizabeth M. Middleton. Hyperspectral radiative transfer modeling to explore the combined retrieval of biophysical parameters and canopy fluorescence from FLEX – Sentinel-3 tandem mission multi-sensor data. Remote Sens. Environ., 204(August 2016):942–963, 2018. URL: <a href="https://doi.org/10.1016/j.rse.2017.08.006" class="external-link uri">https://doi.org/10.1016/j.rse.2017.08.006</a>, <a href="doi:10.1016/j.rse.2017.08.006" class="uri">doi:10.1016/j.rse.2017.08.006</a>.</p>
-<p>Nastassia Vilfan, Christiaan van der Tol, Onno Muller, Uwe Rascher, and Wouter Verhoef. Fluspect-B: A model for leaf fluorescence, reflectance and transmittance spectra. Remote Sens. Environ., 186:596–615, 2016. URL: <a href="http://dx.doi.org/10.1016/j.rse.2016.09.017" class="external-link uri">http://dx.doi.org/10.1016/j.rse.2016.09.017</a>, <a href="doi:10.1016/j.rse.2016.09.017" class="uri">doi:10.1016/j.rse.2016.09.017</a>.</p>
-<p>Peiqi Yang, Wout Verhoef, and Christiaan van der Tol. The mSCOPE model: A simple adaptation to the SCOPE model to describe reflectance, fluorescence and photosynthesis of vertically heterogeneous canopies. Remote Sens. Environ., 201:1–11, nov 2017. URL: <a href="https://www.sciencedirect.com/science/article/pii/S0034425717303954" class="external-link uri">https://www.sciencedirect.com/science/article/pii/S0034425717303954</a>, <a href="doi:10.1016/j.rse.2017.08.029" class="uri">doi:10.1016/j.rse.2017.08.029</a>.</p>
-<p>Xinyou Yin, Jeremy harbinson and Paul C. Struix. Mathematical review of literature to assess alternative electron transports and interphotosystem excitation partitioning of steady-state C3 photosynthesis under limiting light. Plant, Cell Environ., 29(9):1771–1782, sep 2006. URL: <a href="http://doi.wiley.com/10.1111/j.1365-3040.2006.01554.x" class="external-link uri">http://doi.wiley.com/10.1111/j.1365-3040.2006.01554.x</a>, <a href="doi:10.1111/j.1365-3040.2006.01554.x" class="uri">doi:10.1111/j.1365-3040.2006.01554.x</a>.</p>
-<p>Xinyou Yin and Paul C. Struik. Crop systems biology as an avenue to bridge applied crop science and fundamental plant biology. In Proc. - 2012 IEEE 4th Int. Symp. Plant Growth Model. Simulation, Vis. Appl. PMA 2012, 15–17. IEEE, oct 2012. URL: <a href="http://ieeexplore.ieee.org/document/6524806/" class="external-link uri">http://ieeexplore.ieee.org/document/6524806/</a>, <a href="doi:10.1109/PMA.2012.6524806" class="uri">doi:10.1109/PMA.2012.6524806</a>.</p>
-<p>C Van der Tol, J A Berry, P K E Campbell, and U Rascher. Models of fluorescence and photosynthesis for interpreting measurements of solar-induced chlorophyll fluorescence. J. Geophys. Res. Biogeosciences, 119(12):2312–2327, 2014.</p>
-<p>C. Van der Tol, W. Verhoef, J Timmermans, A Verhoef, and Z Su. An integrated model of soil-canopy spectral radiances, photosynthesis, fluorescence, temperature and energy balance. Biogeosciences, 6(12):3109–3129, dec 2009. URL: www.biogeosciences.net/6/3109/2009/, <a href="doi:10.5194/bg-6-3109-2009" class="uri">doi:10.5194/bg-6-3109-2009</a>.</p>
-<p>More info: <a href="https://scope-model.readthedocs.io/en/latest/" class="external-link uri">https://scope-model.readthedocs.io/en/latest/</a></p>
-<div class="section level2">
-<h2 id="foursail-and-foursail2-models">fourSAIL and fourSAIL2 models<a class="anchor" aria-label="anchor" href="#foursail-and-foursail2-models"></a>
-</h2>
-<p>fourSAIL2</p>
-<p>Authors of the version:Jean-Baptiste FERET original version downloadable at <a href="http://teledetection.ipgp.jussieu.fr/prosail/" class="external-link uri">http://teledetection.ipgp.jussieu.fr/prosail/</a></p>
-</div>
 </div>
 <div class="section level1">
-<h1 id="inform-model">INFORM model<a class="anchor" aria-label="anchor" href="#inform-model"></a>
+<h1 id="the-spart-model-a-soil-plant-atmosphere-radiative-transfer-model-for-satellite-measurements-in-the-solar-spectrum">The SPART model: a soil-plant-atmosphere radiative transfer model for satellite measurements in the solar spectrum<a class="anchor" aria-label="anchor" href="#the-spart-model-a-soil-plant-atmosphere-radiative-transfer-model-for-satellite-measurements-in-the-solar-spectrum"></a>
 </h1>
+<p>The model uses three computationally efficient RTMs for soil (BSM), vegetation canopies (PROSAIL) and atmosphere (SMAC), respectively. The sub-models are coupled by using the four-stream theory and the adding method. The resulting `Soil-Plant-Atmosphere Radiative Transfer model’ (SPART) simulates directional TOA spectral observations, with all major effects included, such as sun-observer geometries and non-Lambertian reflectance of the land surface.</p>
+<p>Authors:Yang Peiqgiyang</p>
+<p>Yang, P., van der Tol, C., Yin, T., &amp; Verhoef, W. (2020). The SPART model: A soil-plant-atmosphere radiative transfer model for satellite measurements in the solar spectrum. Remote Sensing of Environment, 247, 111870.</p>
+<p>For the details of the radiative transfer modelling</p>
+<p>Yang, P., Verhoef, W., &amp; van der Tol, C. (2017). The mSCOPE model: A simple adaptation to the SCOPE model to describe reflectance, fluorescence and photosynthesis of vertically heterogeneous canopies. Remote sensing of environment, 201, 1-11.</p>
 <div class="section level2">
 <h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
 </h2>
@@ -185,7 +185,7 @@
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
     </footer>

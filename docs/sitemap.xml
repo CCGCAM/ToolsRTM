@@ -19,6 +19,9 @@
     <loc>/index.html</loc>
   </url>
   <url>
+    <loc>/reference/COST_4Fluspect.html</loc>
+  </url>
+  <url>
     <loc>/reference/Compute_BRF.html</loc>
   </url>
   <url>
@@ -32,6 +35,9 @@
   </url>
   <url>
     <loc>/reference/GetMosaics.html</loc>
+  </url>
+  <url>
+    <loc>/reference/GetSpectralseries.html</loc>
   </url>
   <url>
     <loc>/reference/InversionOpt.html</loc>
@@ -58,10 +64,25 @@
     <loc>/reference/RMSE.html</loc>
   </url>
   <url>
+    <loc>/reference/SPART.html</loc>
+  </url>
+  <url>
+    <loc>/reference/SPART.simN.html</loc>
+  </url>
+  <url>
+    <loc>/reference/Sint.html</loc>
+  </url>
+  <url>
+    <loc>/reference/calc_fluspect_bcar.html</loc>
+  </url>
+  <url>
     <loc>/reference/calctav.html</loc>
   </url>
   <url>
     <loc>/reference/campbell.html</loc>
+  </url>
+  <url>
+    <loc>/reference/color.gradient.html</loc>
   </url>
   <url>
     <loc>/reference/correlatedValue.html</loc>
@@ -70,19 +91,169 @@
     <loc>/reference/dcum.html</loc>
   </url>
   <url>
+    <loc>/reference/define_bands.html</loc>
+  </url>
+  <url>
+    <loc>/reference/define_constants.html</loc>
+  </url>
+  <url>
     <loc>/reference/dladgen.html</loc>
+  </url>
+  <url>
+    <loc>/reference/ephoton.html</loc>
+  </url>
+  <url>
+    <loc>/reference/extract_dates_from_tiff_files.html</loc>
   </url>
   <url>
     <loc>/reference/filter_outliers.html</loc>
   </url>
   <url>
+    <loc>/reference/foursail.html</loc>
+  </url>
+  <url>
+    <loc>/reference/foursail.inf.html</loc>
+  </url>
+  <url>
+    <loc>/reference/foursail.inform.html</loc>
+  </url>
+  <url>
+    <loc>/reference/foursail2.html</loc>
+  </url>
+  <url>
+    <loc>/reference/foursail_t_o.html</loc>
+  </url>
+  <url>
+    <loc>/reference/foursail_t_s.html</loc>
+  </url>
+  <url>
     <loc>/reference/gauss_byMin_Max.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get.Altitude2Pa.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get.Extraterrestrial_radiance.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get.RTM.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get.cars.pls.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get.inversion.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get.plot.ML.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get.plot.cars.pls.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get.plot.plsr.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get.simulator.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get.smac.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get.sobol.indices.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get.spectra.spart.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get.spectral.convolution.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get.spectral.convolution.rfl.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get.spectral.derivative.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get.spectral.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get.stats.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get.stats.ind.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get.stats.plsr.html</loc>
+  </url>
+  <url>
+    <loc>/reference/getBSM.toolsRTM.html</loc>
+  </url>
+  <url>
+    <loc>/reference/getCWSI.html</loc>
+  </url>
+  <url>
+    <loc>/reference/getCor.html</loc>
+  </url>
+  <url>
+    <loc>/reference/getFLD2.html</loc>
+  </url>
+  <url>
+    <loc>/reference/getFLD2_SE.html</loc>
+  </url>
+  <url>
+    <loc>/reference/getFluspect.B.html</loc>
+  </url>
+  <url>
+    <loc>/reference/getFluspect.Cx.html</loc>
+  </url>
+  <url>
+    <loc>/reference/getIndices.html</loc>
+  </url>
+  <url>
+    <loc>/reference/getIndicesSE2.html</loc>
   </url>
   <url>
     <loc>/reference/getIndicesSE2a.html</loc>
   </url>
   <url>
+    <loc>/reference/getKmeans.html</loc>
+  </url>
+  <url>
+    <loc>/reference/getLUT.html</loc>
+  </url>
+  <url>
+    <loc>/reference/getLUT_liberty.html</loc>
+  </url>
+  <url>
+    <loc>/reference/getLUT_time.html</loc>
+  </url>
+  <url>
+    <loc>/reference/getLUTs.html</loc>
+  </url>
+  <url>
+    <loc>/reference/getMLmodel.html</loc>
+  </url>
+  <url>
+    <loc>/reference/getMLmodel.withRetrain.html</loc>
+  </url>
+  <url>
+    <loc>/reference/getPredicts.html</loc>
+  </url>
+  <url>
+    <loc>/reference/getReverse.trans.html</loc>
+  </url>
+  <url>
+    <loc>/reference/getSCOPE_outputs.html</loc>
+  </url>
+  <url>
+    <loc>/reference/getSCOPE_outputs_v1.html</loc>
+  </url>
+  <url>
     <loc>/reference/getSeries.html</loc>
+  </url>
+  <url>
+    <loc>/reference/getSim_fromLUT.html</loc>
   </url>
   <url>
     <loc>/reference/getSpatialTrait.html</loc>
@@ -94,10 +265,28 @@
     <loc>/reference/getSpectraIndices.html</loc>
   </url>
   <url>
+    <loc>/reference/getSplitData.html</loc>
+  </url>
+  <url>
+    <loc>/reference/getSplitData_noMessages.html</loc>
+  </url>
+  <url>
     <loc>/reference/getStacks.html</loc>
   </url>
   <url>
+    <loc>/reference/getStacks_v0.html</loc>
+  </url>
+  <url>
     <loc>/reference/getTIFFs.html</loc>
+  </url>
+  <url>
+    <loc>/reference/getVIF.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get_append.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get_data.html</loc>
   </url>
   <url>
     <loc>/reference/get_distributionLUT.html</loc>
@@ -106,13 +295,25 @@
     <loc>/reference/get_response.R.html</loc>
   </url>
   <url>
+    <loc>/reference/get_simulations.html</loc>
+  </url>
+  <url>
     <loc>/reference/hybrid_inversion.html</loc>
+  </url>
+  <url>
+    <loc>/reference/hybrid_inversionE.html</loc>
   </url>
   <url>
     <loc>/reference/index.html</loc>
   </url>
   <url>
     <loc>/reference/inform.html</loc>
+  </url>
+  <url>
+    <loc>/reference/jfunc1_.html</loc>
+  </url>
+  <url>
+    <loc>/reference/liberty.html</loc>
   </url>
   <url>
     <loc>/reference/m4SAIL.html</loc>
@@ -127,13 +328,61 @@
     <loc>/reference/msail_inf.html</loc>
   </url>
   <url>
+    <loc>/reference/normalize.html</loc>
+  </url>
+  <url>
+    <loc>/reference/numjacobian.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plotspectra.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plotspectra_SE.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plotspectra_image.html</loc>
+  </url>
+  <url>
     <loc>/reference/prospect_DB.html</loc>
   </url>
   <url>
     <loc>/reference/prospect_PRO.html</loc>
   </url>
   <url>
+    <loc>/reference/rbinomcor.html</loc>
+  </url>
+  <url>
+    <loc>/reference/rchisqcor.html</loc>
+  </url>
+  <url>
+    <loc>/reference/resample_fun.html</loc>
+  </url>
+  <url>
+    <loc>/reference/rgammacor.html</loc>
+  </url>
+  <url>
+    <loc>/reference/rlnormcor.html</loc>
+  </url>
+  <url>
+    <loc>/reference/rnegbinomcor.html</loc>
+  </url>
+  <url>
+    <loc>/reference/rnormcor.html</loc>
+  </url>
+  <url>
+    <loc>/reference/rnormcorV.html</loc>
+  </url>
+  <url>
+    <loc>/reference/rpoiscor.html</loc>
+  </url>
+  <url>
     <loc>/reference/runRTM.html</loc>
+  </url>
+  <url>
+    <loc>/reference/runifcor.cor.html</loc>
+  </url>
+  <url>
+    <loc>/reference/rweibullcor.html</loc>
   </url>
   <url>
     <loc>/reference/s13aaf.html</loc>
@@ -143,6 +392,9 @@
   </url>
   <url>
     <loc>/reference/sail_t_s.html</loc>
+  </url>
+  <url>
+    <loc>/reference/soilwat.html</loc>
   </url>
   <url>
     <loc>/reference/volscatt.html</loc>
