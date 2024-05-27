@@ -10,7 +10,7 @@ Authors@R: person(given = "Carlos",
 Maintainer: The package maintainer <caminoccg@gmail.com>
 Description: A series of tools for simulating spectra with radiative transfer modelsand Sentinel-2 data.
 Depends: R (>= 4.3.2)
-Import: caret, rgdal,signal, expint, doParallel, wavelets, parallel,stats, raster,e1071, nnet,gdalutils, pracma, pls 
+Import: caret, rgdal,signal, expint, stats,fmsb, doParallel, wavelets, parallel,stats, raster,e1071, nnet,gdalutils, pracma, pls 
 License: `use_gpl3_license()`
 Encoding: UTF-8
 LazyData: true
