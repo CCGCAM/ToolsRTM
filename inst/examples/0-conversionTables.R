@@ -1,4 +1,17 @@
 
+srf.sentinel2a <- read.csv("Tables/srf_sentinel2a.csv")
+save(srf.sentinel2a, file = "data/srf.sentinel2a.rda")
+
+srf.sentinel2b <- read.csv("Tables/srf_sentinel2b.csv")
+save(srf.sentinel2b, file = "data/srf.sentinel2b.rda")
+
+srf.prisma <- read.csv("Tables/srf_prisma.csv")
+save(srf.prisma, file = "data/srf.prisma.rda")
+
+fwhm.prisma <- read.csv("Tables/prisma_fwhm.csv")
+save(fwhm.prisma, file = "data/fwhm.prisma.rda")
+
+
 
 # library to read matlab data formats into R
 library(R.matlab)
@@ -35,6 +48,8 @@ save(TerraAqua.MODIS, file = "data/TerraAqua.MODIS.rda")
 
 optical.parameters <- read_pickle_file("examples/SPART_v2/optical_params_prospect-d.pkl")
 save(TerraAqua.MODIS, file = "data/TerraAqua.MODIS.rda")
+
+
 
 
 inputsRTMs <- read.csv("examples/LUTs/inputs_Leaf_canopy_v2.csv")

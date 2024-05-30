@@ -87,18 +87,30 @@ sim.spart <-  SPART(inputLUT=LUT[1,], optipar=SCOPEinR::optipar2021.Pro.CX,
 
 plot.rfl <- ggplot(data = sim.spart$output, aes(x = wave)) +
   labs(y = "reflectance", x = "") +
-  geom_point(aes(y = rfl.toa, color = "TOA rfl."), size = 1) +
+  geom_point(aes(y = rfl.toa, color = "TOA rfl."), size = 2) +
   geom_line(aes(y = rfl.toa, color = "TOA rfl.")) +
 
-  geom_point(aes(y = rfl.toc, color = "TOC rfl. (SMAC)"), size = 1) +
+  geom_point(aes(y = rfl.toc, color = "TOC rfl. (SMAC)"), size = 2) +
   geom_line(aes(y = rfl.toc, color = "TOC rfl. (SMAC)")) +
 
 #  geom_point(aes(y = rfl.toc.BRDF, color = "TOC rfl. (BRDF)"), size = 1) +
  # geom_line(aes(y = rfl.toc.BRDF, color = "TOC rfl. (BRDF)")) +
   theme_bw() +
   guides(color = guide_legend(title = "Reflectance:"), linetype = guide_legend(title = "Reflectance:"), shape = guide_legend(title = "Reflectance:")) +
-  
-  theme(legend.position = "right")
+  theme(legend.position="top",
+        strip.text.x = element_text(size = 12, color = "black", face = "bold"),
+        plot.title = element_text(hjust = 0.5, size=12,face="bold"),
+        panel.background = element_rect(fill="grey90"),
+        panel.grid.minor = element_line(colour = "grey90"),
+        panel.grid.major = element_line(colour = "grey90"),
+        axis.title = element_text(face="bold", size=14),
+        legend.text=element_text(size=12,face="bold"),
+        panel.spacing.x = unit(4, "mm"),
+        axis.text.y=element_text(hjust = 0.5, size=12,face="bold"),
+        axis.text.x=element_text(angle=0,hjust = 0.5, size=12,face="bold"),
+        legend.title = element_blank(),
+        legend.key = element_rect(fill = "transparent", color = "transparent"),
+        legend.background = element_rect(fill = "transparent", color = "transparent"))
 
 print(plot.rfl)
 
