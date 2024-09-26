@@ -17,7 +17,6 @@ if (!require("shinyWidgets")) { install.packages("shinyWidgets"); require("shiny
 if (!require("shinythemes")) { install.packages("shinythemes"); require("shinythemes") }
 if (!require("shinyWidgets")) { install.packages("shinyWidgets"); require("shinyWidgets") }
 if (!require("shinybusy")) { install.packages("shinybusy"); require("shinybusy") } ## loading bar progress
-
 if (!require("foreach")) { install.packages("foreach"); require("foreach") }
 if (!require("parallel")) { install.packages("parallel"); require("parallel") }
 if (!require("doParallel")) { install.packages("doParallel"); require("doParallel") }
@@ -49,12 +48,9 @@ loadRDa <- function(directory) {
 
 }
 
-if (!require("ToolsRTM")) { install.packages("ToolsRTM"); require("ToolsRTM") }  ### Paralell foreach and caret
-if (!require("SCOPEinR")) { install.packages("SCOPEinR"); require("SCOPEinR") }  ### Paralell foreach and caret
-
 # Call this function by providing the path to the directory containing .rds files
-#loadRDa("www/data/ToolsRTM")
-#loadRDa("www/data/SCOPEinR")
-#loadRDa("www/data")
+loadRDa("www/data/ToolsRTM")
+loadRDa("www/data/SCOPEinR")
+loadRDa("www/data")
 
 

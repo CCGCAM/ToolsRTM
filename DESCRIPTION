@@ -1,7 +1,7 @@
 Package: ToolsRTM
 Type: A package for simulating RT models
 Title: A package for deriving plant traits using radiative transfer models
-Version: 0.54
+Version: 0.55
 Authors@R: person(given = "Carlos",
            family = "Camino",
            role = c("aut", "cre"),
