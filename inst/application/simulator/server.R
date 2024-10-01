@@ -1,7 +1,7 @@
 
 #  Define SERVER for the app -----------------------------------------
 
-# Define a reactive values object to store the selected model
+# Define a reactive values object to store the selected model ---------------------
 selected_model <- reactiveValues(model = NULL)
 
 server <-shinyServer(function(input, output, session) {
@@ -13,9 +13,9 @@ server <-shinyServer(function(input, output, session) {
   library(tensorflow)
   library(keras)
 
-  inputs.liberty = inputsLiberty
-  LUT.liberty<-as.data.frame(getLUT_liberty(inputs = inputs.liberty, nLUT=1, setseed = 1234))
-  sim.liberty<-liberty(inputLUT = LUT.liberty[1,])
+  #inputs.liberty = inputsLiberty
+  #LUT.liberty<-as.data.frame(getLUT_liberty(inputs = inputs.liberty, nLUT=1, setseed = 1234))
+  #sim.liberty<-liberty(inputLUT = LUT.liberty[1,])
 
 
   ########### 3) SCOPE -------------------------------
@@ -100,35 +100,92 @@ server <-shinyServer(function(input, output, session) {
 
 
   # Render the printed output in verbatimTextOutput
-  output$lut_scope_output_param <- renderPrint({
-    params_SCOPE()
+  #output$lut_scope_output_param <- renderPrint({
+   # params_SCOPE()
 
+  #})
+
+  #### Render the LUT SCOPE param  ----------------------------------
+
+  output$lut_scope_output_param <- DT::renderDataTable({
+    DT::datatable(params_SCOPE(),
+                  options = list(
+                    dom = 't',    # Removes search panel, pagination, etc.
+                    pageLength = 1 # Shows only 1 row
+                  ), rownames = FALSE  # Removes row names
+    )
   })
+
 
   # Render the printed output in verbatimTextOutput
   output$lut_scope_output_canopy <- renderPrint({
     lut_scope.canopy()
-
   })
-
 
   # Render the printed output in verbatimTextOutput
   output$lut_scope_output_leaf <- renderPrint({
     lut_scope.leaf()
+  })
 
+  #### Render the LUT SCOPE canopy  ----------------------------------
+
+  output$lut_scope_output_canopy <- DT::renderDataTable({
+    DT::datatable(lut_scope.canopy(),
+                  options = list(
+                    dom = 't',    # Removes search panel, pagination, etc.
+                    pageLength = 1 # Shows only 1 row
+                  ), rownames = FALSE  # Removes row names
+    )
   })
 
 
-  # Render the LUT SCOPE leaf table ----------------------------------
+
+  # Render the printed output in verbatimTextOutput
+  output$lut_scope_output.leaf <- renderPrint({
+    lut_scope.leaf()
+    print(class(lut_scope.leaf()))
+
+  })
+
+  # Render the LUT SCOPE leaf parameters ----------------------------------
+
+  output$lut_table_scope_leaf <- DT::renderDataTable({
+    DT::datatable(data.frame(t(unlist(params_SCOPE()[[1]]))),
+                  options = list(
+                    dom = 't',    # Removes search panel, pagination, etc.
+                    pageLength = 1 # Shows only 1 row
+                  ), rownames = FALSE  # Removes row names
+    )
+  })
+
   output$lut_table_scope.leaf <- renderTable({
     lut_scope.leaf()
   })
 
 
-  # Render the LUT canopy table ----------------------------------
-  output$lut_table_scope.canopy <- renderTable({
-    lut_scope.canopy()
-  }, tableHeader = "Canopy Parameters")
+
+
+  #### Render the LUT SCOPE for canopy parameters  ----------------------------------
+
+  output$lut_table_scope_canopy <- DT::renderDataTable({
+    DT::datatable(data.frame(t(unlist(params_SCOPE()[[2]]))),
+                  options = list(
+                    dom = 't',    # Removes search panel, pagination, etc.
+                    pageLength = 1 # Shows only 1 row
+                  ), rownames = FALSE  # Removes row names
+    )
+  })
+
+  #### Render the LUT SCOPE for bioleaf parameters  ----------------------------------
+
+  output$lut_table_scope_bioleaf <- DT::renderDataTable({
+    DT::datatable(data.frame(t(unlist(params_SCOPE()[[3]]))),
+                  options = list(
+                    dom = 't',    # Removes search panel, pagination, etc.
+                    pageLength = 1 # Shows only 1 row
+                  ), rownames = FALSE  # Removes row names
+    )
+  })
 
 
   # Reactive expression for the LUT data ---------------------------------------------------
@@ -624,7 +681,7 @@ server <-shinyServer(function(input, output, session) {
   save_data_spart <- reactive({
     to_save<-reflectance_data_spart()
   })
-  # Add the download handler for saving data
+  # Add the download handler for saving data ------
   output$downloadData_spart <- downloadHandler(
     filename = function() {
       paste("SPART_sim_with_", input$leaf_spart,'_', input$canopy_spart,'_', input$sensor_spart, ".csv", sep = "")
@@ -634,29 +691,42 @@ server <-shinyServer(function(input, output, session) {
     }
   )
 
-  # Create the function to generate the output
-  output$lut_spart_output_leaf <- renderTable({
-    # Your actual data or function to generate the table
-    data.to_ <- lut_data.sim_spart()[[3]]
-    # Return the data to display in the table
-    data.to_
+
+  #### Render the LUT leaf table (SPART) ----------------------------------
+
+  output$lut_spart_output_leaf <- DT::renderDataTable({
+    DT::datatable(lut_data.sim_spart()[[3]],
+                  options = list(
+                    dom = 't',    # Removes search panel, pagination, etc.
+                    pageLength = 1 # Shows only 1 row
+                  ), rownames = FALSE  # Removes row names
+                )
   })
 
 
-  # Create the function to generate the output
-  output$lut_spart_output_canopy <- renderTable({
-    # Your actual data or function to generate the table
-    data.to_ <- lut_data.sim_spart()[[4]]
-    # Return the data to display in the table
-    data.to_
+  #### Render the LUT canopy table (SPART) ----------------------------------
+
+  output$lut_spart_output_canopy <- DT::renderDataTable({
+    DT::datatable(lut_data.sim_spart()[[4]],
+                  options = list(
+                    dom = 't',    # Removes search panel, pagination, etc.
+                    pageLength = 1 # Shows only 1 row
+                  ), rownames = FALSE  # Removes row names
+                 )
   })
-  # Create the function to generate the output
-  output$lut_spart_output_atmo <- renderTable({
-    # Your actual data or function to generate the table
-    data.to_ <- lut_data.sim_spart()[[5]]
-    # Return the data to display in the table
-    data.to_
+
+  #### Render the LUT atmospheric table (SPART) ----------------------------------
+
+  output$lut_spart_output_atmo <- DT::renderDataTable({
+    DT::datatable(lut_data.sim_spart()[[5]],
+                  options = list(
+                    dom = 't',    # Removes search panel, pagination, etc.
+                    pageLength = 1 # Shows only 1 row
+                  ), rownames = FALSE  # Removes row names
+    )
   })
+
+
 
 
   # 1) ToolsRTM   ---------------------------------------------------
@@ -1210,10 +1280,10 @@ server <-shinyServer(function(input, output, session) {
     }
 
   })
-  #### Plot Polygons by Sensor  -------------------------
+  # Plot Polygons by Sensor  -------------------------
 
 
-  #### Create a reactive data frame for saving data  ---------------------------------------------------
+  # Create a reactive data frame for saving data  ---------------------------------------------------
 
   export_table <- reactive({
 
@@ -2605,22 +2675,37 @@ server <-shinyServer(function(input, output, session) {
 
 
   #### Render the LUT leaf table ----------------------------------
-  output$lut_table.leaf <- renderTable({
-    lut_data.leaf()
+
+  output$lut_table.leaf <- DT::renderDataTable({
+    DT::datatable(lut_data.leaf(),
+                  options = list(
+                    dom = 't',    # Removes search panel, pagination, etc.
+                    pageLength = 1 # Shows only 1 row
+                  ), rownames = FALSE  # Removes row names
+    )
   })
 
-
   #### Render the LUT canopy table ----------------------------------
-  output$lut_table.canopy <- renderTable({
-    lut_data.canopy()
-  }, tableHeader = "Canopy Parameters")
+
+  output$lut_table.canopy <- DT::renderDataTable({
+    DT::datatable(lut_data.canopy(),
+                  options = list(
+                    dom = 't',    # Removes search panel, pagination, etc.
+                    pageLength = 1 # Shows only 1 row
+                  ), rownames = FALSE  # Removes row names
+    )
+  })
 
   #### Render the LUT sims able ----------------------------------
-  output$lut_table.sim <- renderTable({
-    #lut_data.sim()[[1]]
-  }, tableHeader = "Canopy Parameters")
 
-
+  output$lut_table.sim <- DT::renderDataTable({
+    DT::datatable(lut_data.sim(),
+                  options = list(
+                    dom = 't',    # Removes search panel, pagination, etc.
+                    pageLength = 1 # Shows only 1 row
+                  ), rownames = FALSE  # Removes row names
+    )
+  })
 
   # 5) MACHINE LEARNIG module   ---------------------------------------
 
@@ -2978,6 +3063,10 @@ server <-shinyServer(function(input, output, session) {
 
 
   observeEvent(input$train_model, {
+
+    # Eliminar variables globales antes de entrenar un nuevo modelo
+    #rm(list = ls(globalenv()), envir = globalenv())
+    #gc()  # Forzar la recolección de basura
     # Extract input values
 
     # Check if the checkbox is not selected
@@ -3054,11 +3143,17 @@ server <-shinyServer(function(input, output, session) {
     withProgress(message = 'Training model', value = 0, {
 
     if (input$models_ =='CNN' | input$models_ == 'Hidden_layers'){
-      if(input$models_ == 'Hidden_layers'){
-        model_ <- 'Hidden-layers'
-      } else {
-        model_ <-input$models_
+
+      if (input$models_ %in% c('CNN', 'Hidden_layers')) {
+        model_ <- if (input$models_ == 'Hidden_layers') 'Hidden-layers' else input$models_
       }
+      print(model_)
+
+      # Convert percentage to proportion
+      n.prop <- input$p_samplesML_keras/ 100
+
+      n.samples.reduced <-ceiling(n.prop * nrow(dataset))
+      rows.r <- sample(nrow(dataset), n.samples.reduced)
 
       method.preProcess <- input$method.preProcess
       optimizer <- input$optimizer
@@ -3068,7 +3163,7 @@ server <-shinyServer(function(input, output, session) {
       n_epochs <- input$n_epochs
       # Call the getMLmodel.withRetrain function
       models.time <- getMLmodel.withRetrain(
-        dataset = dataset[, c(depVar, inputs_bands)],
+        dataset = dataset[rows.r, c(depVar, inputs_bands)],
         depVar = depVar,
         model = model_,
         optimizer = optimizer,
@@ -3101,14 +3196,14 @@ server <-shinyServer(function(input, output, session) {
       n.prop <- input$p_samplesML / 100
 
       n.samples.reduced <-ceiling(n.prop * nrow(dataset))
+      rows.r <- sample(nrow(dataset), n.samples.reduced)
 
-      print(length(n.samples.reduced))
       require(e1071)
       require(caret)
       #inputs <- inputs <- c('LAI.preds.median','TVI','EVI','NDVIv','kNDVI','CR.red.nir.6')
 
 
-      models.time<- get.inversion(data=dataset[, c(depVar, inputs_bands)], depVar=depVar, inputs=inputs_bands,n.cores=2,
+      models.time<- get.inversion(data=dataset[rows.r, c(depVar, inputs_bands)], depVar=depVar, inputs=inputs_bands,n.cores=2,
                             n.samples=n.samples.reduced,algorithm=algorithm.i,method.resampling='repeatedcv',
                             seed=set.seed(as.numeric(Sys.time()) %% 10000) , save.model = T, save.path = temp_dir)
      # print(models.time)
@@ -3238,6 +3333,7 @@ server <-shinyServer(function(input, output, session) {
           "n_neurons <- ", input$n_neurons, "\n",  # Number of neurons per layer
           "batch_size <- ", input$batch_size, "\n",  # Batch size for training
           "n_epochs <- ", input$n_epochs, "\n",  # Number of epochs for training
+          "n.prop <- ", input$p_samplesML_keras, " / 100\n",  # Proportion of data to use for training
           # Properly format inputs_bands as a vector
           "inputs_bands <- c(",paste("'",input$inputs_bands, "'",sep='', collapse = ", "), ")\n",  # Input bands selected by the user
 
@@ -3246,6 +3342,7 @@ server <-shinyServer(function(input, output, session) {
           "  dataset = dataset[, c(",input$depVar,", inputs_bands)],\n",  # Use dependent variable and selected input bands
           "  depVar = depVar,\n",  # Dependent variable (trait to estimate)
           "  model = model_,\n",  # Model type (CNN/Hidden Layers)
+
           "  optimizer = optimizer,\n",  # Optimizer for training
           "  n.times = 1,\n",  # Number of times to repeat training
           "  n.neurons = n_neurons,\n",  # Number of neurons per layer

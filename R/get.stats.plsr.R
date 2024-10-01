@@ -70,12 +70,12 @@ mnmb.test<-round(MNMB(pred.test,train[,var]),2)
 mb.test<-round(MB(pred.test,train[,var]),2)
 fge.test<-round(FGE(pred.test,train[,var]),2)
 
-stats<-data.frame(r2=c(r2.train,r2.test),
-                  rmse=c(rmse.train,rmse.test),
-                  mae=c(mae.train,mae.test),
-                  mnmb=c(mnmb.train,mnmb.test),
-                  mb=c(mb.train,mb.test),
-                  fge=c(fge.train,fge.test))
+stats<-data.frame(R2=c(r2.train,r2.test),
+                  RMSE=c(rmse.train,rmse.test),
+                  MAE=c(mae.train,mae.test),
+                  MNMB=c(mnmb.train,mnmb.test),
+                  MB=c(mb.train,mb.test),
+                  FGE=c(fge.train,fge.test))
 
 
 

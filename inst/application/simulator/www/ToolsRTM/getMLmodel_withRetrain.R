@@ -34,6 +34,7 @@ getMLmodel.withRetrain <-function(dataset=NULL, depVar='Cab',model='CNN',optimiz
   require('keras')
   require('tensorflow')
 
+  set.seed(as.numeric(Sys.time()) %% 10000)
 
   stopifnot(class(dataset) == 'data.frame')
 
@@ -85,21 +86,22 @@ getMLmodel.withRetrain <-function(dataset=NULL, depVar='Cab',model='CNN',optimiz
   }
 
   #print(inputs_)
-  if (save.model == TRUE){
-    if (exists('path.model') == FALSE){
-      # output folder
-      path.model='Models/'
-      ifelse(!dir.exists(path.model), dir.create(path.model), FALSE)
-      message(paste('model will save in ',path.model,' ',sep=''))
-    } else{
-      # output folder
-      path.model=path.model
-      ifelse(!dir.exists(path.model), dir.create(path.model), FALSE)
-      message(paste('model will save in ',path.model,' ',sep=''))
+  # Check if the model should be saved
+  if (save.model) {
+    # Set the output folder for the model
+    path.model <- if (exists("path.model")) path.model else "Models/"
+
+    # Create the directory if it doesn't exist
+    if (!dir.exists(path.model)) {
+      dir.create(path.model)
+      message(paste("Model directory created:", path.model))
+    } else {
+      message(paste("Model will be saved in:", path.model))
     }
-
-
   }
+
+
+
 
 
   ##########################################################################################
@@ -185,7 +187,7 @@ getMLmodel.withRetrain <-function(dataset=NULL, depVar='Cab',model='CNN',optimiz
     ##########################################################################################
     ##### Split the Dataset
     ##########################################################################################
-    set.seed(1234+i.times)
+    set.seed(as.numeric(Sys.time()) %% 10000)
     split.data<-getSplitData_noMessages(data=dataset[,inputs_], depVar=depVar,inputs=inputs_[-1],
                                                   data.trans=data.trans,prop.split=prop.split,method.preProcess=method.preProcess,
                                                   depVar.trans=depVar.trans)

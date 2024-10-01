@@ -32,7 +32,7 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
   #https://topepo.github.io/caret/train-models-by-tag.html#gaussian-process
   # Set the seed for reproducibility
   if(is.null(seed)) {
-    seed <- 123  # Default seed value
+    set.seed(as.numeric(Sys.time()) %% 10000)  # Default seed value
     set.seed(seed)
   } else{
     set.seed(seed)
@@ -56,25 +56,21 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
   }
 
 
-
-  # Create train-test split indices based on the 'Anth' column
-  indices <- caret::createDataPartition(data[, depVar], p = 0.8, list = FALSE)
-
-  # Split the data into training and testing sets
-  df.train <- data[indices, ]
-  df.test <- data[-indices, ]
-
-
-  if(is.null(n.samples)) {
-    # Reduce sample size for tuning
-    rows.r <- sample(nrow(df.train), 500)
-    n.model <-round(dim(df.train)[1]/10,0)
+  # Reduce sample size for tuning if n.samples is provided
+  if (!is.null(n.samples) && n.samples <= nrow(data)) {
+    rows.r <- sample(nrow(data), n.samples)
   } else {
-    # Reduce sample size for tuning
-    rows.r <- sample(nrow(df.train), n.samples)
-    n.model <- n.samples
-    rows.model <- sample(nrow(df.train), n.model)
+    stop("n.samples must be less than or equal to the number of rows in data.")
   }
+
+  #Subset data for modeling
+  data <- data[rows.r, ]
+
+  # Create train-test split indices based on the 'depVar' column
+  indices <- caret::createDataPartition(data[[depVar]], p = 0.8, list = FALSE)
+  df.train <- data[indices, ]  # Training set
+  df.test <- data[-indices, ]   # Testing set
+
 
 
   # Force to run PLSR if ML is null or empty
@@ -92,11 +88,11 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
     clusters <- makeCluster(n.cores) #detectCores()/n.cores - 1
     doParallel::registerDoParallel(clusters)
 
-    myfolds <- createMultiFolds(df.train[rows.model,depVar], k = 10, times = 10)
+    myfolds <- createMultiFolds(df.train[,depVar], k = 10, times = 10)
     control <- trainControl(method= method.resampling, index = myfolds, selectionFunction = "oneSE")
 
     # Train PLS model
-    model_ <- caret::train(fmla.n, data = df.train[rows.model,],
+    model_ <- caret::train(fmla.n, data = df.train[,],
                    method = "pls",
                    metric = "RMSE",
                    tuneLength = 20,
@@ -119,7 +115,7 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
     clusters <- makeCluster(n.cores) #detectCores()/n.cores - 1
     doParallel::registerDoParallel(clusters)
 
-    tobj2 <- e1071::tune.svm(fmla.n, data = df.train[rows.r,], sampling = "fix",
+    tobj2 <- e1071::tune.svm(fmla.n, data = df.train[,], sampling = "fix",
                              gamma = 2^c(-10, -8, -6, -4),  # search space for gamma
                              cost = 2^c(-5, -3, -1, 1),     # search space for cost
                              tunecontrol =  tune.control(cross = 5))  # number of cross-validation folds
@@ -127,7 +123,7 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
     gg <- as.numeric(tobj2$best.parameters[1])
 
     # SVM
-    model_ <- svm(fmla.n, kernel = "radial", data = df.train[rows.model, ], gamma = gg, cost = cc,
+    model_ <- svm(fmla.n, kernel = "radial", data = df.train[, ], gamma = gg, cost = cc,
                      type = "eps-regression", probability = FALSE)
 
     parallel::stopCluster(clusters)
@@ -150,19 +146,19 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
     doParallel::registerDoParallel(clusters)
 
     # Define tuning grid with reduced search space
-    mtry2 <- randomForest::tuneRF(df.train[rows.r, inputs], y = df.train[rows.r, depVar],
+    mtry2 <- randomForest::tuneRF(df.train[, inputs], y = df.train[, depVar],
                     ntreeTry = ncol(df.train[, inputs])/3, stepFactor = 1.5, improve = 0.01,
                     trace = F, plot = F)
     best.m <- mtry2[mtry2[, 2] == min(mtry2[, 2]), 1]
     metric <- "RMSE"
     tunegrid <- expand.grid(.mtry = best.m)
-    n.trees <- ncol(df.train[, inputs])/3
+    n.trees <- round(ncol(df.train[, inputs])/3,0)
 
     # Define training control
     fit.control <- caret::trainControl(method = method.resampling, number = 3,
                  search = "grid", repeats = 3, allowParallel = TRUE)
     # Random Forest
-    model_ <- caret::train(fmla.n, data = df.train[rows.model, ], method = "rf", metric = metric,
+    model_ <- caret::train(fmla.n, data = df.train[, ], method = "rf", metric = metric,
                            trControl = fit.control, verbose=F, tuneGrid = tunegrid)
 
     parallel::stopCluster(clusters)
@@ -191,7 +187,7 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
                              n.trees = c(100, 300, 1000))
 
     ##Gradient Boosting
-    model_<- caret::train(fmla.n, data = df.train[rows.model,],  method = "gbm", metric='RMSE',
+    model_<- caret::train(fmla.n, data = df.train[,],  method = "gbm", metric='RMSE',
                          # preProc = c('center', 'scale','BoxCox', 'YeoJohnson', 'expoTrans', 'ica'),
                          trControl = fit.control, tuneGrid =tune.grid,verbose = F)
 
@@ -212,7 +208,7 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
     # Define training control
     fit.control <- caret::trainControl(method=method.resampling, allowParallel=T,
                                        number=3, repeats=3, search="random",
-                                       index = createFolds(df.train[rows.r,inputs], 5),
+                                       index = createFolds(df.train[,inputs], 5),
                                       # sampling ='smote',
                                      # na.action = na.pass,
                                        returnResamp = "all",
@@ -222,7 +218,7 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
                              .size = seq(1,10,by=1))#, .bag=F) for vNNet
 
     ##Neural-Network Model
-    model_<- caret::train(fmla.n, data = df.train[rows.model,],
+    model_<- caret::train(fmla.n, data = df.train[,],
                              method = "nnet", repeats = 1, trControl = fit.control,
                              preProc = c("center", "scale",'BoxCox', 'YeoJohnson'),
                              cross=10,trace=F, ##remove message with Trace=False
@@ -262,7 +258,7 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
                              nu = c(3,5,7))
 
     ## Bayesian Generalized Linear Model
-    model_ <- caret::train(fmla.n, data = df.train[rows.model,], method = "bartMachine", metric='RMSE',
+    model_ <- caret::train(fmla.n, data = df.train[,], method = "bartMachine", metric='RMSE',
                            trControl = fit.control, tuneGrid = tune.grid,verbose = FALSE)
 
     parallel::stopCluster(clusters)
@@ -290,7 +286,7 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
                              maxdepth = c(1, 3, 5))
 
     ## Bagged AdaBoost
-    model_ <- caret::train(fmla.n, data = df.train[rows.model,],
+    model_ <- caret::train(fmla.n, data = df.train[,],
                            method = "AdaBag",
                            trControl = fit.control,
                            tuneGrid = tune.grid,
@@ -322,7 +318,7 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
     tune.grid <- expand.grid(neurons = c(5, 10, 20, 30))
 
     ## Bayesian Regularized Neural Networks (BRNN)
-    model_ <- caret::train(fmla.n, data = df.train[rows.model,],
+    model_ <- caret::train(fmla.n, data = df.train[,],
                            method = "brnn",
                            trControl = fit.control,
                            tuneGrid = tune.grid,
@@ -357,7 +353,7 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
                              eta = c(0.01, 0.05, 0.1))
 
     ## eXtreme Gradient Boosting (XGBoost) with linear base learners
-    model_ <- caret::train(fmla.n, data = df.train[rows.model,],
+    model_ <- caret::train(fmla.n, data = df.train[,],
                            method = "xgbLinear",
                            trControl = fit.control,
                            tuneGrid = tune.grid,
@@ -387,7 +383,7 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
                                        allowParallel = TRUE)
 
     ## Relevance Vector Machines (RVM) with linear kernel
-    model_ <- caret::train(fmla.n, data = df.train[rows.model,],
+    model_ <- caret::train(fmla.n, data = df.train[,],
                            method = "rvmLinear",
                            trControl = fit.control,
                            metric = 'RMSE',  # Use RMSE as the evaluation metric
@@ -420,7 +416,7 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
     tune.grid <- expand.grid(lambda = c(0.01, 0.1, 1, 10))
 
     ## Quantile Regression with LASSO penalty
-    model_ <- caret::train(fmla.n, data = df.train[rows.model,],
+    model_ <- caret::train(fmla.n, data = df.train[,],
                            method = "rqlasso",
                            trControl = fit.control,
                            tuneGrid = tune.grid,
@@ -480,7 +476,7 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
                                repeats=3,
                                search = "random")
 
-    models <- caretEnsemble::caretList(fmla.n, data = df.train[rows.model,],
+    models <- caretEnsemble::caretList(fmla.n, data = df.train[,],
                                        trControl=fit.control,
                                        verbose=FALSE,
                                        tuneList = models.ensemble,
@@ -489,7 +485,7 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
     stackControl <- trainControl(method=method.resampling,
                                  number=3,
                                  repeats=3,
-                                 index = createFolds(df.train[rows.model,], 5),
+                                 index = createFolds(df.train[,], 5),
                                  savePredictions = "all",
                                  search = "random")
 

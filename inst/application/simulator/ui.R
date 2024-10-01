@@ -181,15 +181,18 @@ ui <- navbarPage("Online reflectance simulator",theme = shinytheme("flatly"),
                                          strong("Plant traits values used for the selected leaf model:"),
                                          br(),
                                          br(),
-                                         tableOutput("lut_table.leaf"),
+                                         DT::dataTableOutput("lut_table.leaf"),
+                                        # tableOutput("lut_table.leaf"),
                                          strong("Plant traits and geometric parameters values used for the selected canopy model:"),
                                          br(),
                                          br(),
-                                         tableOutput("lut_table.canopy"),
+                                        DT::dataTableOutput("lut_table.canopy"),
+                                         #tableOutput("lut_table.canopy"),
                                          # strong("LUT for leaf + canopy model"),
                                          br(),
                                          br(),
                                          #tableOutput("lut_table.sim")
+                                        #DT::dataTableOutput("lut_table.sim"),
                                 ),         # end Tab Interactive panel
 
                                 ### Second Pannel
@@ -590,13 +593,15 @@ ui <- navbarPage("Online reflectance simulator",theme = shinytheme("flatly"),
                               p('The selected reflectance spectra were generated based on plant traits and canopy parameters showed in the following tables: '),
 
                               p("Plant traits values used for the selected leaf model:"),
-                              tableOutput("lut_spart_output_leaf"),
+                             # tableOutput("lut_spart_output_leaf"),
+                              DT::dataTableOutput("lut_spart_output_leaf"),
 
                               p("Structural, viewing angles and geometric values used for the selected canopy model:"),
-                              tableOutput("lut_spart_output_canopy"),
-
+                              #tableOutput("lut_spart_output_canopy"),
+                              DT::dataTableOutput("lut_spart_output_canopy"),
                               strong("Atmospheric parameters:"),
-                              tableOutput("lut_spart_output_atmo")
+                              DT::dataTableOutput("lut_spart_output_atmo")
+                              #tableOutput("lut_spart_output_atmo")
                             )
 
 
@@ -887,14 +892,21 @@ ui <- navbarPage("Online reflectance simulator",theme = shinytheme("flatly"),
                               p('The selected reflectance spectra were generated based on plant traits and canopy parameters showed in the following tables: '),
                               br(),
                               br(),
+                              #uiOutput("plotReady_tableReady_scope"),
                               strong("Plant traits values used for the selected leaf model:"),
                               br(),
                               br(),
-                              verbatimTextOutput("lut_scope_output_leaf"),
+                              #verbatimTextOutput("lut_scope_output_leaf"),
+                              # Output for the DataTable
+                              DT::dataTableOutput("lut_table_scope_leaf"),
                               strong("Plant traits and geometric parameters values used for the selected canopy model:"),
                               br(),
                               br(),
-                              verbatimTextOutput("lut_scope_output_canopy"),
+                              DT::dataTableOutput("lut_table_scope_canopy"),
+                              #verbatimTextOutput("lut_scope_output_canopy"),
+                              br(),
+                              br(),
+                              DT::dataTableOutput("lut_table_scope_bioleaf"),
 
                               #tableOutput("lut_table.sim")
                      ),         # end Tab Interactive panel
@@ -958,7 +970,7 @@ ui <- navbarPage("Online reflectance simulator",theme = shinytheme("flatly"),
                               # Introduction to the module
                               h4("Main funtions integrated in the SCOPEinR Package"),
 
-                              p(style = "text-align: justify;", "This module utilizes key functions integrated into the ", strong("ToolsRTM"), " package to process and analyze vegetation data derived from Sentinel-2 satellite imagery. These functions are critical for estimating spectral indices, training machine learning models, and predicting plant traits such as gross primary production (GPP) and other physiological traits."),
+                              p(style = "text-align: justify;", "This module utilizes key functions integrated into the ", strong("SCOPEinR"), " package to process and analyze vegetation data derived from Sentinel-2 satellite imagery. These functions are critical for estimating spectral indices, training machine learning models, and predicting plant traits such as gross primary production (GPP) and other physiological traits."),
 
                               # getLUTfromRanges
                               h4("1. getLUT.SCOPE"),
@@ -1677,13 +1689,14 @@ navbarMenu("Look-up table generator",
                               selectInput("models_", "Select Model:",
                                           choices = list(
                                            "Support Vector Machine" = "SVM",
+                                           "deep Neural Network" = "Hidden_layers",
                                            "Random Forest" = "RF",
-                                            "Convolution Neural Network" = "CNN",
-                                           "Neural Network" = "NN",
+                                    #        "Convolution Neural Network" = "CNN",
+                                       #    "Neural Network (caret)" = "NN",
                                           "Partial least square regression" = "PLSR",
                                           "eXtreme Gradient Boosting (XGBoost)" = "xGB",
-                                           "Gradient Boosting" = "GB",
-                                            "Hidden Layers" = "Hidden_layers")),
+                                           "Gradient Boosting" = "GB"
+                                            )),
 
 
 
@@ -1710,7 +1723,8 @@ navbarMenu("Look-up table generator",
                                 numericInput("n_layers", "Number of Layers:", 3, min = 1,max=5),
                                 numericInput("n_neurons", "Number of Neurons:", 128, min = 1,max=1024),
                                 numericInput("batch_size", "Batch Size:", 32, min = 1,max=2048),
-                                numericInput("n_epochs", "Number of Epochs:", 10, min = 1, max=1000)
+                                numericInput("n_epochs", "Number of Epochs:", 10, min = 1, max=1000),
+                                numericInput("p_samplesML_keras", "Percentage of samples:", value=1, min = 1,max=90),
                               ), # Conditional panel for neural networks (CNN or NNe)
                               conditionalPanel(
                                 condition = "input.models_ == 'SVM' || input.models_ == 'RF'  || input.models_ == 'NN' || input.models_ == 'PLSR'

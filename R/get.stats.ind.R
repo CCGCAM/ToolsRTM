@@ -55,12 +55,12 @@ mb_<-round(MB(df[,depVar.pred], df[,depVar]),2)
 fge_<-round(FGE(df[,depVar.pred], df[,depVar]),2)
 
 
-stats<-data.frame(r2=r2_,
-                  rmse=rmse_,
-                  mae=mae_,
-                  mnmb=mnmb_,
-                  mb=mb_,
-                  fge=fge_)
+stats<-data.frame(R2=r2_,
+                  RMSE=rmse_,
+                  MAE=mae_,
+                  MNMB=mnmb_,
+                  MB=mb_,
+                  FGE=fge_)
 
 return(stats)
 
