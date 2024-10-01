@@ -12,6 +12,8 @@ get.spectral.derivative(df, m = 1, method = "sgolay", get.plot = T)
 \item{m}{The order of the derivative. Default is 1.}
 
 \item{method}{The method to use for derivative calculation. Options are "finApprox" for finite approximation or "sgolay" for Savitzky-Golay filter. Default is "sgolay".}
+
+\item{get.plot}{a boolena TRUE or FALSE; if TRUE a plot will be done}
 }
 \value{
 A DataFrame with spectral derivatives calculated based on the specified method.

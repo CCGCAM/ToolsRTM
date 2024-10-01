@@ -6,7 +6,7 @@
 #' @param df A DataFrame containing spectral data. Columns represent wavelengths and spectral values.
 #' @param m The order of the derivative. Default is 1.
 #' @param method The method to use for derivative calculation. Options are "finApprox" for finite approximation or "sgolay" for Savitzky-Golay filter. Default is "sgolay".
-#' @get.plot a boolena TRUE or FALSE; if TRUE a plot will be done
+#' @param get.plot a boolena TRUE or FALSE; if TRUE a plot will be done
 #' @return A DataFrame with spectral derivatives calculated based on the specified method.
 #' @export
 #'

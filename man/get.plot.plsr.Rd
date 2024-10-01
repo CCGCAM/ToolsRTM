@@ -11,11 +11,11 @@ get.plot.plsr(model, k, data.train, data.test, var)
 
 \item{k}{The number of components to use for prediction.}
 
-\item{data.train}{The training dataset.}
+\item{data.train}{The training dataset, must include the variable of interest.}
 
-\item{data.test}{The testing dataset.}
+\item{data.test}{The testing dataset, must include the variable of interest.}
 
-\item{var}{The variable of interest to plot.}
+\item{var}{The variable of interest to plot (as a string).}
 }
 \value{
 A ggplot object containing the plot of predictions.
@@ -23,4 +23,12 @@ A ggplot object containing the plot of predictions.
 \description{
 This function plots predictions from a Partial Least Squares Regression (PLSR) model
 on both training and testing datasets.
+}
+\examples{
+# Example usage
+library(ggplot2)
+# Assuming 'model', 'data.train', and 'data.test' are defined and 'var' is the target variable
+plot <- get.plot.plsr(model, k = 2, data.train, data.test, var = "target_variable")
+print(plot)
+
 }

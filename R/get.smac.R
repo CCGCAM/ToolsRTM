@@ -1,19 +1,22 @@
 
-
-
 #' Apply an atmospheric correction using SMAC method (Rahman and Dedieu, 1994)
-
-#' @param inputLUT 
-#' @param sensor 
 #'
-#' @return
+#' This function applies the Simplified Method for Atmospheric Correction (SMAC) to satellite
+#' imagery based on the provided LUT (Look-Up Table) and sensor characteristics.
+#'
+#' @param inputLUT A data frame containing the LUT used for atmospheric correction.
+#' @param sensor A dataset with sensor information for which the calculations are performed. Options include "LANDSAT4.TM", "LANDSAT5.TM", 
+#'               "LANDSAT5.TM, "LANDSAT7.ETM", "LANDSAT8.OLI","Sentinel2A.MSI", "Sentinel2B.MSI", "Sentinel3A.OLCI",
+#'               "Sentinel3B.OLCI"and "TerraAqua.MODIS"
+#'
+#' @return A data frame with atmospheric corrected values.
 #' @export
 #'
 #' @examples
 #' inputLUT = ToolsRTM::inputs.SPART
-#' LUT<-as.data.frame(ToolsRTM::getLUT(inputs = ToolsRTM::inputsSPART, nLUT=1, setseed = 1234))
-
-
+#' LUT <- as.data.frame(ToolsRTM::getLUT(inputs = ToolsRTM::inputsSPART, nLUT = 1, setseed = 1234))
+#' corrected_data <- get.smac(inputLUT, sensor = ToolsRTM::TerraAqua.MODIS)
+#' 
 get.smac <- function(inputLUT = LUT,sensor)   {
   
   # Translate by Carlos Camino from Matlab to R cran 

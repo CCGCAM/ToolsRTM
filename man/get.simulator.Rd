@@ -2,10 +2,16 @@
 % Please edit documentation in R/get.simulator.R
 \name{get.simulator}
 \alias{get.simulator}
-\title{Get Simulator  By Carlos Camino}
+\title{Get the simulator tools}
 \usage{
 get.simulator()
 }
+\value{
+Launches the Shiny app and checks for package dependencies.
+}
 \description{
-Get Simulator  By Carlos Camino
+This function launches the simulator app and checks for package dependencies using \code{get.packages()}.
+}
+\examples{
+get.simulator()
 }

@@ -5,15 +5,20 @@
 #'
 #' @param model The trained PLSR model.
 #' @param k The number of components to use for prediction.
-#' @param data.train The training dataset.
-#' @param data.test The testing dataset.
-#' @param var The variable of interest to plot.
+#' @param data.train The training dataset, must include the variable of interest.
+#' @param data.test The testing dataset, must include the variable of interest.
+#' @param var The variable of interest to plot (as a string).
 #'
 #' @return A ggplot object containing the plot of predictions.
 #' @export
 #'
 #' @examples
-#'
+#' # Example usage
+#' library(ggplot2)
+#' # Assuming 'model', 'data.train', and 'data.test' are defined and 'var' is the target variable
+#' plot <- get.plot.plsr(model, k = 2, data.train, data.test, var = "target_variable")
+#' print(plot)
+#' 
 get.plot.plsr<-function(model,k,data.train, data.test, var){
 
   pred.train<-predict(object = model,ncomp=k,newdata=data.train)

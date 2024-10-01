@@ -1,14 +1,17 @@
-#' get.spectra.spart
-#' \code{get.spectra.spart} Calculates the spectra of hemisperical and directional observed #' a function to get the spectral characteristics for SCOPE model
+#' Get Spectral Characteristics for the SCOPE Model
 #'
-#' @param getSpectral  is T get the spectral object needed for SPART
+#' \code{get.spectra.spart} Calculates the spectra of hemispherical and directional observed
+#' data. This function retrieves the necessary spectral characteristics for the SPART model,
+#' including spectral ranges and intervals.
 #'
-#' @return a list with al spectral ranges and Intervals
+#' @param getSpectral A boolean indicating whether to retrieve the spectral object needed for SPART (default is TRUE).
+#'
+#' @return A list containing all spectral ranges and intervals. If `getSpectral` is TRUE,
+#'         the list will include the spectral object for SPART.
 #' @export
 #'
 #' @examples
-#' 
-#' 
+#' spectra <- get.spectra.spart(getSpectral = TRUE)
 get.spectra.spart<-function(getSpectral=T){
   
   if (getSpectral == T){

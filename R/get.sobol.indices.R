@@ -1,15 +1,21 @@
 #' Get first and total Sobol indices by Carlos Camino
 #'
-#' @param data is the dataframe win inputs and predicted output.
-#' @param output the name of the column with the predicitons
-#' @param N number of samples
-#' @normalize a boolean value; True the Si will be normalized
+#' This function calculates the first-order and total Sobol indices for sensitivity analysis
+#' based on the input data and predictions.
 #'
-#' @return
+#' @param data A data frame containing the input variables and the predicted output.
+#' @param output A character string specifying the name of the column with the predictions.
+#' @param N An integer specifying the number of samples to be used for Sobol sensitivity analysis.
+#' @param normalize A boolean value; if TRUE, the Sobol indices will be normalized.
+#'
+#' @return A data frame containing the first-order and total Sobol indices for each input variable.
 #' @export
 #'
 #' @examples
-
+#' # Example usage
+#' data <- data.frame(input1 = runif(100), input2 = runif(100), output = rnorm(100))
+#' sobol_indices <- get.sobol.indices(data, output = "output", N = 1000, normalize = TRUE)
+#' print(sobol_indices)
 get.sobol.indices <- function(data, output, N,normalize = FALSE) {
   # Extract the input variables
   inputs_ <- setdiff(names(data), output)

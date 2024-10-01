@@ -2,7 +2,7 @@
 % Please edit documentation in R/spart_simN.R
 \name{SPART.simN}
 \alias{SPART.simN}
-\title{Title}
+\title{Compute Top-of-Canopy and Top-of-Atmosphere Reflectance and Radiance with Simulations}
 \usage{
 SPART.simN(
   inputLUT,
@@ -14,8 +14,38 @@ SPART.simN(
 )
 }
 \arguments{
-\item{sensor.i}{}
+\item{inputLUT}{A lookup table (LUT) containing the necessary parameters for the radiative transfer model.}
+
+\item{optipar}{Optional parameters for optical calculations (default is NULL).}
+
+\item{CanopyModel}{A character string specifying the canopy model to use. Default is 'fourSAIL'.}
+
+\item{LeafModel}{A character string specifying the leaf model to use. Default is 'PROSPECT-PRO'.}
+
+\item{sensor.i}{A dataset with sensor information for which the calculations are performed. Options include "LANDSAT4.TM", "LANDSAT5.TM",
+"LANDSAT5.TM, "LANDSAT7.ETM", "LANDSAT8.OLI","Sentinel2A.MSI", "Sentinel2B.MSI", "Sentinel3A.OLCI",
+"Sentinel3B.OLCI"and "TerraAqua.MODIS"}
+
+\item{df.irradiance}{A data frame containing irradiance data for the calculations.}
+
+\item{N}{Simulations; the number of simulations to run (default is 1).}
+}
+\value{
+A list containing TOC reflectance, TOA reflectance, and TOA radiance for each simulation.
 }
 \description{
-Title
+This function computes the top-of-canopy (TOC) reflectance, top-of-atmosphere (TOA)
+reflectance, and TOA radiance using the Soil-Plant-Atmosphere Radiative Transfer (SPART)
+model based on the provided input parameters and models. It also supports multiple
+simulations to assess variability.
+}
+\examples{
+# Example usage of the SPART.simN function
+LUT <- data.frame(...)  # Populate with appropriate LUT data
+df.irradiance <- data.frame(...)  # Populate with irradiance data
+results <- SPART.simN(inputLUT = LUT, optipar = NULL, 
+                       CanopyModel = 'fourSAIL', LeafModel = 'PROSPECT-PRO',
+                       sensor.i = ToolsRTM::TerraAqua.MODIS, df.irradiance = df.irradiance, 
+                       N = 10)
+                       
 }

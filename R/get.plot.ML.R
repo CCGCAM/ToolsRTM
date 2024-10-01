@@ -1,18 +1,21 @@
-#' Plot Predictions from ML Model
-#'
-#' This function plots predictions from a  ML model
+#' This function plots predictions from a machine learning (ML) model
 #' on both training and testing datasets.
 #'
 #' @param model The trained ML model.
-#' @param data.train The training dataset.
-#' @param data.test The testing dataset.
-#' @param var The variable of interest to plot.
+#' @param data.train The training dataset, must include the variable of interest.
+#' @param data.test The testing dataset, must include the variable of interest.
+#' @param var The variable of interest to plot (as a string).
 #'
 #' @return A ggplot object containing the plot of predictions.
 #' @export
 #'
 #' @examples
-#'
+#' # Example usage
+#' library(ggplot2)
+#' # Assuming 'model', 'data.train', and 'data.test' are defined and 'var' is the target variable
+#' plot <- get.plot.ML(model, data.train, data.test, var = "target_variable")
+#' print(plot)
+#' 
 get.plot.ML<-function(model,data.train, data.test, var){
 
   pred.train<-predict(object = model,newdata=data.train)

@@ -1,17 +1,32 @@
-# Function to compute top-of-canopy (TOC) reflectance, top-of-atmosphere (TOA) reflectance, and top-of-atmosphere (TOA) radiance
-#' Title
+#' Compute Top-of-Canopy and Top-of-Atmosphere Reflectance and Radiance with Simulations
 #'
-#' @param inputLUT
-#' @param optipar
-#' @param CanopyModel
-#' @param LeafModel
-#' @param df.irradiance
-#' @param sensor.i
+#' This function computes the top-of-canopy (TOC) reflectance, top-of-atmosphere (TOA)
+#' reflectance, and TOA radiance using the Soil-Plant-Atmosphere Radiative Transfer (SPART)
+#' model based on the provided input parameters and models. It also supports multiple
+#' simulations to assess variability.
 #'
-#' @return
+#' @param inputLUT A lookup table (LUT) containing the necessary parameters for the radiative transfer model.
+#' @param optipar Optional parameters for optical calculations (default is NULL).
+#' @param CanopyModel A character string specifying the canopy model to use. Default is 'fourSAIL'.
+#' @param LeafModel A character string specifying the leaf model to use. Default is 'PROSPECT-PRO'.
+#' @param df.irradiance A data frame containing irradiance data for the calculations.
+#' @param sensor.i A dataset with sensor information for which the calculations are performed. Options include "LANDSAT4.TM", "LANDSAT5.TM", 
+#'               "LANDSAT5.TM, "LANDSAT7.ETM", "LANDSAT8.OLI","Sentinel2A.MSI", "Sentinel2B.MSI", "Sentinel3A.OLCI",
+#'               "Sentinel3B.OLCI"and "TerraAqua.MODIS"
+#' @param N Simulations; the number of simulations to run (default is 1).
+#'
+#' @return A list containing TOC reflectance, TOA reflectance, and TOA radiance for each simulation.
 #' @export
 #'
 #' @examples
+#' # Example usage of the SPART.simN function
+#' LUT <- data.frame(...)  # Populate with appropriate LUT data
+#' df.irradiance <- data.frame(...)  # Populate with irradiance data
+#' results <- SPART.simN(inputLUT = LUT, optipar = NULL, 
+#'                        CanopyModel = 'fourSAIL', LeafModel = 'PROSPECT-PRO',
+#'                        sensor.i = ToolsRTM::TerraAqua.MODIS, df.irradiance = df.irradiance, 
+#'                        N = 10)
+#'                        
 SPART.simN <-  function(inputLUT, optipar=NULL, CanopyModel = 'fourSAIL',LeafModel='PROSPECT-PRO',
                    sensor.i = NULL , df.irradiance=NULL){
 

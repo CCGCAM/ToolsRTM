@@ -7,12 +7,24 @@
 get.sobol.indices(data, output, N, normalize = FALSE)
 }
 \arguments{
-\item{data}{is the dataframe win inputs and predicted output.}
+\item{data}{A data frame containing the input variables and the predicted output.}
 
-\item{output}{the name of the column with the predicitons}
+\item{output}{A character string specifying the name of the column with the predictions.}
 
-\item{N}{number of samples}
+\item{N}{An integer specifying the number of samples to be used for Sobol sensitivity analysis.}
+
+\item{normalize}{A boolean value; if TRUE, the Sobol indices will be normalized.}
+}
+\value{
+A data frame containing the first-order and total Sobol indices for each input variable.
 }
 \description{
-Get first and total Sobol indices by Carlos Camino
+This function calculates the first-order and total Sobol indices for sensitivity analysis
+based on the input data and predictions.
+}
+\examples{
+# Example usage
+data <- data.frame(input1 = runif(100), input2 = runif(100), output = rnorm(100))
+sobol_indices <- get.sobol.indices(data, output = "output", N = 1000, normalize = TRUE)
+print(sobol_indices)
 }

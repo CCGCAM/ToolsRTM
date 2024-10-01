@@ -2,19 +2,37 @@
 % Please edit documentation in R/getVIF.r
 \name{getVIF}
 \alias{getVIF}
-\title{Title}
+\title{Calculate Variance Inflation Factor (VIF)}
 \usage{
 getVIF(in_frame, thresh = 10, trace = T, ...)
 }
 \arguments{
-\item{in_frame}{}
+\item{in_frame}{A data frame containing the predictor variables. The dependent variable
+should not be included in this frame.}
 
-\item{thresh}{}
+\item{thresh}{A numeric value indicating the threshold for VIF; predictors with VIF
+greater than this threshold will be flagged as having multicollinearity.
+Default is 10.}
 
-\item{trace}{}
+\item{trace}{A boolean value; if TRUE, the function will print information about
+the VIF calculations and any predictors that exceed the threshold.}
 
-\item{...}{}
+\item{...}{Additional arguments passed to other methods (not used in this function).}
+}
+\value{
+A data frame containing the VIF values for each predictor variable.
 }
 \description{
-Title
+This function calculates the Variance Inflation Factor (VIF) for the predictor variables
+in a linear regression model to assess multicollinearity.
+}
+\examples{
+# Example data frame
+df <- data.frame(x1 = rnorm(100), x2 = rnorm(100), x3 = rnorm(100))
+df$x2 <- df$x1 + rnorm(100, sd = 0.1)  # Introduce multicollinearity
+vif_results <- getVIF(in_frame = df, thresh = 5, trace = TRUE)
+print(vif_results)
+# The following VIF function were extracted from 
+#https://beckmw.wordpress.com/2013/02/05/collinearity-and-stepwise-vif-selection/
+
 }

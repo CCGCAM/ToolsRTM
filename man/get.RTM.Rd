@@ -2,7 +2,7 @@
 % Please edit documentation in R/get.RTM.R
 \name{get.RTM}
 \alias{get.RTM}
-\title{\code{get.RTM} fourSAIL simulation based on a set of combinations of input parameters}
+\title{get.RTM - Run Radiative Transfer Model (RTM)}
 \usage{
 get.RTM(
   LUT.table,
@@ -14,18 +14,30 @@ get.RTM(
 )
 }
 \arguments{
-\item{LUT.table}{}
+\item{LUT.table}{A lookup table with input variables for the RTM model (e.g., leaf optical properties, canopy structure).}
 
-\item{leaf.model}{}
+\item{leaf.model}{The leaf model to be used (default is 'fluspect-CX').}
 
-\item{canopy.model}{}
+\item{canopy.model}{The canopy model to be used (default is 'fourSAIL').}
 
-\item{option}{}
+\item{option}{A string specifying the option or mode (e.g., 'Forward-Mode', 'Inverse-Mode'). Default is 'Forward-Mode'.}
 
-\item{BRDF}{}
+\item{BRDF}{A boolean to indicate whether Bidirectional Reflectance Distribution Function (BRDF) correction should be applied. Default is TRUE.}
 
-\item{get.plots}{}
+\item{get.plots}{A boolean to indicate whether to generate plots of the results. Default is TRUE.}
+}
+\value{
+A list with results of the RTM, potentially including reflectance, transmittance, and optional plots.
 }
 \description{
-\code{get.RTM} fourSAIL simulation based on a set of combinations of input parameters
+This function runs a Radiative Transfer Model (RTM) using specified models for the leaf and canopy,
+and allows for optional BRDF correction and plot generation.
+}
+\examples{
+# Run RTM with default settings
+get.RTM(LUT.table)
+
+# Run RTM without BRDF correction and plots
+get.RTM(LUT.table, BRDF = FALSE, get.plots = FALSE)
+
 }

@@ -1,21 +1,31 @@
 #################################
 ###########
-# The following VIF function were extracted from 
-# https://beckmw.wordpress.com/2013/02/05/collinearity-and-stepwise-vif-selection/
-###########
-###########
 
-#' Title
+#' Calculate Variance Inflation Factor (VIF)
 #'
-#' @param in_frame 
-#' @param thresh 
-#' @param trace 
-#' @param ... 
+#' This function calculates the Variance Inflation Factor (VIF) for the predictor variables
+#' in a linear regression model to assess multicollinearity.
 #'
-#' @return
+#' @param in_frame A data frame containing the predictor variables. The dependent variable
+#'                 should not be included in this frame.
+#' @param thresh A numeric value indicating the threshold for VIF; predictors with VIF
+#'               greater than this threshold will be flagged as having multicollinearity.
+#'               Default is 10.
+#' @param trace A boolean value; if TRUE, the function will print information about
+#'              the VIF calculations and any predictors that exceed the threshold.
+#' @param ... Additional arguments passed to other methods (not used in this function).
+#'
+#' @return A data frame containing the VIF values for each predictor variable.
 #' @export
 #'
 #' @examples
+#' # Example data frame
+#' df <- data.frame(x1 = rnorm(100), x2 = rnorm(100), x3 = rnorm(100))
+#' df$x2 <- df$x1 + rnorm(100, sd = 0.1)  # Introduce multicollinearity
+#' vif_results <- getVIF(in_frame = df, thresh = 5, trace = TRUE)
+#' print(vif_results)
+#' # The following VIF function were extracted from 
+#' #https://beckmw.wordpress.com/2013/02/05/collinearity-and-stepwise-vif-selection/
 #' 
 getVIF<-function(in_frame,thresh=10,trace=T,...){
 

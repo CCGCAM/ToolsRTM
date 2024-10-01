@@ -2,23 +2,32 @@
 % Please edit documentation in R/get.plot.ML.R
 \name{get.plot.ML}
 \alias{get.plot.ML}
-\title{Plot Predictions from ML Model}
+\title{This function plots predictions from a machine learning (ML) model
+on both training and testing datasets.}
 \usage{
 get.plot.ML(model, data.train, data.test, var)
 }
 \arguments{
 \item{model}{The trained ML model.}
 
-\item{data.train}{The training dataset.}
+\item{data.train}{The training dataset, must include the variable of interest.}
 
-\item{data.test}{The testing dataset.}
+\item{data.test}{The testing dataset, must include the variable of interest.}
 
-\item{var}{The variable of interest to plot.}
+\item{var}{The variable of interest to plot (as a string).}
 }
 \value{
 A ggplot object containing the plot of predictions.
 }
 \description{
-This function plots predictions from a  ML model
+This function plots predictions from a machine learning (ML) model
 on both training and testing datasets.
+}
+\examples{
+# Example usage
+library(ggplot2)
+# Assuming 'model', 'data.train', and 'data.test' are defined and 'var' is the target variable
+plot <- get.plot.ML(model, data.train, data.test, var = "target_variable")
+print(plot)
+
 }
