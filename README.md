@@ -1,57 +1,107 @@
+---
+editor_options: 
+  markdown: 
+    wrap: 72
+---
 
-# ToolsRTM
+### ToolsRTM package
 
-An R packages with tools for simulating canopy reflectance using a set of radiative transfer (RT) models at several satellite resolutions
+The **ToolsRTM** package provides a comprehensive suite of tools for
+simulating canopy reflectance using various radiative transfer (RT)
+models at multiple satellite resolutions. Currently in the testing
+phase, this package is designed to facilitate detailed simulations,
+enabling versatile and accurate analyses of canopy reflectance
+characteristics.
 
+For canopy-level simulations, the package features models such as
+**INFORM**, **fourSAIL**, and **fourSAIL2**. When it comes to leaf-level
+simulations, it includes the **PROSPECT** model (with D and PRO
+variants), **Liberty**, and **FLUSPECT** (B-Cx). These models empower
+users to conduct sophisticated simulations that capture the intricate
+dynamics of reflectance behavior in both leaf and canopy contexts.
+
+Additionally, the **SPART** model (Soil-Plant-Atmosphere Radiative
+Transfer model) is tailored for satellite measurements in the solar
+spectrum. It integrates three computationally efficient RT models: the
+**BSM** model for soil, **PROSAIL** for vegetation canopies, and
+**SMAC** for the atmosphere. These components are interconnected using
+the four-stream theory and the adding method, allowing SPART to simulate
+directional top-of-atmosphere (TOA) spectral observations. This approach
+accounts for significant effects, such as sun-observer geometries and
+the non-Lambertian reflectance of the land surface.
 
 ### Getting started
 
-To install the ToolsRTM package, please follow these instructions in R session:
+To install the ToolsRTM package, please follow these steps in R session:
 
 1)  Download the ToolsRTM package as .tar.gz file
 
 ```         
-## install SCOPEinR
-
-install.packages('pathWithFile/toolsrtm-main.tar.gz',repos = NULL,type = "source")
+# install ToolsRTM
+install.packages('pathWithFile/toolsrtm-main.tar.gz',repos = NULL,type = "source"2
 ```
 
-2.  Additional package SCOPEinR package is needed for the SCOPE model.
+2.  Check the installed version:
 
-A R package for running the Soil Canopy Observation, Photochemistry and Energy fluxes (SCOPE, Van der Tol at al., 2009, Yang et al., 2020) radiative transfer model developed in MATLAB.
+```         
+# Check the version of ToolsRTM
+packageVersion("ToolsRTM")
+```
+
+### Installing the SCOPEinR Package
+
+The **SCOPEinR** package is required for running the Soil Canopy
+Observation, Photochemistry and Energy fluxes (SCOPE) model, which
+simulates soil, canopy observation, photochemistry, and energy fluxes
+(SCOPE, Van der Tol et al., 2009; Yang et al., 2020).
+
+This R package enables to run the SCOPE model developed in MATLAB by Van
+der Tol at al. (2009), Yang et al. (2020)
 
 ```         
 ## Install additional SCOPEinR package. 
-# SCOPEinR uses inversion method and main RT models at leaf and canopy scales (INFORM, PROSAIL-2, PROSPECT-D and PRO, Liberty)
-
 install.packages('pathWithFile/scopeinr-main.tar.gz',repos = NULL,type = "source")
 ```
 
-## Manual
+### Manuals
 
-Manual is available at ReadTheDocs
-<https://toolsrtm-tutorial.readthedocs.io/en/latest/> (in progress)
+The manuals are accessible through the [Shiny
+app](https://carlos-camino.shinyapps.io/0-toolsrtm-simulator/)or
+directly within the
+[ToolsRTM](https://carlos-camino.shinyapps.io/0-toolsrtm-simulator/_w_ef4421a7/Notebooks/R/ToolsRTM/ToolsRTM.html){.uri}
+and
+[SCOPEinR](https://carlos-camino.shinyapps.io/0-toolsrtm-simulator/_w_ef4421a7/Notebooks/R/SCOPEinR/SCOPEinR.html)
+packages. Vignettes are currently under development.
 
-## Description
+### Citation
 
-This package integrates the main radiative transfer (RT) models for
-simulating canopy reflectance at hyperspectral and Sentinel-2 scales.
-This package uses several functions for estimating plant traits,
-spectral indices and useful functions for generating time series,
-validation of the predictions with field observations ....
+If you use the **ToolsRTM** or **SCOPEinR** packages, please consider
+citing the following references:
 
-## Citation
+1.  Camino et al. (2024). **RT-Simulator: An Online Platform to Simulate
+    Canopy Reflectance from Biochemical and Structural Plant Properties
+    Using Radiative Transfer Models**. *IGARSS 2024 - 2024 IEEE
+    International Geoscience and Remote Sensing Symposium*, Athens,
+    Greece, pp. 2811-2814. [doi:
+    10.1109/IGARSS53475.2024.10642442.](10.1109/IGARSS53475.2024.10642442)
 
-If you use ToolSRTM, please cite the following references:
+2.  Arano et al. (2024). **Enhancing Chlorophyll Content Estimation with
+    Sentinel-2 Imagery: A Fusion of Deep Learning and Biophysical
+    Models**. *IGARSS 2024 - 2024 IEEE International Geoscience and
+    Remote Sensing Symposium*, Athens, Greece, pp. 4486-4489.\
+    doi:
+    [10.1109/IGARSS53475.2024.10641613](10.1109/IGARSS53475.2024.10641613).
 
-## PROSPECT model
+3.  Camino et al. (in preparation). **Integrating Physiological Plant
+    Traits with Sentinel-2 Imagery for Monitoring Gross Primary
+    Production and Detecting Forest Disturbances**.
 
-Authors:Jean-Baptiste FERET
-([jb.feret\@teledetection.fr](mailto:jb.feret@teledetection.fr){.email});
-Frédéric BARET
-([baret\@avignon.inra.fr](mailto:baret@avignon.inra.fr){.email});
-Stephane JACQUEMOUD
-([jacquemoud\@ipgp.fr](mailto:jacquemoud@ipgp.fr){.email})
+### Citation of the main radiative transfer models 
+
+For further details on the the radiative transfer modelsl, please refer
+to the original publications by the authors.
+
+#### PROSPECT model
 
 Féret J-B, Gitelson AA, Noble SD & Jacquemoud S, 2017. PROSPECT-D:
 Towards modeling leaf optical properties through a complete lifecycle.
@@ -74,11 +124,14 @@ properties spectra. Remote Sens. Environ. 34, 75--91.
 
 More info: <http://teledetection.ipgp.fr/prosail/>
 
-Basic version of PROSPECT-D and PROSPECT-PRO: Féret J.-B., 2021
+#### FLUSPECT model
 
-## fourSAIL & fourSAIL-2 models
+Vilfan, N., van der Tol, C., Muller, O., Rascher, U., Verhoef, W., 2016.
+Fluspect-B: A model for leaf fluorescence, reflectance and transmittance
+spectra. Remote Sens. Environ. 186, 596?615.
+<doi:10.1016/j.rse.2016.09.017>
 
-Authors: Verhoef W & Bach H
+#### fourSAIL & fourSAIL-2 models
 
 Verhoef W & Bach H, 2007. Coupled soil--leaf-canopy and atmosphere
 radiative transfer modeling to simulate hyperspectral multi-angular
@@ -100,21 +153,7 @@ Berger K, Atzberger C, Danner M, D'Urso G, Mauser W, Vuolo F & Hank T
 Hyperspectral Model Environments: A Review Study. Remote Sensing, 10:85.
 <https://doi.org/10.3390/rs10010085>
 
-More info: <http://teledetection.ipgp.fr/prosail/>
-
-Basic version of fourSAIL and fourSAIL2: Verhoef W., Bach. H. fourSAILs
-modifications: Féret J.-B., 2021
-
-## FLUSPECT model
-
-Vilfan, N., van der Tol, C., Muller, O., Rascher, U., Verhoef, W., 2016.
-Fluspect-B: A model for leaf fluorescence, reflectance and transmittance
-spectra. Remote Sens. Environ. 186, 596?615.
-<doi:10.1016/j.rse.2016.09.017>
-
-## Invertible Forest Reflectance Model
-
-Authors:Atzberger, C.; Schlerf, M.
+#### Invertible Forest Reflectance Model
 
 Atzberger, C., 2000. Development of an Invertible Forest Reflectance
 Model: The INFOR- model.
@@ -144,29 +183,30 @@ Environment, 16: 125-141.
 Basic version of INFORM: Clement Atzberger, 1999 INFORM modifications
 and validation: Martin Schlerf, 2004-2007
 
-# The SPART model: a soil-plant-atmosphere radiative transfer model for satellite measurements in the solar spectrum
-
-The model uses three computationally efficient RTMs for soil (BSM),
-vegetation canopies (PROSAIL) and atmosphere (SMAC), respectively. The
-sub-models are coupled by using the four-stream theory and the adding
-method. The resulting \`Soil-Plant-Atmosphere Radiative Transfer model'
-(SPART) simulates directional TOA spectral observations, with all major
-effects included, such as sun-observer geometries and non-Lambertian
-reflectance of the land surface.
-
-Authors:Yang Peiqgiyang
+#### The SPART model: a soil-plant-atmosphere radiative transfer model for satellite measurements in the solar spectrum
 
 Yang, P., van der Tol, C., Yin, T., & Verhoef, W. (2020). The SPART
 model: A soil-plant-atmosphere radiative transfer model for satellite
 measurements in the solar spectrum. Remote Sensing of Environment, 247,
 111870.
 
-For the details of the radiative transfer modelling
+#### SCOPE model: The Soil Canopy Observation, Photochemistry and Energy fluxes model
 
 Yang, P., Verhoef, W., & van der Tol, C. (2017). The mSCOPE model: A
 simple adaptation to the SCOPE model to describe reflectance,
 fluorescence and photosynthesis of vertically heterogeneous canopies.
 Remote sensing of environment, 201, 1-11.
+
+Yang, P., Prikaziuk, E., Verhoef, W., & Van der Tol, C. (2021). **SCOPE
+2.0: A model to simulate vegetated land surface fluxes and satellite
+signals**. *Geoscientific Model Development*, 14, 4697–4712.
+<https://doi.org/10.5194/gmd-14-4697-2021>.
+
+Van der Tol, C., Verhoef, W., Timmermans, J., Verhoef, A., & Su, Z.
+(2009). **An integrated model of soil-canopy spectral radiances,
+photosynthesis, fluorescence, temperature, and energy balance**.
+*Biogeosciences*, 6(12), 3109–3129.
+<https://doi.org/10.5194/bg-6-3109-2009>.
 
 ## License
 
