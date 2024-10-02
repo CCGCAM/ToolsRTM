@@ -212,4 +212,4 @@ photosynthesis, fluorescence, temperature, and energy balance**.
 
 ## License
 
-For open source projects, say how it is licensed.
+The ToolsRTM package is licensed under an open-source license, allowing for free use, modification, and distribution. This package is available on GitLab, and we encourage contributions and collaborations from the community. For more details on the specific license type, please refer to the LICENSE file in the repository.
