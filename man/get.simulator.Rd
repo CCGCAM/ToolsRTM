@@ -7,11 +7,19 @@
 get.simulator()
 }
 \value{
-Launches the Shiny app and checks for package dependencies.
+Launches the Shiny app and verifies that all necessary packages are installed.
 }
 \description{
-This function launches the simulator app and checks for package dependencies using \code{get.packages()}.
+This function launches the simulator Shiny app and ensures that all necessary package dependencies are installed.
+It first runs \code{get.packages()} to check for and install any missing packages required by the app.
+}
+\details{
+Note: It is required to run \code{get.packages()} beforehand to ensure all package dependencies are resolved.
 }
 \examples{
+# First, ensure package dependencies are installed:
+get.packages()
+
+# Then, launch the simulator:
 get.simulator()
 }

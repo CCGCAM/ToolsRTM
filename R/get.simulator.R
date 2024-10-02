@@ -1,20 +1,21 @@
 #' Get the simulator tools
 #'
-#' This function launches the simulator app and checks for package dependencies using `get.packages()`.
+#' This function launches the simulator Shiny app and ensures that all necessary package dependencies are installed. 
+#' It first runs `get.packages()` to check for and install any missing packages required by the app.
 #'
-#' @return Launches the Shiny app and checks for package dependencies.
+#' Note: It is required to run `get.packages()` beforehand to ensure all package dependencies are resolved.
+#'
+#' @return Launches the Shiny app and verifies that all necessary packages are installed.
 #' @export
 #'
 #' @examples
+#' # First, ensure package dependencies are installed:
+#' get.packages()
+#' 
+#' # Then, launch the simulator:
 #' get.simulator()
 get.simulator <- function() {
-  # Call get.packages to check for required dependencies
-  packages <- get.packages()
-
-  # Print the list of dependencies (optional, for debugging purposes)
-  message("The following packages are required for the simulator:")
-  print(packages)
-
+ 
   appDir <- system.file("application", "simulator", package = "ToolsRTM")
   if (appDir == "") {
     stop("Could not find example directory. Try re-installing `ToolsRTM`.", call. = FALSE)

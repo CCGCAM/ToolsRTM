@@ -1,0 +1,17 @@
+# Ignore static assets and large files
+www/
+data/*
+datasets/*
+images/
+Notebooks/
+outs/
+plots/
+SCOPE/
+*.rda
+*.pdf
+*.png
+*.jpg
+
+# Ignore version control files
+.git/
+.gitignore

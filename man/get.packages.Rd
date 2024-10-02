@@ -14,7 +14,8 @@ A character vector of unique package names found in the project dependencies.
 }
 \description{
 This function retrieves the list of R package dependencies for the specified path
-using \code{renv::dependencies()}. If \code{renv} is not installed, it installs \code{renv} first.
+using \code{renv::dependencies()}. If \code{renv} is not installed, it installs \code{renv} first. THis is designed for getting the packages
+that the Shiny app needs in this package
 }
 \examples{
 # Get the packages for the current directory

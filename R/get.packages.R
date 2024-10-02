@@ -25,22 +25,29 @@ get.packages <- function(path = ".") {
   }
 
   # Load the renv package
-  library(renv)
+  #library(renv)
 
+  
+  
   # Get the list of dependencies from renv
   deps <- renv::dependencies(path = path)
 
   # Extract unique package names from the dependencies
   packages <- unique(deps$Package)
+  # Define a list of packages to avoid
+  packages_to_avoid <- c("hsdar", "gdalUtils")
 
-  # Install missing packages
+  packages_to_print <- packages[!packages %in% packages_to_avoid]
+  
+  # Filter out packages that are not available
   missing_packages <- setdiff(packages, rownames(installed.packages()))
-
+  missing_packages <- missing_packages[!missing_packages %in% packages_to_avoid]
+  
   if (length(missing_packages) > 0) {
     message("Installing missing packages: ", paste(missing_packages, collapse = ", "))
     install.packages(missing_packages)
   } else {
     message("All packages are already installed.")
   }
-
+ return(packages_to_print)
 }
