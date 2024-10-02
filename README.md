@@ -62,9 +62,9 @@ install.packages('pathWithFile/scopeinr-main.tar.gz',repos = NULL,type = "source
 ### Manuals
 
 The manuals are accessible through the [Shiny
-app](https://carlos-camino.shinyapps.io/0-toolsrtm-simulator/)or
+app](https://carlos-camino.shinyapps.io/0-toolsrtm-simulator/) or
 directly within the
-[ToolsRTM](https://carlos-camino.shinyapps.io/0-toolsrtm-simulator/_w_ef4421a7/Notebooks/R/ToolsRTM/ToolsRTM.html){.uri}
+[ToolsRTM](https://carlos-camino.shinyapps.io/0-toolsrtm-simulator/_w_ef4421a7/Notebooks/R/ToolsRTM/ToolsRTM.html)
 and
 [SCOPEinR](https://carlos-camino.shinyapps.io/0-toolsrtm-simulator/_w_ef4421a7/Notebooks/R/SCOPEinR/SCOPEinR.html)
 packages. Vignettes are currently under development.
