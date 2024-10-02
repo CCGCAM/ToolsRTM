@@ -210,6 +210,10 @@ photosynthesis, fluorescence, temperature, and energy balance**.
 *Biogeosciences*, 6(12), 3109–3129.
 <https://doi.org/10.5194/bg-6-3109-2009>.
 
-## License
+### License
 
-The ToolsRTM package is licensed under an open-source license, allowing for free use, modification, and distribution. This package is available on GitLab, and we encourage contributions and collaborations from the community. For more details on the specific license type, please refer to the LICENSE file in the repository.
+![](https://img.shields.io/badge/License-MIT-yellow.svg)
+
+The **ToolsRTM** package is licensed under the MIT License, allowing for free use, modification, and distribution. This package is available on GitLab, and we encourage contributions and collaborations from the community. For more details, please refer to the LICENSE file in the repository.
+
+
