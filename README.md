@@ -127,6 +127,12 @@ Fluspect-B: A model for leaf fluorescence, reflectance and transmittance
 spectra. Remote Sens. Environ. 186, 596?615.
 <doi:10.1016/j.rse.2016.09.017>
 
+#### Liberty model
+
+Dawson, T. P., Curran, P. J., & Plummer, S. E. (1998). LIBERTY—Modeling the Effects of Leaf Biochemical Concentration on Reflectance Spectra. Remote Sensing of Environment, 65(1), 50–60. <https://doi.org/10.1016/S0034-4257(98)00007-8>
+
+Di Vittorio, A. V. (2009). Enhancing a leaf radiative transfer model to estimate concentrations and in vivo specific absorption coefficients of total carotenoids and chlorophylls a and b from single-needle reflectance and transmittance. Remote Sensing of Environment, 113(9), 1948–1966. <https://doi.org/10.1016/j.rse.2009.05.002> 
+
 #### fourSAIL & fourSAIL-2 models
 
 Verhoef W & Bach H, 2007. Coupled soil--leaf-canopy and atmosphere
