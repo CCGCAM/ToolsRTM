@@ -43,7 +43,8 @@
 #rfl=sim.canopy; sensor="prisma"
 get.spectra.convolved <- function(rfl, sensor, plot.spectra=T){
 
-
+  rfl = sim.canopy
+  sensor = 'Sentinel2a'
   #Convert rfl to a matrix if it's not already one
   if (!is.matrix(rfl)) {
     rfl <- as.matrix(rfl)
@@ -161,11 +162,11 @@ get.spectra.convolved <- function(rfl, sensor, plot.spectra=T){
 
       #Prepared convolved and observed reflectance for plotting
       #Convolved
-      conv=as.data.frame(conv)
-      conv$id=NULL
-      conv<- tidyr::gather(conv, key = "band", value = "reflectance")
+      conv.plot=as.data.frame(conv)
+      conv.plot$id=NULL
+      conv.plot<- tidyr::gather(conv.plot, key = "band", value = "reflectance")
 
-      summary_conv <- conv %>%
+      summary_conv <- conv.plot %>%
         group_by(band) %>%
         summarise(
           average = mean(reflectance),

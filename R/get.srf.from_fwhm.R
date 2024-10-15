@@ -1,7 +1,7 @@
 #' Generate Spectral Response Function from Full Width at Half Maximum (FWHM)
 #'
 #' This function generates a spectral response function based on a Gaussian distribution, which is defined by the center wavelength and standard deviation (sd). A normalization based on the maximum (max) value is applied. The sensors considered in this function include:
-#' - **Sentinel-2a** and **Sentinel-2b**: For these sensors, the function uses the spectral response data stored in `ToolsRTM::str.sentinel2a` and `ToolsRTM::str.sentinel2b`, respectively. These datasets provide the necessary characteristics to accurately model their spectral responses.
+#' - **Sentinel2a** and **Sentinel2b**: For these sensors, the function uses the spectral response data stored in `ToolsRTM::str.sentinel2a` and `ToolsRTM::str.sentinel2b`, respectively. These datasets provide the necessary characteristics to accurately model their spectral responses.
 #' - **PRISMA**: The function utilizes the original resampling function for PRISMA, with the spectral response characteristics stored in `ToolsRTM::srf.prisma`. This allows for precise calculations based on the unique properties of the PRISMA sensor.
 #' - Other sensors (e.g., ALI, Hyperion, Landsat4-8, MODIS, Quickbird, RapidEye, WorldView2-4, WorldView2-8) use the Full Width at Half Maximum (FWHM) function for their spectral response calculations, based on their respective characteristics.
 #'
@@ -53,11 +53,11 @@ get.srf.from_fwhm <- function( sensor='', save=T, path.out, get.plot = FALSE) {
   srf <- data.frame(wavelength = nm_range)  # Create base dataframe with wavelengths
   # Loop through each channel in df.data_sub
 
-  if (sensor == 'Sentinel-2a'){
+  if (sensor == 'Sentinel2a'){
 
     srf <- ToolsRTM::srf.sentinel2a
 
-  } else if (sensor == 'Sentinel-2b'){
+  } else if (sensor == 'Sentinel2b'){
 
     srf <- ToolsRTM::srf.sentinel2b
 
