@@ -43,8 +43,6 @@
 #rfl=sim.canopy; sensor="prisma"
 get.spectra.convolved <- function(rfl, sensor, plot.spectra=T){
 
-  rfl = sim.canopy
-  sensor = 'Sentinel2a'
   #Convert rfl to a matrix if it's not already one
   if (!is.matrix(rfl)) {
     rfl <- as.matrix(rfl)
@@ -126,7 +124,7 @@ get.spectra.convolved <- function(rfl, sensor, plot.spectra=T){
 
   if (plot.spectra==T ) {
     if(sensor=="Sentinel2a") {
-      db.sensor <- subset(sensor.characteristics, Sensor == 'Sentinel2a')
+      db.sensor <- subset(ToolsRTM::sensor.characteristics, Sensor == 'Sentinel2a')
       nm = cbind(bands, as.numeric(db.sensor$average))
       colnames(nm)=c("band", "nm")
 
@@ -138,7 +136,7 @@ get.spectra.convolved <- function(rfl, sensor, plot.spectra=T){
     }
 
     if(sensor=="Sentinel2b") {
-      db.sensor <- subset(sensor.characteristics, Sensor == 'Sentinel2b')
+      db.sensor <- subset(ToolsRTM::sensor.characteristics, Sensor == 'Sentinel2b')
       nm = cbind(bands, as.numeric(db.sensor$average))
       colnames(nm)=c("band", "nm")
 
