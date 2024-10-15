@@ -24,7 +24,7 @@ A data frame containing the spectral response functions.
 \description{
 This function generates a spectral response function based on a Gaussian distribution, which is defined by the center wavelength and standard deviation (sd). A normalization based on the maximum (max) value is applied. The sensors considered in this function include:
 \itemize{
-\item \strong{Sentinel-2a} and \strong{Sentinel-2b}: For these sensors, the function uses the spectral response data stored in \code{ToolsRTM::str.sentinel2a} and \code{ToolsRTM::str.sentinel2b}, respectively. These datasets provide the necessary characteristics to accurately model their spectral responses.
+\item \strong{Sentinel2a} and \strong{Sentinel2b}: For these sensors, the function uses the spectral response data stored in \code{ToolsRTM::str.sentinel2a} and \code{ToolsRTM::str.sentinel2b}, respectively. These datasets provide the necessary characteristics to accurately model their spectral responses.
 \item \strong{PRISMA}: The function utilizes the original resampling function for PRISMA, with the spectral response characteristics stored in \code{ToolsRTM::srf.prisma}. This allows for precise calculations based on the unique properties of the PRISMA sensor.
 \item Other sensors (e.g., ALI, Hyperion, Landsat4-8, MODIS, Quickbird, RapidEye, WorldView2-4, WorldView2-8) use the Full Width at Half Maximum (FWHM) function for their spectral response calculations, based on their respective characteristics.
 }
