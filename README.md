@@ -56,7 +56,6 @@ The manuals for the models and simulations can be accessed directly from the Shi
 Here’s some examples of how the Shiny app integrates with the `get.simulator` function:
 
 ```         
-
 ToolsRTM::get.simulator(app='SCOPE')
 ToolsRTM::get.simulator(app='PROSAIL-BRDF')
 ToolsRTM::get.simulator(app='getLUT')
