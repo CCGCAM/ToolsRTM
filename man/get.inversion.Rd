@@ -10,10 +10,12 @@ get.inversion(
   inputs,
   algorithm = "PLSR",
   method.resampling = NULL,
+  n.cores = NULL,
   seed = 123,
   n.samples = 500,
   save.model = FALSE,
-  save.path = NULL
+  save.path = NULL,
+  ...
 )
 }
 \arguments{
@@ -28,6 +30,8 @@ get.inversion(
 'Bayesian' ( Bayesian Additive Regression Trees); 'AdaBag' ( Bagged AdaBoost); "qLASSO" (Quantile Regression with LASSO penalty); "RVM" (Relevance Vector Machines (RVM) with linear kernel);
 'BRNN' (Bayesian Regularized Neural Networks); "Ensemble" (Stacking Ensemble models)
 Default is "PLSR".}
+
+\item{n.cores}{The number of cores}
 
 \item{seed}{The seed for reproducibility. Default is 123.}
 

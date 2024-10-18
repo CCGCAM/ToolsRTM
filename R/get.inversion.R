@@ -11,6 +11,8 @@
 #' @param method.control The resampling method for controlling tht ML: Options are: "boot" (Bootstrapping); "boot632" (Bootstrapping-632);
 #' "optimism_boot"; "boot_all"; "cv" (cross-Validation); "repeatedcv" (repeats k-fold cross-validation with 3 times);
 #' "LOOCV" (Leave-One-Out Cross-Validation with 3 times); "LGOCV"
+#' @param n.cores The number of cores
+
 #' @param seed The seed for reproducibility. Default is 123.
 #' @param n.samples A integer with the number of samples used for tunning search (nsample/2) and create the ML model (n.sample)
 #' @param save.model Logical indicating whether to save the trained models. Default is FALSE.
@@ -22,20 +24,28 @@
 #' @examples
 #' get.inversion(data = my_data, depVar = "Cab", inputs = c("NDVI", "TCARI"), ML = "SVM", seed = 123)
 
-get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampling=NULL,
-                          seed=123, n.samples=500, save.model = FALSE, save.path = NULL) {
+get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampling=NULL,n.cores=NULL,
+                          seed=123, n.samples=500, save.model = FALSE, save.path = NULL, ...) {
 
   #https://topepo.github.io/caret/available-models.html
   #https://topepo.github.io/caret/model-training-and-tuning.html#model-training-and-parameter-tuning
   #https://topepo.github.io/caret/train-models-by-tag.html#gaussian-process
   # Set the seed for reproducibility
   if(is.null(seed)) {
-    seed <- 123  # Default seed value
-    set.seed(seed)
+    set.seed(as.numeric(Sys.time()) %% 10000)  # Default seed value
   } else{
     set.seed(seed)
   }
 
+
+  # Set the n.cores
+  if(is.null(n.cores)) {
+    n.cores <- 2#parallel::makeCluster(detectCores() - 2)
+
+
+  } else {
+    n.cores <- 2
+  }
 
   # Set the seed the resampling method in the Model
   if(is.null(method.resampling)) {
@@ -45,25 +55,26 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
   }
 
 
-
-  # Create train-test split indices based on the 'Anth' column
-  indices <- caret::createDataPartition(data[, depVar], p = 0.8, list = FALSE)
-
-  # Split the data into training and testing sets
-  df.train <- data[indices, ]
-  df.test <- data[-indices, ]
-
-
-  if(is.null(n.samples)) {
-    # Reduce sample size for tuning
-    rows.r <- sample(nrow(df.train), 500)
-    n.model <-round(dim(df.train)[1]/10,0)
+  # Reduce sample size for tuning if n.samples is provided
+  if (!is.null(n.samples) && n.samples <= nrow(data)) {
+    rows.r <- sample(nrow(data), n.samples)
   } else {
-    # Reduce sample size for tuning
-    rows.r <- sample(nrow(df.train), n.samples)
-    n.model <- n.samples
-    rows.model <- sample(nrow(df.train), n.model)
+    stop("n.samples must be less than or equal to the number of rows in data.")
   }
+
+  #Subset data for modeling
+  data <- data[rows.r, ]
+
+  # Create train-test split indices based on the 'depVar' column
+  indices <- caret::createDataPartition(data[,depVar], p = 0.7, list=F)
+
+  if (length(indices) == nrow(data)){
+    indices <- sample(1:nrow(data), size = round(0.7 * nrow(data)))
+  }
+
+  df.train <- data[indices, ]  # Training set
+  df.test <- data[-indices, ]   # Testing set
+
 
 
   # Force to run PLSR if ML is null or empty
@@ -78,14 +89,14 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
     fmla.n <- as.formula(paste(depVar," ~ ", paste(inputs, collapse= "+")))
 
     # Parallelize tuning process
-    clusters <- parallel::makeCluster(detectCores() - 1)
+    clusters <- makeCluster(n.cores) #detectCores()/n.cores - 1
     doParallel::registerDoParallel(clusters)
 
-    myfolds <- createMultiFolds(df.train[rows.model,depVar], k = 10, times = 10)
+    myfolds <- createMultiFolds(df.train[,depVar], k = 10, times = 10)
     control <- trainControl(method= method.resampling, index = myfolds, selectionFunction = "oneSE")
 
     # Train PLS model
-    model_ <- train(fmla.n, data = df.train[rows.model,],
+    model_ <- caret::train(fmla.n, data = df.train[,],
                    method = "pls",
                    metric = "RMSE",
                    tuneLength = 20,
@@ -105,18 +116,18 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
     fmla.n <- as.formula(paste(depVar," ~ ", paste(inputs, collapse= "+")))
 
     # Parallelize tuning process
-    clusters <- parallel::makeCluster(detectCores() - 1)
+    clusters <- makeCluster(n.cores) #detectCores()/n.cores - 1
     doParallel::registerDoParallel(clusters)
 
-    tobj2 <- e1071::tune.svm(fmla.n, data = df.train[rows.r,], sampling = "fix",
+    tobj2 <- e1071::tune.svm(fmla.n, data = df.train[,], sampling = "fix",
                              gamma = 2^c(-10, -8, -6, -4),  # search space for gamma
                              cost = 2^c(-5, -3, -1, 1),     # search space for cost
-                             tunecontrol = tune.control(cross = 5))  # number of cross-validation folds
+                             tunecontrol =  tune.control(cross = 5))  # number of cross-validation folds
     cc <- as.numeric(tobj2$best.parameters[2])
     gg <- as.numeric(tobj2$best.parameters[1])
 
     # SVM
-    model_ <- svm(fmla.n, kernel = "radial", data = df.train[rows.model, ], gamma = gg, cost = cc,
+    model_ <- svm(fmla.n, kernel = "radial", data = df.train[, ], gamma = gg, cost = cc,
                      type = "eps-regression", probability = FALSE)
 
     parallel::stopCluster(clusters)
@@ -135,23 +146,23 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
     fmla.n <- as.formula(paste(depVar," ~ ", paste(inputs, collapse= "+")))
 
     # Parallelize tuning process
-    clusters <- parallel::makeCluster(detectCores() - 1)
+    clusters <- makeCluster(n.cores) #detectCores()/n.cores - 1
     doParallel::registerDoParallel(clusters)
 
     # Define tuning grid with reduced search space
-    mtry2 <- randomForest::tuneRF(df.train[rows.r, inputs], y = df.train[rows.r, depVar],
+    mtry2 <- randomForest::tuneRF(df.train[, inputs], y = df.train[, depVar],
                     ntreeTry = ncol(df.train[, inputs])/3, stepFactor = 1.5, improve = 0.01,
                     trace = F, plot = F)
     best.m <- mtry2[mtry2[, 2] == min(mtry2[, 2]), 1]
     metric <- "RMSE"
     tunegrid <- expand.grid(.mtry = best.m)
-    n.trees <- ncol(df.train[, inputs])/3
+    n.trees <- round(ncol(df.train[, inputs])/3,0)
 
     # Define training control
     fit.control <- caret::trainControl(method = method.resampling, number = 3,
                  search = "grid", repeats = 3, allowParallel = TRUE)
     # Random Forest
-    model_ <- caret::train(fmla.n, data = df.train[rows.model, ], method = "rf", metric = metric,
+    model_ <- caret::train(fmla.n, data = df.train[, ], method = "rf", metric = metric,
                            trControl = fit.control, verbose=F, tuneGrid = tunegrid)
 
     parallel::stopCluster(clusters)
@@ -165,7 +176,7 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
     fmla.n <- as.formula(paste(depVar," ~ ", paste(inputs, collapse= "+")))
 
     # Parallelize tuning process
-    clusters <- parallel::makeCluster(detectCores() - 1)
+    clusters <- makeCluster(n.cores) #detectCores()/n.cores - 1
     doParallel::registerDoParallel(clusters)
 
     # Define training control
@@ -180,7 +191,7 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
                              n.trees = c(100, 300, 1000))
 
     ##Gradient Boosting
-    model_<- caret::train(fmla.n, data = df.train[rows.model,],  method = "gbm", metric='RMSE',
+    model_<- caret::train(fmla.n, data = df.train[,],  method = "gbm", metric='RMSE',
                          # preProc = c('center', 'scale','BoxCox', 'YeoJohnson', 'expoTrans', 'ica'),
                          trControl = fit.control, tuneGrid =tune.grid,verbose = F)
 
@@ -195,13 +206,15 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
     fmla.n <- as.formula(paste(depVar," ~ ", paste(inputs, collapse= "+")))
 
     # Parallelize tuning process
-    clusters <- parallel::makeCluster(detectCores() - 1)
+    clusters <- makeCluster(n.cores) #detectCores()/n.cores - 1
     doParallel::registerDoParallel(clusters)
 
     # Define training control
     fit.control <- caret::trainControl(method=method.resampling, allowParallel=T,
                                        number=3, repeats=3, search="random",
-                                       index = createFolds(df.train[rows.r,inputs], 5),
+                                       index = createFolds(df.train[,inputs], 5),
+                                      # sampling ='smote',
+                                     # na.action = na.pass,
                                        returnResamp = "all",
                                        savePredictions = "all")
     # Define tuning grid with reduced search space
@@ -209,11 +222,12 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
                              .size = seq(1,10,by=1))#, .bag=F) for vNNet
 
     ##Neural-Network Model
-    model_<- caret::train(fmla.n, data = df.train[rows.model,],
+    model_<- caret::train(fmla.n, data = df.train[,],
                              method = "nnet", repeats = 1, trControl = fit.control,
                              preProc = c("center", "scale",'BoxCox', 'YeoJohnson'),
                              cross=10,trace=F, ##remove message with Trace=False
                              threshold = 0.3,
+                             na.action  = na.pass,
                              maxit = 1000, linout = 1,
                              metric='Rsquared', tuneGrid = nnet.grid,
                              verbose = FALSE)
@@ -232,7 +246,7 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
     fmla.n <- as.formula(paste(depVar," ~ ", paste(inputs, collapse= "+")))
 
     # Parallelize tuning process
-    clusters <- parallel::makeCluster(detectCores() - 1)
+    clusters <- makeCluster(n.cores) #detectCores()/n.cores - 1
     doParallel::registerDoParallel(clusters)
 
    # Define training control
@@ -248,7 +262,7 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
                              nu = c(3,5,7))
 
     ## Bayesian Generalized Linear Model
-    model_ <- caret::train(fmla.n, data = df.train[rows.model,], method = "bartMachine", metric='RMSE',
+    model_ <- caret::train(fmla.n, data = df.train[,], method = "bartMachine", metric='RMSE',
                            trControl = fit.control, tuneGrid = tune.grid,verbose = FALSE)
 
     parallel::stopCluster(clusters)
@@ -262,7 +276,7 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
     fmla.n <- as.formula(paste(depVar," ~ ", paste(inputs, collapse= "+")))
 
     # Parallelize tuning process
-    clusters <- parallel::makeCluster(detectCores() - 1)
+    clusters <- makeCluster(n.cores) #detectCores()/n.cores - 1
     doParallel::registerDoParallel(clusters)
 
     # Define training control
@@ -276,7 +290,7 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
                              maxdepth = c(1, 3, 5))
 
     ## Bagged AdaBoost
-    model_ <- caret::train(fmla.n, data = df.train[rows.model,],
+    model_ <- caret::train(fmla.n, data = df.train[,],
                            method = "AdaBag",
                            trControl = fit.control,
                            tuneGrid = tune.grid,
@@ -295,7 +309,7 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
     fmla.n <- as.formula(paste(depVar, " ~ ", paste(inputs, collapse = "+")))
 
     # Parallelize tuning process
-    clusters <- parallel::makeCluster(detectCores() - 1)
+    clusters <- makeCluster(n.cores) #detectCores()/n.cores - 1
     doParallel::registerDoParallel(clusters)
 
     # Define training control
@@ -308,7 +322,7 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
     tune.grid <- expand.grid(neurons = c(5, 10, 20, 30))
 
     ## Bayesian Regularized Neural Networks (BRNN)
-    model_ <- caret::train(fmla.n, data = df.train[rows.model,],
+    model_ <- caret::train(fmla.n, data = df.train[,],
                            method = "brnn",
                            trControl = fit.control,
                            tuneGrid = tune.grid,
@@ -327,7 +341,7 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
     fmla.n <- as.formula(paste(depVar, " ~ ", paste(inputs, collapse = "+")))
 
     # Parallelize tuning process
-    clusters <- parallel::makeCluster(detectCores() - 1)
+    clusters <- makeCluster(n.cores) #detectCores()/n.cores - 1
     doParallel::registerDoParallel(clusters)
 
     # Define training control
@@ -343,7 +357,7 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
                              eta = c(0.01, 0.05, 0.1))
 
     ## eXtreme Gradient Boosting (XGBoost) with linear base learners
-    model_ <- caret::train(fmla.n, data = df.train[rows.model,],
+    model_ <- caret::train(fmla.n, data = df.train[,],
                            method = "xgbLinear",
                            trControl = fit.control,
                            tuneGrid = tune.grid,
@@ -363,7 +377,7 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
     fmla.n <- as.formula(paste(depVar, " ~ ", paste(inputs, collapse = "+")))
 
     # Parallelize training process if applicable
-    clusters <- parallel::makeCluster(detectCores() - 1)
+    clusters <- makeCluster(n.cores) #detectCores()/n.cores - 1
     doParallel::registerDoParallel(clusters)
 
     # Define training control
@@ -373,7 +387,7 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
                                        allowParallel = TRUE)
 
     ## Relevance Vector Machines (RVM) with linear kernel
-    model_ <- caret::train(fmla.n, data = df.train[rows.model,],
+    model_ <- caret::train(fmla.n, data = df.train[,],
                            method = "rvmLinear",
                            trControl = fit.control,
                            metric = 'RMSE',  # Use RMSE as the evaluation metric
@@ -393,7 +407,7 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
     fmla.n <- as.formula(paste(depVar, " ~ ", paste(inputs, collapse = "+")))
 
     # Parallelize training process if applicable
-    clusters <- parallel::makeCluster(detectCores() - 1)
+    clusters <- makeCluster(n.cores) #detectCores()/n.cores - 1
     doParallel::registerDoParallel(clusters)
 
     # Define training control
@@ -406,7 +420,7 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
     tune.grid <- expand.grid(lambda = c(0.01, 0.1, 1, 10))
 
     ## Quantile Regression with LASSO penalty
-    model_ <- caret::train(fmla.n, data = df.train[rows.model,],
+    model_ <- caret::train(fmla.n, data = df.train[,],
                            method = "rqlasso",
                            trControl = fit.control,
                            tuneGrid = tune.grid,
@@ -424,7 +438,7 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
 
 
     # Parallelize tuning process
-    clusters <- parallel::makeCluster(detectCores() - 1)
+    clusters <- parallel::makeCluster(n.cores)
     doParallel::registerDoParallel(clusters)
 
     algorithmList <- c('gbm', #Gradient-boosted machines
@@ -466,7 +480,7 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
                                repeats=3,
                                search = "random")
 
-    models <- caretEnsemble::caretList(fmla.n, data = df.train[rows.model,],
+    models <- caretEnsemble::caretList(fmla.n, data = df.train[,],
                                        trControl=fit.control,
                                        verbose=FALSE,
                                        tuneList = models.ensemble,
@@ -475,7 +489,7 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
     stackControl <- trainControl(method=method.resampling,
                                  number=3,
                                  repeats=3,
-                                 index = createFolds(df.train[rows.model,], 5),
+                                 index = createFolds(df.train[,], 5),
                                  savePredictions = "all",
                                  search = "random")
 
@@ -492,32 +506,34 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
   }
 
 
-  if(save.model) {
-    saveRDS(model_, file = file.path(save.path, paste('model-',ML,'.rds', sep='')))
+
+  pred.train <- stats::predict(object = model_, df.train[, c(depVar, inputs)])
+  pred.test <- stats::predict(object = model_, df.test[, c(depVar, inputs)])
+
+  # Prediction
+  n.rows_.train <- as.numeric(names(pred.train))
+  n.rows_.test <- as.numeric(names(pred.test))
+
+  # Statistics
+  stats <- get.stats(model = model_, train = df.train[, c(depVar, inputs)],
+                     test = df.test[, c(depVar, inputs)], var = depVar)
+
+  # Plot
+  plot.result <- get.plot.ML(model = model_, df.train[, c(depVar, inputs)],
+                             df.test[, c(depVar, inputs)], depVar)
+
+  # Save the model, statistics, and plot if the save.model flag is TRUE
+  if (save.model) {
+    # Save the model as an RDS file
+    saveRDS(model_, file = file.path(save.path, paste0('model-', algorithm, '.rds')))
+
+    # Write the statistics as a CSV file
+    write.csv(stats, file = file.path(save.path, paste0('stats-', algorithm, '.csv')), row.names = FALSE)
+
+    # Save the plot as a PNG file
+    ggplot2::ggsave(filename = file.path(save.path, paste0('Plot-', algorithm, '.png')), plot = plot.result)
   }
 
-  if (algorithm == 'PLSR'){
-    # Prediction
-    pred.train <- stats::predict(object = model_, newdata = df.train)
-    pred.test <- stats::predict(object = model_, newdata = df.test)
-
-    # Statistics
-    stats <- ToolsRTM::get.stats.plsr(model_, k, df.train, df.test, depVar)
-    # Plot
-    plot.result <- ToolsRTM::get.plot.plsr(model = model_, k, df.train, df.test, depVar)
-  } else {
-    # Prediction
-    pred.train <- stats::predict(object = model_, df.train[, c(depVar, inputs)])
-    pred.test <- stats::predict(object = model_, df.test[, c(depVar, inputs)])
-
-    # Statistics
-    stats <- ToolsRTM::get.stats(model = model_, train = df.train[, c(depVar, inputs)],
-                                 test = df.test[, c(depVar, inputs)], var = depVar)
-
-    # Plot
-    plot.result <- ToolsRTM::get.plot.ML(model = model_, df.train[, c(depVar, inputs)],
-                                         df.test[, c(depVar, inputs)], depVar)
-  }
 
   results <- list(
     model.label = algorithm,

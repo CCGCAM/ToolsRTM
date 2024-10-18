@@ -9,6 +9,7 @@
 #'            - `"SCOPE"`: Launch the SCOPE simulator. Need the SCOPEinR package
 #'            - `"getLUT"`: Launch the configuration LUT app. 
 #'             -`"RTMs"`: Launch the RTM simulator. 
+#'              -`"Inversion"`: Launch the Inversion module for retriving plant traits. 
 #'            - `"default"`: Launch the default simulator (general).
 #' @return Launches the Shiny app and verifies that all necessary packages are installed.
 #' @export
@@ -28,9 +29,8 @@
 
 get.simulator <- function(app = "PROSAIL") {
   
-  
   # Validate the app parameter
-  valid_apps <- c("PROSAIL", "PROSAIL-BRDF", "MARMIT", "getLUT",'SPART', 'SCOPE','RTMs' )
+  valid_apps <- c("PROSAIL", "PROSAIL-BRDF", "MARMIT", "getLUT",'SPART', 'SCOPE','RTMs','Inversion' )
   
   if (!app %in% valid_apps) {
     stop(paste("Invalid app specified. Please choose one of the following options:", 
@@ -41,7 +41,7 @@ get.simulator <- function(app = "PROSAIL") {
   if (app %in% c("SCOPE", "SPART") && !"SCOPEinR" %in% installed.packages()[,"Package"]) {
     stop("The SCOPEinR package is required for this app. Please install it from the GitLab repository.", call. = FALSE)
   } else {
-    message ('SCOPEinR is install on your system.')
+    message ('ToolRTM and SCOPEinR packages are install on your system.')
   }
   # Determine the appropriate app directory based on the simulator parameter
   if (app == "PROSAIL") {
@@ -56,6 +56,8 @@ get.simulator <- function(app = "PROSAIL") {
     appDir <- system.file("application", "SCOPE", package = "ToolsRTM")
   } else if (app == "getLUT") {
     appDir <- system.file("application", "LUTs", package = "ToolsRTM")
+  } else if (app == "Inversion") {
+    appDir <- system.file("application", "Inversion", package = "ToolsRTM")
   } else {
     appDir <- system.file("application", "RTMs", package = "ToolsRTM")
   }
