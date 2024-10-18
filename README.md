@@ -57,7 +57,7 @@ Here’s some examples of how the Shiny app integrates with the `get.simulator` 
 
 ```         
 
-ToolsRTM::get.sinulator(app='SCOPE')
+ToolsRTM::get.simulator(app='SCOPE')
 ToolsRTM::get.simulator(app='PROSAIL-BRDF')
 ToolsRTM::get.simulator(app='getLUT')
 ?get.simulator # to see more options
