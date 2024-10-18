@@ -1,21 +1,27 @@
-
 #' LUT inversion using a RTM
 #'
-#' @param rfl.sensor is a matrix with reflectance values of the observed sensor.
-#' @param rfl.rtm is a matrix with reflectance values simulated by the Radiative transfer (RT) model.
-#' @param LUT a LUT table with the distribution of biophysical parameters used as input parameters in the RT model
-#' @param wave vector with the wavelength to compare
-#' @param method Function cost used in the inversion of the model, the default option is method= opt ='merit-RMSE'. The 
-#' other method are 'merit-DWT' and 'merit-1stD'. Where merit-DWT applies a wavelets transformation. Where 
-#' merit-1stD uses the first derivative in both data.
-#' @param nOpt Solutions uses by the chosen method 
+#' @param rfl.sensor A matrix with reflectance values of the observed sensor.
+#' @param rfl.rtm A matrix with reflectance values simulated by the Radiative Transfer (RT) model.
+#' @param LUT A LUT table with the distribution of biophysical parameters used as input parameters in the RT model.
+#' @param wave A vector with the wavelengths to compare.
+#' @param method Function cost used in the inversion of the model. The default option is method = 'merit-RMSE'. 
+#' Other methods are 'merit-DWT' and 'merit-1stD'. 'merit-DWT' applies a wavelet transformation, while 'merit-1stD' 
+#' uses the first derivative in both data.
+#' @param nOpt The number of optimal solutions to be selected by the chosen method.
 #'
-#' @return get tradtional inversion
+#' @return A list with two elements: the LUT and the reflectance matrix (rfl).
 #' @export
 #'
-#' @examples here adding examples ....
-#' 
-InversionOpt<-function (rfl.sensor=NULL,rfl.rtm=NULL,LUT=NULL,wave=NULL,method=NULL,nOpt=NULL) 
+#' @examples
+#' # Example usage:
+#' sensor_data <- matrix(runif(100), nrow=10, ncol=10) # Simulated sensor reflectance
+#' rtm_data <- matrix(runif(100), nrow=10, ncol=10)    # Simulated RTM reflectance
+#' lut_table <- data.frame(N=runif(10), Cab=runif(10), Cw=runif(10)) # Simulated LUT
+#' wavelengths <- seq(400, 700, length.out = 10)  # Simulated wavelengths
+#' result <- get.inversionOpt(sensor_data, rtm_data, lut_table, wavelengths, method='merit-RMSE', nOpt=5)
+#' print(result)
+#'
+get.inversionOpt<-function (rfl.sensor=NULL,rfl.rtm=NULL,LUT=NULL,wave=NULL,method=NULL,nOpt=NULL) 
 {
   ##rfl.sensor is a matrix
   ##rfl.prosail is a matrix
@@ -28,6 +34,7 @@ InversionOpt<-function (rfl.sensor=NULL,rfl.rtm=NULL,LUT=NULL,wave=NULL,method=N
   ##### RMSE function -------
   rmse_f = function(sim,obs){
     sqrt(mean((sim - obs)^2))}
+  
   ###############################################################################
   ###############################################################################
   ## Outputs-------
@@ -42,6 +49,7 @@ InversionOpt<-function (rfl.sensor=NULL,rfl.rtm=NULL,LUT=NULL,wave=NULL,method=N
   Table.rmse.nOpt<-list()
   Table.rmse.mean<-list()
   rfl.best<-list()
+  rfl.prosail <- rfl.rtm
   ###############################################################################
   ###############################################################################
   
@@ -94,7 +102,7 @@ InversionOpt<-function (rfl.sensor=NULL,rfl.rtm=NULL,LUT=NULL,wave=NULL,method=N
 
   if (method == 'merit-DWT') {
     version<-method
-    print(message('Merit fuction using RMSE with DW transformation is processing'))
+    message('Merit fuction using RMSE with DW transformation is processing')
     if (!require("wavelets")) { install.packages("wavelets"); require("wavelets") }  ### load wavelets packages
     
     ###############################################################################
@@ -209,7 +217,7 @@ InversionOpt<-function (rfl.sensor=NULL,rfl.rtm=NULL,LUT=NULL,wave=NULL,method=N
   Table.best<-cbind(ID = c(1:dim(rfl.sensor)[1]), LUT.best,rfl.b)
  
   
-  return(list(Table.best))
+  return(list(rfl.b,LUT.best))
   
 }
 
