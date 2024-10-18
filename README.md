@@ -25,6 +25,15 @@ directional top-of-atmosphere (TOA) spectral observations. This approach
 accounts for significant effects, such as sun-observer geometries and
 the non-Lambertian reflectance of the land surface.
 
+### Soil Models
+
+In particular, this package can simulate the MARMIT (Multilayer rAdiative tRansfer Model of soIl reflecTance), a radiative transfer model that predicts the spectral reflectance of bare soil from 400 nm to 2500 nm with a 1 nm step (solar domain) as a function of its surface water content [1]. The improved version, MARMIT-2 [2], enhances the capabilities of the original model
+
+##### Data Requirements for Soil
+
+The datasets needed for running the models can be downloaded from the databases. Each of the eight database directories (Bablet_2016, Dupiau_2020, Humper_2015, Lesaignoux_2008, Liu_2002, Lobell_2002, Marcq_2012, and Philpot_2014) contains essential data for model validation and simulations.
+
+For more information, please visit: MARMIT GitLab
 ### Getting started
 
 To install the ToolsRTM package, please follow these steps in R session:
@@ -42,7 +51,7 @@ install.packages('pathWithFile/toolsrtm-main.tar.gz',repos = NULL,type = "source
 # Check the version of ToolsRTM
 packageVersion("ToolsRTM")
 ```
-Note: The last version is 0.60
+Note: The last version is 0.61
 
 ### Installing the SCOPEinR Package
 
@@ -209,6 +218,12 @@ Van der Tol, C., Verhoef, W., Timmermans, J., Verhoef, A., & Su, Z.
 photosynthesis, fluorescence, temperature, and energy balance**.
 *Biogeosciences*, 6(12), 3109–3129.
 <https://doi.org/10.5194/bg-6-3109-2009>.
+
+#### MARMIT model (Multilayer rAdiative tRansfer Model of soIl reflecTance)
+
+Bablet A., Vu P.V.H., Jacquemoud S., Viallefont-Robinet F., Fabre S., Briottet X., Sadeghi M., Whiting M.L., Baret F. and Tian J. (2018), MARMIT: a multilayer radiative transfer model of soil reflectance to estimate surface soil moisture content in the solar domain (400–2500 nm), Remote Sensing of Environment, 217:1-17. <https://doi.org/10.1016/j.rse.2018.07.031>. 
+
+Dupiau A., Jacquemoud S., Briottet X., Fabre S., Viallefont-Robinet F., Philpot W., Di Biagio C., Hébert H. and Formenti P. (2022), MARMIT-2: an improved version of the MARMIT model to predict soil reflectance as a function of surface water content in the solar domain, Remote Sensing of Environment, 272:112951. <https://doi.org/10.1016/j.rse.2022.112951>.
 
 ### License
 
