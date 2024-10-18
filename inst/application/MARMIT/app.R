@@ -1,16 +1,19 @@
 
 # Load packages
 library(ToolsRTM)
-library(shiny)
-library(shinythemes)
-library(ggplot2)
-library(dplyr)
-library(reshape2)
-library(DT)
-source('www/marmit/marmit1.R')
-source('www/marmit/marmit2.R')
+required_packages <- c("shiny", "shinythemes", "ggplot2", "dplyr",'DT')
+
+# Check for missing packages and install them if necessary
+missing_packages <- required_packages[!(required_packages %in% installed.packages()[,"Package"])]
+
+if (length(missing_packages) > 0) {
+  install.packages(missing_packages)
+}
+# Load the libraries
+lapply(required_packages, library, character.only = TRUE)
+
 # Define UI
-ui <- navbarPage("MARMIT Soil Reflectance Simulator", theme = shinytheme("flatly"),
+ui <- navbarPage("Soil Reflectance Simulator", theme = shinytheme("flatly"),
 
   # Main Tab Panel for Running the Simulation
   tabPanel("MARMIT Model",

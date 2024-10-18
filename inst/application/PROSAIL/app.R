@@ -2,17 +2,21 @@
 
 # Load packages
 library(ToolsRTM)
-library(shiny)
-library(shinythemes)
-library(ggplot2)
-library(dplyr)
-library(reshape2)
+required_packages <- c("shiny", "shinythemes", "ggplot2", "dplyr", "reshape2")
 
+# Check for missing packages and install them if necessary
+missing_packages <- required_packages[!(required_packages %in% installed.packages()[,"Package"])]
+
+if (length(missing_packages) > 0) {
+  install.packages(missing_packages)
+}
+# Load the libraries
+lapply(required_packages, library, character.only = TRUE)
 
 # Define UI
 ui <- navbarPage("Online reflectance simulator",theme = shinytheme("flatly"),
 
-          tabPanel(title = "Advanced Earth Observation Course (GRS-32306)",
+          tabPanel(title = "PROSAIL model",
   # Sidebar layout with input and output definitions ----
   sidebarLayout(
 

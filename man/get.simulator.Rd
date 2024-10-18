@@ -4,17 +4,25 @@
 \alias{get.simulator}
 \title{Get the simulator tools}
 \usage{
-get.simulator()
+get.simulator(app = "PROSAIL")
+}
+\arguments{
+\item{app}{A character string indicating which simulator to launch.
+Acceptable values are:
+- \code{"PROSAIL"}: Launch the PROSAIL simulator.
+- \code{"PROSAIL-BRDF"}: Launch the PROSAIL-BRF simulator.
+- \code{"MARMIT"}: Launch the MARMIT simulator.
+- \code{"SPART"}: Launch the SPART simulator. Need the SCOPEinR package
+- \code{"SCOPE"}: Launch the SCOPE simulator. Need the SCOPEinR package
+- \code{"getLUT"}: Launch the configuration LUT app.
+-\code{"RTMs"}: Launch the RTM simulator.
+- \code{"default"}: Launch the default simulator (general).}
 }
 \value{
 Launches the Shiny app and verifies that all necessary packages are installed.
 }
 \description{
-This function launches the simulator Shiny app and ensures that all necessary package dependencies are installed.
-It first runs \code{get.packages()} to check for and install any missing packages required by the app.
-}
-\details{
-Note: It is required to run \code{get.packages()} beforehand to ensure all package dependencies are resolved.
+Get the simulator tools
 }
 \examples{
 # First, ensure package dependencies are installed:
@@ -22,4 +30,10 @@ get.packages()
 
 # Then, launch the simulator:
 get.simulator()
+
+# Launch specific simulators:
+get.simulator("PROSAIL")
+get.simulator("SCOPE")
+get.simulator("MARMIT")
+get.simulator("getLUT")
 }
