@@ -20,7 +20,7 @@ To install the ToolsRTM package, please follow these steps in R session:
 
 ```         
 # install ToolsRTM
-install.packages('pathWithFile/toolsrtm-main.tar.gz',repos = NULL,type = "source"2
+install.packages('pathWithFile/toolsrtm-main.tar.gz',repos = NULL,type = "source")
 ```
 
 2.  Check the installed version:
