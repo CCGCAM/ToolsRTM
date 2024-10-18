@@ -47,6 +47,22 @@ install.packages('pathWithFile/scopeinr-main.tar.gz',repos = NULL,type = "source
 
 The manuals are accessible through the [Shiny app](https://carlos-camino.shinyapps.io/0-toolsrtm-simulator/) or directly within the [ToolsRTM](https://carlos-camino.shinyapps.io/0-toolsrtm-simulator/_w_ef4421a7/Notebooks/R/ToolsRTM/ToolsRTM.html) and [SCOPEinR](https://carlos-camino.shinyapps.io/0-toolsrtm-simulator/_w_ef4421a7/Notebooks/R/SCOPEinR/SCOPEinR.html) packages. Vignettes are currently under development.
 
+### Shiny application
+
+This package includes a Shiny app designed for running simulations using various functions available in `get.simulator`. The app provides an intuitive interface for configuring parameters and visualizing simulation results, making it easy to explore different model setups and their outcomes. Users can seamlessly interact with radiative transfer models, such as PROSPECT, SAIL, and MARMIT, without needing to write complex scripts.
+
+The manuals for the models and simulations can be accessed directly from the Shiny app or through the ToolsRTM and SCOPEinR packages. Comprehensive vignettes are under development to guide users in harnessing the full power of these tools.
+
+Here’s some examples of how the Shiny app integrates with the `get.simulator` function:
+
+```         
+
+ToolsRTM::get.sinulator(app='SCOPE')
+ToolsRTM::get.simulator(app='PROSAIL-BRDF')
+ToolsRTM::get.simulator(app='getLUT')
+?get.simulator # to see more options
+```
+
 ### Citation
 
 If you use the **ToolsRTM** or **SCOPEinR** packages, please consider citing the following references:
