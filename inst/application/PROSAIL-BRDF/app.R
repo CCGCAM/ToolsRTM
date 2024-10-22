@@ -1,8 +1,11 @@
 
+rm(list= ls())
 
-# Load packages
+# 1. load the main libraries  -----
+
 library(ToolsRTM)
-required_packages <- c("shiny", "shinythemes", "ggplot2", "dplyr", "doParallel",'foreach','DT')
+required_packages <- c("shiny", "shinythemes", "ggplot2", "dplyr", 
+                       "doParallel",'foreach','DT','parallel')
 
 # Check for missing packages and install them if necessary
 missing_packages <- required_packages[!(required_packages %in% installed.packages()[,"Package"])]

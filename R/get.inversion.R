@@ -40,11 +40,11 @@ get.inversion <- function(data, depVar, inputs, algorithm='PLSR',method.resampli
 
   # Set the n.cores
   if(is.null(n.cores)) {
-    n.cores <- 2#parallel::makeCluster(detectCores() - 2)
+    n.cores <- parallel::makeCluster(detectCores() - 2)
 
 
   } else {
-    n.cores <- 2
+    n.cores <- parallel::makeCluster(detectCores() - 2)
   }
 
   # Set the seed the resampling method in the Model

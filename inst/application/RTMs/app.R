@@ -1,6 +1,8 @@
 
+rm(list= ls())
 
-# Load packages
+# 1. load the main libraries  -----
+
 library(ToolsRTM)
 required_packages <- c("shiny", "shinythemes", 'shinyWidgets',"ggplot2", "dplyr",'DT')
 

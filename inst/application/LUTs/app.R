@@ -1,6 +1,8 @@
 
+rm(list= ls())
 
-# Load packages
+# 1. load the main libraries  -----
+
 library(ToolsRTM)
 required_packages <- c("shiny", "shinythemes", "shinybusy","ggplot2", "dplyr", 'tidyverse',
                        "doParallel",'parallel','foreach','DT')
@@ -428,7 +430,7 @@ server <- function(input, output,session) {
     output$plot_lut <- renderPlot({
       
       # Call the Simulations
-      data <- dataSpec_PDB
+      data <- ToolsRTM::dataSpec_PDB
       Rsoil.dry  <- data[,11]  # rsoil1 = dry soil
       Rsoil.wet <- data[,12]  # rsoil2 = wet soil
       

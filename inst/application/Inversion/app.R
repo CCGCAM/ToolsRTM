@@ -1,6 +1,8 @@
 
 
-# Load packages
+rm(list= ls())
+# 1. load the main libraries  -----
+
 library(ToolsRTM)
 required_packages <- c("shiny", "shinythemes", 'shinydashboard',"ggplot2", "dplyr", "tidyr",
                        'shinybusy','parallel',"doParallel",'foreach',
@@ -16,7 +18,8 @@ if (length(missing_packages) > 0) {
 # Load the libraries
 lapply(required_packages, library, character.only = TRUE)
 
-# Define UI
+
+# 2. Define UI -----
 
 ui <- navbarPage("Online reflectance simulator",theme = shinytheme("flatly"),
                  
@@ -467,11 +470,15 @@ ui <- navbarPage("Online reflectance simulator",theme = shinytheme("flatly"),
                  
                  
 )
-# Define server logic required to draw a histogram ----
+# 3. Define server logic -----
+
+
 server <- function(input, output,session) {
-  Sys.setenv(TF_CPP_MIN_LOG_LEVEL = '2')  # Set log level to reduce TensorFlow output
-  Sys.setenv("CUDA_VISIBLE_DEVICES" = "-1")  # Disable GPU
   
+  #Sys.setenv(TF_CPP_MIN_LOG_LEVEL = '2')  # Set log level to reduce TensorFlow output
+  #Sys.setenv("CUDA_VISIBLE_DEVICES" = "-1")  # Disable GPU
+  library(tensorflow)
+  tf$config$optimizer$set_jit(FALSE)  # Disable XLA JIT compiler
   # 5) MACHINE LEARNIG module   ---------------------------------------
   
   
@@ -944,8 +951,6 @@ server <- function(input, output,session) {
     
     # Generate filename with date and time
     paste0("model_and_stats_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".tar")
-    
-    
     # Convert percentage to proportion
     n.prop <- input$p_samplesML / 100
     # Calculate the number of samples to reduce
@@ -964,21 +969,26 @@ server <- function(input, output,session) {
       )
       
       # Adjust proportion to 10% and recalculate
-      n.prop <- 20 / 100
+      n.prop <- 10 / 100  # Adjusted to 10% (was 20% in the original code)
       n.samples.reduced <- ceiling(n.prop * nrow(dataset))
       rows.r <- sample(nrow(dataset), n.samples.reduced)
-      
+      print(length(rows.r))
       # Show warning about the change in proportion
       showNotification(
-        paste("Warning: The number of data samples for training and testing has been increased to 20%."),
+        paste("Warning: The number of data samples for training and testing has been increased to 10%."),
         type = "warning",
         duration = 5
       )
     } else {
-      
+      # Convert percentage to proportion
+      n.prop <- input$p_samplesML / 100
+      # Calculate the number of samples to reduce
+      n.samples.reduced <- ceiling(n.prop * nrow(dataset))
+      # Sample rows
+      rows.r <- sample(nrow(dataset), n.samples.reduced)
+      print(length(rows.r))
     }
-    
-    
+
     show_modal_spinner()
     
     if (input$models_ =='CNN' | input$models_ == 'Hidden_layers'){

@@ -1,9 +1,16 @@
 
+rm(list= ls())
 
-# Load packages
+# 1. load the main libraries  -----
+
 library(ToolsRTM)
-library(SCOPEinR)
-required_packages <- c("shiny", "shinythemes", "shinybusy", 'shinyWidgets',"ggplot2", "dplyr", "doParallel",'foreach','DT')
+if (!require(SCOPEinR)) {
+  stop("The 'SCOPEinR' package is required. Please install it and try again.\n",
+       "To install, run:\n", 
+       "  install.packages('SCOPEinR')") 
+}
+required_packages <- c("shiny", "shinythemes", "shinybusy", 'shinyWidgets',"ggplot2", "dplyr",
+                       "doParallel",'foreach','parallel','DT')
 
 # Check for missing packages and install them if necessary
 missing_packages <- required_packages[!(required_packages %in% installed.packages()[,"Package"])]
