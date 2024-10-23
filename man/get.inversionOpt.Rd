@@ -35,11 +35,12 @@ get.inversionOpt(
 
 \item{method}{The merit function used to evaluate the inversion. Options include:
 \itemize{
-\item \code{'merit-RMSE'}: Root Mean Square Error.
+\item \code{'merit-RMSE'}: Root Mean Square Error. The default when no method is provided
 \item \code{'merit-NRMSE'}: Normalized RMSE (scaled by the range of observed data).
 \item \code{'merit-MAE'}: Mean Absolute Error.
 \item \code{'merit-NMB'}: Normalized Mean Bias.
 \item \code{'merit-FGE'}: Fractional Gross Error.
+\item \code{'merit-custom.metric'}: A custom metric defined by users.
 }}
 
 \item{nOpt}{The number of optimal solutions (i.e., the best-matching simulated spectra) to select based on the chosen merit function.}

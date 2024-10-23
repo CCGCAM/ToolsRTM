@@ -9,11 +9,12 @@
 #' @param wave A vector containing the wavelengths corresponding to the columns of `rfl.sensor` and `rfl.rtm`.
 #' @param method The merit function used to evaluate the inversion. Options include:
 #' \itemize{
-#'   \item \code{'merit-RMSE'}: Root Mean Square Error.
+#'   \item \code{'merit-RMSE'}: Root Mean Square Error. The default when no method is provided
 #'   \item \code{'merit-NRMSE'}: Normalized RMSE (scaled by the range of observed data).
 #'   \item \code{'merit-MAE'}: Mean Absolute Error.
 #'   \item \code{'merit-NMB'}: Normalized Mean Bias.
 #'   \item \code{'merit-FGE'}: Fractional Gross Error.
+#'   \item \code{'merit-custom.metric'}: A custom metric defined by users.
 
 #' }
 #' @param nOpt The number of optimal solutions (i.e., the best-matching simulated spectra) to select based on the chosen merit function.
@@ -87,28 +88,28 @@ get.inversionOpt <- function(rfl.sensor = NULL, rfl.rtm = NULL, LUT = NULL,
     mean(2 * abs(sim - obs) / (sim + obs), na.rm = TRUE)
   }
   
-  # Select the appropriate method
-  if (method == 'merit-RMSE') {
-    merit_function <- rmse_f
-  } else if (method == 'merit-NRMSE') {
-    merit_function <- nrmse_f
-  } else if (method == 'merit-MAE') {
-    merit_function <- mae_f
-  } else if (method == 'merit-NMB') {
-    merit_function <- nmb_f
-  } else if (method == 'merit-FGE') {
-    merit_function <- fge_f
-  } else {
-    stop("Invalid method. Choose from 'merit-RMSE', 'merit-NRMSE', 'merit-MAE', 'merit-NMB', 'merit-FGE'")
-  }
-  
-  
-  # Select the merit function: either custom or default RMSE
+  # Select the appropriate merit function based on the 'method' or custom_stat
   if (!is.null(custom_stat)) {
     merit_function <- custom_stat
-    method <- 'merit-custom metric'
+    method <- 'merit-custom.metric'
   } else {
-    merit_function <- merit_function
+    # Check if method is NULL and set a default
+    if (is.null(method)) {
+      merit_function <- rmse_f  # Default to RMSE if no method is provided
+      method <- 'merit-RMSE'
+      message("No method provided. Defaulting to RMSE.")
+    } else {
+      # Define merit function based on method
+      merit_function <- switch(method,
+                               'merit-RMSE' = rmse_f,
+                               'merit-NRMSE' = nrmse_f,
+                               'merit-MAE' = mae_f,
+                               'merit-NMB' = nmb_f,
+                               'merit-FGE' = fge_f,
+                               'merit-custom.metric' = custom_stat,
+                               stop("Invalid method. Choose from 'merit-RMSE', 'merit-NRMSE', 'merit-MAE', 'merit-NMB', 'merit-FGE', 'merit-custom.metric'")
+      )
+    }
   }
   
   ###############################################################################
