@@ -16,6 +16,7 @@ Acceptable values are:
 - \code{"SCOPE"}: Launch the SCOPE simulator. Need the SCOPEinR package
 - \code{"getLUT"}: Launch the configuration LUT app.
 -\code{"RTMs"}: Launch the RTM simulator.
+-\code{"STAC"}: Launch the RTM simulator.
 -\code{"Inversion"}: Launch the Inversion module for retriving plant traits.
 - \code{"default"}: Launch the default simulator (general).}
 }
@@ -37,4 +38,5 @@ get.simulator("PROSAIL")
 get.simulator("SCOPE")
 get.simulator("MARMIT")
 get.simulator("getLUT")
+get.simulator("STAC")
 }

@@ -5,7 +5,8 @@
 #' @param s_collection An object representing the Sentinel-2 image collection, typically created using a function like `get.satellite_collection()`.
 #' @param shape An object defining the spatial extent for the data cube, such as a polygon or a raster extent.
 #' @param date_range A character vector of length 2 specifying the start and end dates in "YYYY-MM-DD" format for the aggregation period.
-#' @param aggregation_method A character string indicating the method of aggregation to apply to the pixel values. Default is "mean". Other options may include "first", "median", etc.
+#' @param aggregation_method A character string indicating the method of aggregation to apply to the pixel values. Default is "mean". Other options may include "min", "max", "median", or "first"
+#' @param resampling_method A character string indicating the method of resampling to apply to the pixel values. Default is "bicubic". Other options may include "near", or "bilinear".
 #' @param get.dataset A logical value indicating whether to return the dataset of processed data (default is TRUE).
 #'
 #' @return A processed data cube containing aggregated pixel values over the specified shape and date range. If `get.dataset` is TRUE, it returns a dataset object; otherwise, it returns the cube object.
@@ -33,8 +34,11 @@
 #' # Print the resulting data cube details
 #' print(sentinel2_cube)
 #' }
-get.sentinel2_cube <- function(s_collection, shape, date_range, aggregation_method = "mean", get.dataset=T) {
+get.sentinel2_cube <- function(s_collection, shape, date_range, 
+                               aggregation_method = "mean", 
+                               resampling_method='bicubic', get.dataset=T) {
 
+  
   if (missing(get.dataset) || is.null(get.dataset)) {
     get.dataset = F  # Set default to F if empty or missing
     print('A raster is processing ---')
@@ -56,7 +60,15 @@ get.sentinel2_cube <- function(s_collection, shape, date_range, aggregation_meth
     sf::st_bbox(crs = crs_cube)
 
 
-
+  # Set default values if missing or NULL
+  if (missing(aggregation_method) || is.null(aggregation_method)) {
+    aggregation_method <- "mean"
+  }
+  
+  if (missing(resampling_method) || is.null(resampling_method)) {
+    resampling_method <- "bicubic"
+  }
+  
   # Define the cube view (spatial extent and resolution)
   view <- cube_view(
     srs = crs_cube,
@@ -68,17 +80,19 @@ get.sentinel2_cube <- function(s_collection, shape, date_range, aggregation_meth
       top = shape_cube["ymax"],
       bottom = shape_cube["ymin"]
     ),
-    dx = 10, dy = 10, dt = "P1D",  # 10m resolution, time unit = 1 day
- #   aggregation = aggregation_method,#"mean",  # Set default aggregation to "mean"
-    resampling = "near"    # Resampling method
+    dx = 20, dy = 20, dt = "P1D",  # 20m resolution, time unit = 1 day
+    aggregation = aggregation_method, #"aggregation method
+    resampling = resampling_method    # Resampling method
   )
 
 
   # Mask to remove clouds and shadows using the SCL band
-  mask <- image_mask("SCL", values = c(0,1,2,3, 6,7,8, 9,10,11,12))  # Clouds,snow,water bad pixels and shadows
+  mask <- image_mask("SCL", values = c(0,1,3,8,9,10,11,12))  # Clouds,snow,water bad pixels and shadows
 
+  gdalcubes::gdalcubes_options(parallel = parallel::detectCores()-2)
   # Create a raster cube for the given collection and view
-  cube <- raster_cube(s_collection, view, mask = mask)
+  cube <- raster_cube(s_collection, view,mask)
+  
   # Check available bands in the cube
   available_bands <- names(cube)  # Adjust based on how you access bands
 
@@ -87,27 +101,44 @@ get.sentinel2_cube <- function(s_collection, shape, date_range, aggregation_meth
   # Reorder the available bands based on preferred order
   selected_bands <- preferred_order[preferred_order %in% available_bands]
   print(selected_bands)
+
   # Calculate average or median across time for selected bands
+  # Calculate the result cube based on the selected aggregation method
   if (aggregation_method == "mean") {
     result_cube <- cube |>
       select_bands(selected_bands) |>
       reduce_time(paste0("mean(", selected_bands, ")"))
+    
   } else if (aggregation_method == "median") {
-
     result_cube <- cube |>
       select_bands(selected_bands) |>
       reduce_time(paste0("median(", selected_bands, ")"))
-
-  }  else if (aggregation_method == "first") {
-
+    
+  } else if (aggregation_method == "min") {
     result_cube <- cube |>
       select_bands(selected_bands) |>
+      reduce_time(paste0("min(", selected_bands, ")"))
+    
+  } else if (aggregation_method == "max") {
+    result_cube <- cube |>
+      select_bands(selected_bands) |>
+      reduce_time(paste0("max(", selected_bands, ")"))
+    
+  } else if (aggregation_method == "first") {
+    result_cube <- cube |>
+      select_bands(selected_bands) |>
+      #reduce_time(paste0("min(", selected_bands, ")"))
       slice_time(as.character(date_range[[1]]))
-
-
+    
   } else {
-    stop("Invalid aggregation method specified.")
+    # Default case if aggregation_method is invalid
+    warning("Invalid aggregation method specified. Using 'mean' as the default.")
+    result_cube <- cube |>
+      select_bands(selected_bands) |>
+      reduce_time(paste0("mean(", selected_bands, ")"))
   }
+  
+ 
 
   # Convert to stars or terra format for visualization
   result_raster <- st_as_stars.cube(result_cube) |> rast()
@@ -124,7 +155,7 @@ get.sentinel2_cube <- function(s_collection, shape, date_range, aggregation_meth
     data.collection <- cube |> as.data.frame(complete_only = TRUE)
     data.list <-list(data.collection=data.collection, raster=result_raster)
 
-    return(data.list)
+    return(list(result_raster,data.list))
 
   } else {
     return(result_raster)

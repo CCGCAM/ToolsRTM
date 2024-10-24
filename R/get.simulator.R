@@ -8,8 +8,9 @@
 #'            - `"SPART"`: Launch the SPART simulator. Need the SCOPEinR package
 #'            - `"SCOPE"`: Launch the SCOPE simulator. Need the SCOPEinR package
 #'            - `"getLUT"`: Launch the configuration LUT app. 
-#'             -`"RTMs"`: Launch the RTM simulator. 
-#'              -`"Inversion"`: Launch the Inversion module for retriving plant traits. 
+#'            -`"RTMs"`: Launch the RTM simulator. 
+#'            -`"STAC"`: Launch the RTM simulator. 
+#'            -`"Inversion"`: Launch the Inversion module for retriving plant traits. 
 #'            - `"default"`: Launch the default simulator (general).
 #' @return Launches the Shiny app and verifies that all necessary packages are installed.
 #' @export
@@ -26,6 +27,7 @@
 #' get.simulator("SCOPE")
 #' get.simulator("MARMIT")
 #' get.simulator("getLUT")
+#' get.simulator("STAC")
 
 get.simulator <- function(app = "PROSAIL") {
   
@@ -45,21 +47,23 @@ get.simulator <- function(app = "PROSAIL") {
   }
   # Determine the appropriate app directory based on the simulator parameter
   if (app == "PROSAIL") {
-    appDir <- system.file("application", "PROSAIL", package = "ToolsRTM")
+    appDir <- system.file("applications", "PROSAIL", package = "ToolsRTM")
   } else if (app == "PROSAIL-BRDF") {
-    appDir <- system.file("application", "PROSAIL-BRDF", package = "ToolsRTM")
+    appDir <- system.file("applications", "PROSAIL-BRDF", package = "ToolsRTM")
   } else if (app == "MARMIT") {
-    appDir <- system.file("application", "MARMIT", package = "ToolsRTM")
+    appDir <- system.file("applications", "MARMIT", package = "ToolsRTM")
   } else if (app == "SPART") {
-    appDir <- system.file("application", "SPART", package = "ToolsRTM")
+    appDir <- system.file("applications", "SPART", package = "ToolsRTM")
   } else if (app == "SCOPE") {
-    appDir <- system.file("application", "SCOPE", package = "ToolsRTM")
+    appDir <- system.file("applications", "SCOPE", package = "ToolsRTM")
   } else if (app == "getLUT") {
-    appDir <- system.file("application", "LUTs", package = "ToolsRTM")
+    appDir <- system.file("applications", "LUTs", package = "ToolsRTM")
+  } else if (app == "STAC") {
+    appDir <- system.file("applications", "STAC", package = "ToolsRTM")
   } else if (app == "Inversion") {
-    appDir <- system.file("application", "Inversion", package = "ToolsRTM")
+    appDir <- system.file("applications", "Inversion", package = "ToolsRTM")
   } else {
-    appDir <- system.file("application", "RTMs", package = "ToolsRTM")
+    appDir <- system.file("applications", "RTMs", package = "ToolsRTM")
   }
   
   if (appDir == "") {

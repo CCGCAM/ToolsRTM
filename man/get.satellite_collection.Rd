@@ -7,6 +7,7 @@
 get.satellite_collection(
   scenario,
   collection,
+  cloud_server = "microsoft",
   date_range,
   cloud_threshold,
   buffer_size = NULL
@@ -17,7 +18,7 @@ get.satellite_collection(
 
 \item{collection}{A character string specifying the name of the satellite data collection (e.g., "sentinel-2-l2a").}
 
-\item{date_range}{A character vector of length 2 indicating the start and end dates in "YYYY-MM-DD" format.}
+\item{cloud_server}{The cloud server to use. Options are "microsoft" or "amazon". Defaults to "microsoft".}
 
 \item{cloud_threshold}{A numeric value representing the maximum allowable cloud cover percentage.}
 
@@ -33,8 +34,11 @@ This function retrieves satellite image collections from the Planetary Computer 
 \dontrun{
 # Example usage of the get.satellite_collection function
 scenario <- "your_scenario_here"  # Replace with your actual scenario
+# names ofr every single cloud server
+coleccion.microsoft <- c('sentinel-2-l2a','landsat-c2-l2','modis-17A2HGF-061','modis-09A1-061','modis-09Q1-061','modis-11A2-061','modis-15A2H-061','modis-15A3H-061')
+coleccion.aws <- c('sentinel-s2-l2a','sentinel-s2-l2a-cogs','landsat-8-l1-c1')
 collection <- "sentinel-2-l2a"  # Sentinel-2 Level-2A collection
-date_range <- c("2023-01-01", "2023-01-31")  # Date range for January 2023
+date_range <- c("2023-06-01", "2023-09-30")  # Date range for January 2023
 cloud_threshold <- 20  # Maximum cloud cover of 20\%
 
 # Retrieve the satellite collection

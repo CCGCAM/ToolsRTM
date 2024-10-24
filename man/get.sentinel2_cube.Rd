@@ -9,6 +9,7 @@ get.sentinel2_cube(
   shape,
   date_range,
   aggregation_method = "mean",
+  resampling_method = "bicubic",
   get.dataset = T
 )
 }
@@ -19,7 +20,9 @@ get.sentinel2_cube(
 
 \item{date_range}{A character vector of length 2 specifying the start and end dates in "YYYY-MM-DD" format for the aggregation period.}
 
-\item{aggregation_method}{A character string indicating the method of aggregation to apply to the pixel values. Default is "mean". Other options may include "first", "median", etc.}
+\item{aggregation_method}{A character string indicating the method of aggregation to apply to the pixel values. Default is "mean". Other options may include "min", "max", "median", or "first"}
+
+\item{resampling_method}{A character string indicating the method of resampling to apply to the pixel values. Default is "bicubic". Other options may include "near", or "bilinear".}
 
 \item{get.dataset}{A logical value indicating whether to return the dataset of processed data (default is TRUE).}
 }
