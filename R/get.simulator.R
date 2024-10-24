@@ -32,7 +32,7 @@
 get.simulator <- function(app = "PROSAIL") {
   
   # Validate the app parameter
-  valid_apps <- c("PROSAIL", "PROSAIL-BRDF", "MARMIT", "getLUT",'SPART', 'SCOPE','RTMs','Inversion' )
+  valid_apps <- c("PROSAIL", "PROSAIL-BRDF", "MARMIT", "getLUT",'SPART', 'SCOPE','RTMs','Inversion', 'STAC')
   
   if (!app %in% valid_apps) {
     stop(paste("Invalid app specified. Please choose one of the following options:", 
