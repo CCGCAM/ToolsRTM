@@ -6,6 +6,7 @@
 #' @param collection A character string specifying the name of the satellite data collection (e.g., "sentinel-2-l2a").
 #' @param collection A character string specifying the name of the satellite data collection (e.g., "sentinel-2-l2a").
 #' @param cloud_server The cloud server to use. Options are "microsoft" or "amazon". Defaults to "microsoft".
+#' @param n.limit a integer with the maximum  number of images during the extractions.
 #' @param cloud_threshold A numeric value representing the maximum allowable cloud cover percentage.
 #' @param buffer_size A numeric value indicating the buffer size around the bounding box in meters (default is 300).
 #'
@@ -30,10 +31,12 @@
 #' print(satellite_data)
 #' }
 #'
-get.satellite_collection <- function(scenario, collection, cloud_server='microsoft', 
+get.satellite_collection <- function(scenario, collection, cloud_server='microsoft', n.limit=NULL,
                                      date_range, cloud_threshold, buffer_size = NULL) {
   
-
+  if (missing(n.limit)) {
+    n.limit = 500
+  }
   gdalcubes::gdalcubes_options(parallel = parallel::detectCores()-2)
   # Ensure the scenario is in sf format
   if (!inherits(scenario, "sf")) {
@@ -67,7 +70,7 @@ get.satellite_collection <- function(scenario, collection, cloud_server='microso
       stac_search(collections = collection,
                   bbox = bbox[1:4],  # Use the reduced bounding box
                   datetime = paste0(date_range[[1]], "/", date_range[[2]]),
-                  limit = 500) |>
+                  limit = n.limit) |>
       post_request() |> items_fetch(progress = FALSE)
       print(length(items$features))
 
@@ -77,7 +80,7 @@ get.satellite_collection <- function(scenario, collection, cloud_server='microso
       stac_search(collections = collection,
                   bbox = bbox[1:4],  # Use the reduced bounding box
                   datetime = paste0(date_range[[1]], "/", date_range[[2]]),
-                  limit = 500) |>
+                  limit = n.limit) |>
       post_request()
     print(length(items$features))
   }
@@ -116,6 +119,9 @@ get.satellite_collection <- function(scenario, collection, cloud_server='microso
                    "modis-15A3H-061" = c("Lai_500m","Fpar_500m","LaiStdDev_500m",'FparStdDev_500m','FparLai_QC')  # Example for MODIS Leaf Area Index/FPAR 4-Day
   )
 
+  # Initialize clt as NULL
+  clt <- NULL
+   
   # Determine if cloud filtering is applicable
   if (collection == "modis-09A1-061" || collection == "modis-17A2HGF-061" || collection == "modis-11A2-061"
       || collection == 'modis-09Q1-061'|| collection == 'modis-09A1-061'

@@ -33,8 +33,8 @@ ui <- navbarPage("Sentinel-2's Scenario ",theme = shinytheme("flatly"),
                  selectInput("scenario", "Select Scenario",
                              choices = c("Bark beetle outbreak", "San Rossore")),  # Scenarios choices
                  selectInput("server_map", "Select Spatial platform",
-                             choices = c("Microsoft Planetary Computer")),
-                                     ##    "Amazon Web Service")),  # Platforms for spatial data access
+                             choices = c("Microsoft Planetary Computer",
+                                     "Amazon Web Service")),  # Platforms for spatial data access
 
                  selectInput("satellite_collection", "Satellite Collections:",
                              choices = c("Sentinel-2 Collection" )),
@@ -48,9 +48,9 @@ ui <- navbarPage("Sentinel-2's Scenario ",theme = shinytheme("flatly"),
                              selected = "Bilinear"),
                  numericInput("bbox_cube", "Composite window (m)", min = 20, max = 10000, value = 600, step = 10),
 
-                 dateRangeInput("date_range_collection", "Select a time period:",
-                                start = "2023-06-01", end = "2023-06-15",
-                                min = "2020-06-23", max = "2024-06-23"),
+            #     dateRangeInput("date_range_collection", "Select a time period:",
+             #                   start = "2023-06-01", end = "2023-06-15",
+              #                  min = "2020-06-23", max = "2024-06-23"),
 
                  sliderInput("cloud_collection", "Maximum Cloud Coverage (%):", min = 5, max = 100, value = 25, step = 1),
 
@@ -83,7 +83,16 @@ ui <- navbarPage("Sentinel-2's Scenario ",theme = shinytheme("flatly"),
                          Click on the map to retrieve the spectral profiles if the first image.')),
 
                          leafletOutput("map", height = 450, width=700),
+                         sliderInput("date_slider",
+                                     label = "Select a Date:",
+                                     min = as.Date("2023-01-01"),
+                                     max = as.Date("2023-12-31"),
+                                     value = as.Date("2023-6-10"),
+                                     step=7,
+                                     timeFormat = "%Y-%m-%d",
+                                     animate = TRUE, width=700),  # Allows auto-play
                          br(),
+                         
                          div(style = "display: flex; align-items: flex-start;",
                              materialSwitch(inputId = "checkbox_spectra", label = "Get Spectral Information", status = "danger"),
                              p('Activate it to see spectral profiles on the Spectral tab', style = "margin-left: 2px;")
@@ -224,7 +233,10 @@ server <- function(input, output,session) {
     req(input$satellite_collection)  # Ensure input is available
 
     # Get the date range and satellite collection from user inputs
-    date_range <- input$date_range_collection
+   # date_range <- input$date_range_collection
+    start_date <- input$date_slider -3
+    end_date <- start_date + 7  # Add 10 days to the start date
+    date_range <-c(start_date, end_date)
     satellite_collection <- input$satellite_collection
     cloud_cover <- input$cloud_collection
     # Map collection names to their respective Stack Catalog IDs
@@ -257,7 +269,9 @@ server <- function(input, output,session) {
 
   observeEvent(input$get_cube, {
     show_modal_spinner()
-    req(input$date_range_collection)
+    #req(input$date_range_collection)
+    req(input$date_slider)
+   # req(input$date_)
     req(scenario())  # Ensure scenario is not NULL
     req(scenario_coord())  # Get the coordinates
 
@@ -276,8 +290,13 @@ server <- function(input, output,session) {
     collection <- selected_collection()
 
     # Get the date range from user input
-    date_range <- input$date_range_collection
+   
+    start_date <- as.Date('2023-05-14')#, input$date_slider -3
+    end_date <- start_date + 7  # Add 10 days to the start date
+    date_range <-c(start_date, end_date)
     print(date_range)
+    #date_range <- input$date_range_collection
+    
     cloud_threshold <- input$cloud_collection
     print(paste0('cloud is:',cloud_threshold))
 
@@ -294,9 +313,10 @@ server <- function(input, output,session) {
     satellite_collection <- get.satellite_collection(scenario=scenario(), collection= collection,
                                                      cloud_server =cloud_,
                                                      date_range = date_range,
+                                                     n.limit=1,
                                                      cloud_threshold= cloud_threshold,
                                                      buffer_size = input$bbox_cube)
-    
+    print(satellite_collection)
       # Check if satellite_collection is empty
     # Check if satellite_collection is NULL
     if (is.null(satellite_collection[[1]])) {
@@ -310,6 +330,11 @@ server <- function(input, output,session) {
       
     }
 
+    # Optional: You can also add checks for empty collections if the retrieval does not throw an error but returns an empty result
+    if (is.null(satellite_collection) || lengh(collection) == 0) {
+      showNotification("No collections available for the selected date range.", type = "warning")
+      remove_modal_spinner()
+    }
     # Calculate the centroid of the scenario geometry
     centroid <- sf::st_centroid(scenario())
 

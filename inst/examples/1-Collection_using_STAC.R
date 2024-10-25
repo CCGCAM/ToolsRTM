@@ -14,7 +14,7 @@ library(ToolsRTM)
 link_m <- 'https://planetarycomputer.microsoft.com/api/stac/v1'
 link_a <- 'https://earth-search.aws.element84.com/v0'
 
-collections_ <- rstac::stac(link_a,force_version=T) %>%
+collections_ <- rstac::stac(link_m,force_version=T) %>%
   collections() %>%
   get_request()
 # Extract and print only the IDs of the collections
@@ -31,9 +31,9 @@ print(head(filtered_collection_ids))
 
 
 # Example scenario data (replace this with your real scenario data)
-scenario <- sf::st_read("inst/application/STAC/www/scenario/fungus_infection.gpkg")
-scenari_path <- fs::dir_ls("inst/application/STAC/www/scenario/")
-scenario <- sf::st_read(scenari_path[2])
+scenario <- sf::st_read("inst/applications/STAC/www/scenario/fungus_infection.gpkg")
+scenari_path <- fs::dir_ls("inst/applications/STAC/www/scenario/")
+scenario <- sf::st_read(scenari_path[1])
 # Set GDAL cubes options
 gdalcubes::gdalcubes_options(parallel = 8)
 
@@ -41,7 +41,7 @@ gdalcubes::gdalcubes_options(parallel = 8)
 
 # Input parameters (replace with actual values as needed)
 buffer_size <- 300  # Buffer size around the centroid in meters
-date_range <- as.Date(c("2021-03-15", "2022-07-31"))  # Date range for data search
+date_range <- as.Date(c("2023-05-14", "2023-05-21"))  # Date range for data search
 cloud_threshold <- 5  # Cloud cover percentage threshold
 
 # Calculate the bounding box using the buffer size around the scenario centroid
@@ -61,8 +61,8 @@ coleccion_names.aws <- c('sentinel-s2-l2a','sentinel-s2-l2a-cogs')
 print(coleccion_names.aws)
 
 
-satellite_collection <- get.satellite_collection(scenario=scenario, collection=coleccion_names.microsoft[1], 
-                                                 cloud_server = 'microsoft',
+ss <- get.satellite_collection(scenario=scenario, collection=coleccion_names.microsoft[1], 
+                                                 cloud_server = 'microsoft', n.limit=5,
                                                  date_range=date_range, cloud_threshold=25, buffer_size = 1500)
 head(satellite_collection[[2]])
 satellite_collection[[3]]

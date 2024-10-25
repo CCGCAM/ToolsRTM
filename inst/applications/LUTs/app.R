@@ -423,7 +423,8 @@ server <- function(input, output,session) {
   
   
   w <- reactiveValues(data = NULL)
-  
+  # Isolate simulation logic in an eventReactive expression
+ 
   observeEvent(input$buttonLUT2, {
     
     showNotification("Generating simulations based on the pre-configured Look-Up Table. Please wait...", type = "warning")
