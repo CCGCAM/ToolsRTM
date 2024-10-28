@@ -89,7 +89,7 @@ get.satellite_collection <- function(scenario, collection, cloud_server='microso
   items <- items_sign(items,
     sign_planetary_computer())
 
-
+  
   if (length(items$features) == 0) {
     return(list(clt = NULL, df.data = NULL))
     stop("No images found in the specified collection for the given bounding box and date range.")
@@ -124,9 +124,15 @@ get.satellite_collection <- function(scenario, collection, cloud_server='microso
       || collection == 'modis-09Q1-061'|| collection == 'modis-09A1-061'
       || collection == 'modis-15A2H-061'|| collection == 'modis-15A3H-061') {
     # Create image collection without cloud cover filtering
-    clt <- items$features |>
-      stac_image_collection(asset_names = assets)
+  
     
+    clt <- tryCatch(
+      items$features |>
+        stac_image_collection(asset_names = assets),
+      error = function(e) {
+        NULL  # Return NA if an error occurs
+      }
+    )
     
     
   } else if (collection == 'landsat-c2-l2' || 
@@ -134,16 +140,28 @@ get.satellite_collection <- function(scenario, collection, cloud_server='microso
              collection == "sentinel-s2-l2a-cogs" || 
              collection == "sentinel-2-l2a") {
     # Create image collection with cloud cover filtering for other collections
-    clt <- items$features |>
-      stac_image_collection(asset_names = assets,
-                            property_filter = function(x) {
-                              x[["eo:cloud_cover"]] < cloud_threshold
-                            })
+    # Create image collection with cloud cover filtering for collections that require it
+    clt <- tryCatch(
+      items$features |>
+        stac_image_collection(asset_names = assets,
+                              property_filter = function(x) {
+                                x[["eo:cloud_cover"]] < cloud_threshold
+                              }),
+      error = function(e) {
+        NULL  # Return NA if an error occurs
+      }
+    )
     
     
   } else {
-    clt <- items$features |>
-      stac_image_collection(asset_names = assets)
+    clt <- tryCatch(
+      items$features |>
+        stac_image_collection(asset_names = assets),
+      error = function(e) {
+        NA  # Return NA if an error occurs
+      }
+    )
+    
   }
   
   if (items$features[[1]]$collection == 'sentinel-2-l2a'){
