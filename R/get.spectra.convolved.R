@@ -217,6 +217,9 @@ get.spectra.convolved <- function(rfl, sensor, plot.spectra=T){
 
       return(conv)
   } else {
+    
+     colnames(conv) <- c('id',db.sensor$average)
+    
     return(conv)
       }
 
