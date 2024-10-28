@@ -41,7 +41,7 @@ gdalcubes::gdalcubes_options(parallel = 8)
 
 # Input parameters (replace with actual values as needed)
 buffer_size <- 300  # Buffer size around the centroid in meters
-date_range <- as.Date(c("2023-05-14", "2023-05-21"))  # Date range for data search
+date_range <- as.Date(c("2023-05-14", "2023-05-16"))  # Date range for data search
 cloud_threshold <- 5  # Cloud cover percentage threshold
 
 # Calculate the bounding box using the buffer size around the scenario centroid
@@ -52,8 +52,8 @@ print(bb)
 # Retrieve the list of collections
 plot(scenario)
 ## Example usage
-date_range <- as.Date(c("2023-06-01", "2023-09-30"))
-cloud_threshold <- 5
+#date_range <- as.Date(c("2023-06-01", "2023-09-30"))
+cloud_threshold <- 25
 
 coleccion_names.microsoft <- c('sentinel-2-l2a','landsat-c2-l2','modis-17A2HGF-061','modis-09A1-061','modis-09Q1-061','modis-11A2-061','modis-15A2H-061','modis-15A3H-061')
 print(coleccion_names.microsoft)
@@ -61,9 +61,9 @@ coleccion_names.aws <- c('sentinel-s2-l2a','sentinel-s2-l2a-cogs')
 print(coleccion_names.aws)
 
 
-ss <- get.satellite_collection(scenario=scenario, collection=coleccion_names.microsoft[1], 
-                                                 cloud_server = 'microsoft', n.limit=5,
-                                                 date_range=date_range, cloud_threshold=25, buffer_size = 1500)
+satellite_collection <- get.satellite_collection(scenario=scenario, collection=coleccion_names.microsoft[1], 
+                                                 cloud_server = 'microsoft', n.limit=1,
+                                                 date_range=date_range, cloud_threshold=5, buffer_size = 1500)
 head(satellite_collection[[2]])
 satellite_collection[[3]]
 

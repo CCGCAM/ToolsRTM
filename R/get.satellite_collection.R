@@ -119,9 +119,6 @@ get.satellite_collection <- function(scenario, collection, cloud_server='microso
                    "modis-15A3H-061" = c("Lai_500m","Fpar_500m","LaiStdDev_500m",'FparStdDev_500m','FparLai_QC')  # Example for MODIS Leaf Area Index/FPAR 4-Day
   )
 
-  # Initialize clt as NULL
-  clt <- NULL
-   
   # Determine if cloud filtering is applicable
   if (collection == "modis-09A1-061" || collection == "modis-17A2HGF-061" || collection == "modis-11A2-061"
       || collection == 'modis-09Q1-061'|| collection == 'modis-09A1-061'

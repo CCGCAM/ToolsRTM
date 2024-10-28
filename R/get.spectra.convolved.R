@@ -215,10 +215,13 @@ get.spectra.convolved <- function(rfl, sensor, plot.spectra=T){
                             legend.title=element_blank())
       print(plot_convoluted)
 
+      return(conv)
+  } else {
+    return(conv)
       }
 
 
-  return(conv)
+
 
   }
 

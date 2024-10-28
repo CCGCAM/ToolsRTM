@@ -20,9 +20,9 @@ lapply(required_packages, library, character.only = TRUE)
 
 # 3.Define UI -----
 
-ui <- navbarPage("Sentinel-2's Scenario ",theme = shinytheme("flatly"),
+ui <- navbarPage("Sentinel-2 Collection",theme = shinytheme("flatly"),
 
-                 tabPanel(title = "Advanced Earth Observation Course (GRS-32306)",
+                 tabPanel(title = "STAC application",
   # Sidebar layout with input and output definitions ----
   sidebarLayout(
     # Sidebar panel for inputs ----
@@ -41,8 +41,8 @@ ui <- navbarPage("Sentinel-2's Scenario ",theme = shinytheme("flatly"),
                  selectInput("aggregation_method", "Aggregation methods:",
                              choices = c("Minimum","Maximum", "Mean", "Median" ), #'First'
                              selected = "Median"),
-                 
-           
+
+
                  selectInput("resampling_method", "Resampling methods:",
                              choices = c("Near","Bilinear", "Bicubic" ),
                              selected = "Bilinear"),
@@ -76,29 +76,64 @@ ui <- navbarPage("Sentinel-2's Scenario ",theme = shinytheme("flatly"),
               tabsetPanel(id = "tabs",
                 tabPanel("Map viewer",
                          br(),
-                         p(style = "text-align: justify;", HTML('This section guides you in analyzing vegetation health over time.
-                         First, select your scenario, time period, and buffer area around the centroid of the selected polygon.')),
-                         p(style = "text-align: justify;", HTML('Next, use the STAC API from Microsoft Planetary to download a
-                         the first Sentinel-2 image from the selected period.After downloading, the map will display RGB, NDVI, and false color composites.
-                         Click on the map to retrieve the spectral profiles if the first image.')),
-
-                         leafletOutput("map", height = 450, width=700),
-                         sliderInput("date_slider",
-                                     label = "Select a Date:",
-                                     min = as.Date("2023-01-01"),
-                                     max = as.Date("2023-12-31"),
-                                     value = as.Date("2023-6-10"),
-                                     step=7,
-                                     timeFormat = "%Y-%m-%d",
-                                     animate = TRUE, width=700),  # Allows auto-play
-                         br(),
-                         
-                         div(style = "display: flex; align-items: flex-start;",
-                             materialSwitch(inputId = "checkbox_spectra", label = "Get Spectral Information", status = "danger"),
-                             p('Activate it to see spectral profiles on the Spectral tab', style = "margin-left: 2px;")
+                         p(style = "text-align: justify;", HTML('This app allows you to retrieve satellite imagery via the Microsoft Planetary STAC API to analyze vegetation health over time. Start by selecting a scenario, time period, and a buffer area around your chosen polygon’s centroid.
+                         Then, click on the map to view
+                         spectral profiles for the selected image.')),
+                         # Add custom CSS styling for the map border and slider
+                         tags$head(
+                           tags$style(HTML("
+                           #map {
+                           border: 2px solid #007BFF; /* Blue border */
+                           border-radius: 10px;
+                           }
+                           .slider-input {
+                           width: 100%;max-width: 700px;}
+                          .slider-input .irs-bar, .slider-input .irs-bar-edge {
+                          background-color: #007BFF; /* Blue slider bar */
+                          border-color: #007BFF;}
+                          .slider-input .irs-slider {
+                          background-color: #ffffff;
+                          border: 16px solid #007BFF;
+                          }
+                          .slider-input .irs-single {
+                          background: #007BFF;
+                          color: #ffffff;
+                          font-weight: bold;
+                          padding: 8px 12px;
+                          border-radius: 4px;
+                         /* Style for slider label */
+                         .slider-label {
+                         font-weight: bold;
+                         font-size: 22px;}}"))
                          ),
 
-                         p('Once the Sentinel-2 collection is ready, a TIFF file will be available for download in TIFF format.'),
+                         fluidRow(
+                           leafletOutput("map", height = 450, width = 700),
+                           br(),
+
+                           sliderInput("date_slider",
+                                       label = tags$span("Select a Date:", class = "slider-label"),
+
+                                       min = as.Date("2023-01-01"),
+                                       max = as.Date("2023-12-31"),
+                                       value = as.Date("2023-06-10"),
+                                       step = 7,
+                                       timeFormat = "%Y-%m-%d",
+                                       animate = TRUE,
+                                       width = "100%"  # Full-width slider, max-width applied via CSS
+                           ),
+                           br(),
+                           div(style = "text-align: center; font-weight: bold; color: #007BFF;",
+                               ""),
+                           br(),
+                         ),
+
+                         div(style = "display: flex; align-items: flex-start;",
+                         #    materialSwitch(inputId = "checkbox_spectra", label = "Get Spectral Information", status = "danger"),
+                          #   p('Activate it to see spectral profiles on the Spectral tab', style = "margin-left: 2px;")
+                         ),
+
+                         #p('Once the Sentinel-2 collection is ready, a TIFF file will be available for download in TIFF format.'),
 
                 ),
                 tabPanel("Bandset",
@@ -107,16 +142,29 @@ ui <- navbarPage("Sentinel-2's Scenario ",theme = shinytheme("flatly"),
                 tabPanel("Spectral profile",
                         # DTOutput("pixel_table"),
                          # Conditional panel to show the table and download button
-                         conditionalPanel(
-                           condition = "input.checkbox_spectra == true", 
-                           DTOutput("pixel_table"),
-                           plotOutput("spectral_plot"),
-                           downloadButton("download_table", "Download Table")
-                         )
+                        
+                        DTOutput("pixel_table"),
+                        plotOutput("spectral_plot"),
+                        br(),
+                        p(strong('The selected satellite imagery used in the selected aggregation method:')),
+                        br(),
+                        
+                        DTOutput("satellite_table"),
+                        # Row layout for download buttons
+                        div(
+                          style = "display: flex; align-items: center; gap: 10px; padding-top: 10px;",
+                          downloadButton("download_table", "Download Spectral Data"),
+                          downloadButton("download_metadata", "Download Metadata")
+                        ),
+                      #  downloadButton("download_table", "Download Table")
+                         #conditionalPanel(
+                          # condition = "input.checkbox_spectra == true",
+
+                        # )
                 ),
                 tabPanel("Info STAC",
                          br(),
-                         p(style = "text-align: justify;", HTML("This Shiny app allows you to explore and analyze Sentinel-2 satellite imagery. 
+                         p(style = "text-align: justify;", HTML("This Shiny app allows you to explore and analyze Sentinel-2 satellite imagery.
                          It takes advantage of cloud-optimized GeoTIFFs (COGs) and the SpatioTemporal Asset Catalog (STAC) for efficient data access.
                          The app can access Sentinel-2 catalogs from two providers.
                          <ul>
@@ -124,7 +172,7 @@ ui <- navbarPage("Sentinel-2's Scenario ",theme = shinytheme("flatly"),
                          <li>Microsoft Planetary Computer: <a href='https://planetarycomputer.microsoft.com/api/stac/v1' target='_blank'>https://planetarycomputer.microsoft.com/api/stac/v1</a></li>
                          </ul>
                          This dual-source approach ensures seamless searching and retrieval of the imagery you need.")),
-                       
+
                          ),
                 tabPanel("References",
                          p(style = "text-align: justify;",HTML('If you use <b>ToolsRTM</b> or <b>SCOPEinR</b> package, please cite the following references:')),
@@ -215,7 +263,7 @@ server <- function(input, output,session) {
                   "A spatial map using Amazon cloud services is display.",
                   options = popupOptions(closeButton = TRUE))
 
-    
+
     } else if (input$server_map == "Microsoft Planetary Computer") {
 
       # Here, you can include any additional layers or customization specific to Microsoft Planetary Computer
@@ -241,7 +289,7 @@ server <- function(input, output,session) {
     cloud_cover <- input$cloud_collection
     # Map collection names to their respective Stack Catalog IDs
 
-    
+
     if(input$server_map == 'Amazon Web Service'){
       collection_map <- list(
         "Sentinel-2 Collection" = 'sentinel-s2-l2a')
@@ -249,7 +297,7 @@ server <- function(input, output,session) {
       collection_map <- list(
         "Sentinel-2 Collection" = 'sentinel-2-l2a')
     }
-    
+
     # Get the corresponding Stack Catalog ID
     collection_id <- collection_map[[input$satellite_collection]]
     # Print the selected collection ID and date range to the console
@@ -290,51 +338,50 @@ server <- function(input, output,session) {
     collection <- selected_collection()
 
     # Get the date range from user input
-   
-    start_date <- as.Date('2023-05-14')#, input$date_slider -3
+
+    start_date <- input$date_slider -3
     end_date <- start_date + 7  # Add 10 days to the start date
     date_range <-c(start_date, end_date)
     print(date_range)
     #date_range <- input$date_range_collection
-    
+
     cloud_threshold <- input$cloud_collection
     print(paste0('cloud is:',cloud_threshold))
 
     showNotification("Getting the collection from Microsoft Planetary Computer ...", type = "message")
-    
-    
+
+
     if(input$server_map == 'Amazon Web Service'){
        cloud_ <- 'amazon'
     } else if (input$server_map == 'Microsoft Planetary Computer'){
       cloud_ <- 'microsoft'
     }
-    
+
     print(collection)
     satellite_collection <- get.satellite_collection(scenario=scenario(), collection= collection,
                                                      cloud_server =cloud_,
                                                      date_range = date_range,
-                                                     n.limit=1,
+                                                     n.limit=3,
                                                      cloud_threshold= cloud_threshold,
                                                      buffer_size = input$bbox_cube)
-    print(satellite_collection)
+    if(missing(satellite_collection)){
+      showNotification("Error: Failed to retrieve the collection. Please check your inputs and try again.", type = "error")
+      remove_modal_spinner()
+    }
       # Check if satellite_collection is empty
     # Check if satellite_collection is NULL
     if (is.null(satellite_collection[[1]])) {
       showNotification("Error: Failed to retrieve the collection. Please check your inputs and try again.", type = "error")
       remove_modal_spinner()
-      return() 
+      return()
     } else {
       # Print satellite collection for debugging
       print(head(satellite_collection[[2]]))
       showNotification("Collection retrieved successfully.", type = "message")
-      
+
     }
 
-    # Optional: You can also add checks for empty collections if the retrieval does not throw an error but returns an empty result
-    if (is.null(satellite_collection) || lengh(collection) == 0) {
-      showNotification("No collections available for the selected date range.", type = "warning")
-      remove_modal_spinner()
-    }
+
     # Calculate the centroid of the scenario geometry
     centroid <- sf::st_centroid(scenario())
 
@@ -355,24 +402,24 @@ server <- function(input, output,session) {
         if (input$aggregation_method == "Minimum") {
           aggregation_ <- 'min'
           s_collection <- satellite_collection[[1]]
-          
+
         } else if (input$aggregation_method == "Maximum") {
           aggregation_ <- 'max'
           s_collection <- satellite_collection[[1]]
-          
+
         } else if (input$aggregation_method == "Mean") {
           aggregation_ <- 'mean'
           s_collection <- satellite_collection[[1]]
-          
+
         } else if (input$aggregation_method == "Median") {
           aggregation_ <- 'median'
           s_collection <- satellite_collection[[1]]
-          
+
         } else if (input$aggregation_method == "First") {
           aggregation_ <- 'first'
           s_collection <- satellite_collection[[1]]
         }
-        
+
         print(aggregation_)
         # Update choices based on selected method
         if (input$resampling_method == "Near") {
@@ -381,12 +428,12 @@ server <- function(input, output,session) {
           resampling_ <- 'bicubic'
         } else if (input$resampling_method == "Bilinear") {
           resampling_ <- 'bilinear'
-        } 
+        }
         print(resampling_)
-        
-    
+
+
         avg_raster_cube <- get.sentinel2_cube(s_collection, shape = buffer_area,
-                                              date_range = date_range, 
+                                              date_range = date_range,
                                               aggregation_method = aggregation_,
                                               resampling_method = resampling_,
                                               get.dataset = FALSE)
@@ -469,6 +516,8 @@ server <- function(input, output,session) {
       # Initialize the map with scenario and OSM layer
       m <- leaflet(data = scenario()) |>
         setView(lng = coord_start[1], lat = coord_start[2], zoom = 16) |>
+        clearControls() |>
+        clearGroup(c("Orthophoto", "OSM", "RGB", "False Color", "NDVI")) |> # Clear previous groups
         addTiles(urlTemplate = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
                  group = "Orthophoto") |>  # Add Esri layer first
         addTiles(group = "OSM") |>          # Add OSM layer
@@ -482,8 +531,8 @@ server <- function(input, output,session) {
       # Add the average raster RGB layer (after it's computed)
       if (!is.null(avg_raster_cube)) {
         # Define a viridis color palette for NDVI
-        ndvi_pal <- colorNumeric(palette = "viridis", domain = c(-0.3, 0.9),  reverse = TRUE) 
-        
+        ndvi_pal <- colorNumeric(palette = "viridis", domain = c(-0.3, 0.9),  reverse = TRUE)
+
         m <- m |>
           leafem::addRasterRGB(avg_raster, r = 1, g = 2, b = 3,
                                quantile = c(0.02, 0.98),
@@ -494,8 +543,8 @@ server <- function(input, output,session) {
           # Add NDVI layers
           #leaflet::addRasterImage(ndvi_avg, group = "NDVI", colors = terrain.colors(100))
           leaflet::addRasterImage(ndvi_avg, group = "NDVI", colors = ndvi_pal) %>%
-          leaflet::addLegend(pal = ndvi_pal, values = c(-0.3,0.9), title = "NDVI")  
-        
+          leaflet::addLegend(pal = ndvi_pal, values = c(-0.3,0.9), title = "NDVI")
+
 
       }
 
@@ -539,11 +588,11 @@ server <- function(input, output,session) {
 
     # In your server function
     pixel_data <- reactiveVal(data.frame(Latitude = numeric(), Longitude = numeric(), PixelInfo = character()))
-    
+
     leaflet_map <- reactiveVal(NULL)
     # Initialize a counter for marker IDs
     marker_counter <- reactiveVal(0)
-    
+
     #Add this observeEvent somewhere in your server code
     observeEvent(input$click_coordinates, {
       lat <- input$click_coordinates$lat
@@ -552,16 +601,18 @@ server <- function(input, output,session) {
       cat("Clicked coordinates: Latitude:", lat, "Longitude:", lng, "\n")
       # Increment the counter and generate the marker ID
       marker_counter(marker_counter() + 1)
-      marker_id <- paste0("", marker_counter()) 
-      
+      marker_id <- paste0("", marker_counter())
+
       # Update the map with a marker with the ID
       leafletProxy("map") %>%  # Use leafletProxy directly
-        addMarkers(lng = lng, lat = lat, 
+        addMarkers(lng = lng, lat = lat,
                    popup = paste("ID:", marker_id, "<br>",  # Include ID in the popup
                                  "Latitude:", lat, "<br>", "Longitude:", lng),
-                   layerId = marker_id,      label = lapply(marker_id, htmltools::HTML)) 
- 
-      
+                   layerId = marker_id,      label = lapply(marker_id, htmltools::HTML))
+
+      # Show notification to user
+      showNotification("Spectral information has been saved in the Spectral tab.", 
+                       type = "message", duration = 3)
       # Create a data frame for the extraction coordinates
       extraction_coords <- data.frame(Latitude = lat, Longitude = lng)
 
@@ -595,7 +646,7 @@ server <- function(input, output,session) {
       factor_rfl = 1/10000
       # Create a data frame for pixel information
       pixel_info <- data.frame(
-        ID = marker_id, 
+        ID = marker_id,
         Latitude = lat,
         Longitude = lng,
         B02 = raster_values[1, "B02"] * factor_rfl,
@@ -612,8 +663,8 @@ server <- function(input, output,session) {
         NDVI = ndvi_values  # Assuming ndvi_values is a single value
       )
 
-      
-      
+
+
       # Print pixel info for debugging
       cat("Pixel Info:\n")
       rownames(pixel_info) <-NULL
@@ -624,13 +675,22 @@ server <- function(input, output,session) {
       print(pixel_data)
     })
 
-    # In your server function
+    # get the spectral table
     output$pixel_table <- renderDT({
-      req(input$checkbox_spectra)  # Only render if the switch is active
+     # req(input$checkbox_spectra)  # Only render if the switch is active
       # Get the pixel data
       pixel_data()
     })
 
+
+
+    
+    # get the metadata table
+    output$satellite_table <- renderDT({
+     # req(input$checkbox_spectra)  # Only render if the switch is active
+      # Get the pixel data
+      satellite_collection[[2]]
+    })
 
     # Download the data table
     output$download_table <- downloadHandler(
@@ -641,23 +701,32 @@ server <- function(input, output,session) {
         write.csv(pixel_data(), file, row.names = FALSE)
       }
     )
-    
+    # Download the data table
+    output$download_metadata <- downloadHandler(
+      filename = function() {
+        "metadata.csv"
+      },
+      content = function(file) {
+        df.metadata <-  satellite_collection[[2]]
+        write.csv(df.metadata, file, row.names = FALSE)
+      }
+    )
     # Reactive value to store pixel data
-    pixel_data <- reactiveVal(data.frame()) 
-    
+    pixel_data <- reactiveVal(data.frame())
+
     # ... your map rendering and marker adding code ...
-    
+
     # Render the spectral plot
     output$spectral_plot <- renderPlot({
-      req(input$checkbox_spectra, pixel_data()) # Require switch to be active and data available
-      
+      #req(input$checkbox_spectra, pixel_data()) # Require switch to be active and data available
+
       # Prepare data for plotting
       plot_data <- pixel_data() %>%
-        tidyr::pivot_longer(cols = c("B02", "B03", "B04", "B05", "B06", "B07", "B08", "B11", "B12"), 
+        tidyr::pivot_longer(cols = c("B02", "B03", "B04", "B05", "B06", "B07", "B08", "B11", "B12"),
                             names_to = "Band", values_to = "Reflectance")
-      
+
       # Create the ggplot
-      ggplot(plot_data, aes(x = Band, y = Reflectance, group = ID, color = factor(ID))) + 
+      ggplot(plot_data, aes(x = Band, y = Reflectance, group = ID, color = factor(ID))) +
         geom_line() +   geom_point() +
         labs(title = "", x = "", y = "Reflectance", color = "ID") +  # Add legend title
         theme_bw() + theme(
@@ -669,10 +738,10 @@ server <- function(input, output,session) {
           axis.text.x = element_text(hjust = 0.5, size = 14, face = "bold"),
           panel.grid.major = element_blank(),  # Optional: Remove grid lines
           panel.grid.minor = element_blank()) +
-    
+
         scale_color_discrete(name = "ID")
     })
-    
+
       # Observe changes in scenarios
   observeEvent(input$scenario, {
     # Reset pixel_data
@@ -726,11 +795,11 @@ server <- function(input, output,session) {
   })
 
   # In your server function
-  observeEvent(input$checkbox_spectra, {
-    if (input$checkbox_spectra) { # If the switch is activated
-      showNotification("Spectral information is activated. Check the spectral profiles tab.", type = "message")
-    }
-  })
+ # observeEvent(input$checkbox_spectra, {
+  #  if (input$checkbox_spectra) { # If the switch is activated
+   #   showNotification("Spectral information is activated. Check the spectral profiles tab.", type = "message")
+  #  }
+  #})
 
 
 }
