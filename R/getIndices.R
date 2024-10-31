@@ -14,28 +14,24 @@
 #'
 getIndices <- function(data, pattern.rfl='R.', spectral.domain=NULL) {
 
-  if (is.null(pattern.rfl)){
-    s.pattern ='R.'
-  } else {
-    s.pattern = pattern.rfl
-  }
-
-  if (is.null(spectral.domain)){
-    s.domain ='VNIR'
-    
-  } else {
-    s.domain = spectral.domain
-  }
+  
+  
+  # Set the pattern for reflectance columns
+  s.pattern <- if (is.null(pattern.rfl)) 'R.' else pattern.rfl
+  
+  # Set the spectral domain
+  s.domain <- if (is.null(spectral.domain)) 'VNIR' else spectral.domain
   
   if (is.matrix(data)){
     df.data = data.matrix(data)
   }
   
   
-  if (s.domain == 'VNIR' | s.domain == 'VNIR-SWIR' | s.domain =='SWIR' ){
-    print(paste('estimating indices using  ',s.domain, ' domain ....', sep=''))
+  # Check the spectral domain
+  if (s.domain %in% c('VNIR', 'VNIR-SWIR', 'SWIR')) {
+    print(paste('Estimating indices using', s.domain, 'domain...'))
   } else {
-    stop('please use a correct spectral domain, options are VNIR,VNIR-SWIR and SWIR')
+    stop('Please use a correct spectral domain: options are VNIR, VNIR-SWIR, and SWIR.')
   }
   
   if (is.data.frame(data)){
@@ -47,13 +43,16 @@ getIndices <- function(data, pattern.rfl='R.', spectral.domain=NULL) {
     } else {
       
       df = data[,rfl_bands]
-      as.numeric(gsub("R\\.(\\d+\\.\\d+)", "\\1",rfl_bands))
-      #wavelengths = as.numeric(gsub(".*?([0-9]+).*", "\\1", rfl_bands))
-      # Extract wavelengths with decimal points
-      wavelengths <- as.numeric(gsub(".*?([0-9]+\\.[0-9]+).*", "\\1", rfl_bands))
+      # Construct the regex pattern dynamically using the user-defined pattern
+      wavelength_pattern <- paste0(s.pattern, "(\\d+(?:\\.\\d+)?)")
       
-      min_ <-round(min(wavelengths)+10,0)
-      max_ <-round(max(wavelengths)+10,0)
+      # Extract wavelengths as numeric values from rfl_bands
+      wavelengths <- as.numeric(gsub(wavelength_pattern, "\\1", rfl_bands))
+      
+      # Check the output of the wavelengths
+      print(wavelengths)
+      min_ <-min(wavelengths)
+      max_ <-max(wavelengths)
       range2interpo <-  c(min_:max_)
       
       indices.list = list()
@@ -77,7 +76,7 @@ getIndices <- function(data, pattern.rfl='R.', spectral.domain=NULL) {
 
     indices = c()
 
-    if(s.domain %in% 'VNIR'){
+    if(s.domain %in% c('VNIR','VNIR-SWIR')){
       
       ##########################################
       ## Structurual Indices
@@ -436,7 +435,7 @@ getIndices <- function(data, pattern.rfl='R.', spectral.domain=NULL) {
       
     }
     
-    else if (s.domain %in% 'SWIR' ) {
+    else if (s.domain %in% c('SWIR','VNIR-SWIR') ) {
       ##########################################
       ## SWIR Indices
       ##########################################
@@ -541,8 +540,10 @@ getIndices <- function(data, pattern.rfl='R.', spectral.domain=NULL) {
   
   df.indices <- data.frame(matrix(unlist(indices.list), nrow=length(indices.list), byrow=T))
   colnames(df.indices)<-names(indices)
-  df.indices<-cbind(data,df.indices)
   ## remove indices wih no data
+  df.indices = df.indices[, colSums(is.na(df.indices)) != nrow(df.indices)]
+  ## remove indices wih no data
+  df.indices[sapply(df.indices, is.infinite)] <- NA
   df.indices = df.indices[, colSums(is.na(df.indices)) != nrow(df.indices)]
   
   close(barProgress)
