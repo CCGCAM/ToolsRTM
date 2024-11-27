@@ -20,9 +20,9 @@ lapply(required_packages, library, character.only = TRUE)
 
 # 3.Define UI -----
 
-ui <- navbarPage("Sentinel-2 Collection",theme = shinytheme("flatly"),
+ui <- navbarPage("Sentinel-2's Scenario ",theme = shinytheme("flatly"),
 
-                 tabPanel(title = "STAC application",
+                 tabPanel(title = "Advanced Earth Observation Course (GRS-32306)",
   # Sidebar layout with input and output definitions ----
   sidebarLayout(
     # Sidebar panel for inputs ----
@@ -119,7 +119,7 @@ ui <- navbarPage("Sentinel-2 Collection",theme = shinytheme("flatly"),
                                        value = as.Date("2023-06-10"),
                                        step = 7,
                                        timeFormat = "%Y-%m-%d",
-                                       animate = TRUE,
+                                       animate = F,
                                        width = "100%"  # Full-width slider, max-width applied via CSS
                            ),
                            br(),
@@ -128,27 +128,23 @@ ui <- navbarPage("Sentinel-2 Collection",theme = shinytheme("flatly"),
                            br(),
                          ),
 
-                         div(style = "display: flex; align-items: flex-start;",
+                     #    div(style = "display: flex; align-items: flex-start;",
                          #    materialSwitch(inputId = "checkbox_spectra", label = "Get Spectral Information", status = "danger"),
                           #   p('Activate it to see spectral profiles on the Spectral tab', style = "margin-left: 2px;")
-                         ),
-
-                         #p('Once the Sentinel-2 collection is ready, a TIFF file will be available for download in TIFF format.'),
+                      #   ),
 
                 ),
                 tabPanel("Bandset",
                          plotOutput("plots_band"), # For trait distribution plot
                 ),
                 tabPanel("Spectral profile",
-                        # DTOutput("pixel_table"),
-                         # Conditional panel to show the table and download button
-                        
+
                         DTOutput("pixel_table"),
                         plotOutput("spectral_plot"),
                         br(),
                         p(strong('The selected satellite imagery used in the selected aggregation method:')),
                         br(),
-                        
+
                         DTOutput("satellite_table"),
                         # Row layout for download buttons
                         div(
@@ -156,11 +152,8 @@ ui <- navbarPage("Sentinel-2 Collection",theme = shinytheme("flatly"),
                           downloadButton("download_table", "Download Spectral Data"),
                           downloadButton("download_metadata", "Download Metadata")
                         ),
-                      #  downloadButton("download_table", "Download Table")
-                         #conditionalPanel(
-                          # condition = "input.checkbox_spectra == true",
 
-                        # )
+
                 ),
                 tabPanel("Info STAC",
                          br(),
@@ -515,9 +508,10 @@ server <- function(input, output,session) {
 
       # Initialize the map with scenario and OSM layer
       m <- leaflet(data = scenario()) |>
-        setView(lng = coord_start[1], lat = coord_start[2], zoom = 16) |>
         clearControls() |>
         clearGroup(c("Orthophoto", "OSM", "RGB", "False Color", "NDVI")) |> # Clear previous groups
+        setView(lng = coord_start[1], lat = coord_start[2], zoom = 16) |>
+        clearControls() |>  # Clears previous legends and controls
         addTiles(urlTemplate = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
                  group = "Orthophoto") |>  # Add Esri layer first
         addTiles(group = "OSM") |>          # Add OSM layer
@@ -550,6 +544,7 @@ server <- function(input, output,session) {
 
       # Add layer controls for the raster and base layers
       m <- m |>
+
         addLayersControl(
           baseGroups = c("Orthophoto", "OSM"),
           overlayGroups = c("RGB", "False Color", "NDVI"),  # Add other layers as needed
@@ -611,7 +606,7 @@ server <- function(input, output,session) {
                    layerId = marker_id,      label = lapply(marker_id, htmltools::HTML))
 
       # Show notification to user
-      showNotification("Spectral information has been saved in the Spectral tab.", 
+      showNotification("Spectral information has been saved in the Spectral tab.",
                        type = "message", duration = 3)
       # Create a data frame for the extraction coordinates
       extraction_coords <- data.frame(Latitude = lat, Longitude = lng)
@@ -663,8 +658,6 @@ server <- function(input, output,session) {
         NDVI = ndvi_values  # Assuming ndvi_values is a single value
       )
 
-
-
       # Print pixel info for debugging
       cat("Pixel Info:\n")
       rownames(pixel_info) <-NULL
@@ -682,9 +675,6 @@ server <- function(input, output,session) {
       pixel_data()
     })
 
-
-
-    
     # get the metadata table
     output$satellite_table <- renderDT({
      # req(input$checkbox_spectra)  # Only render if the switch is active
@@ -701,6 +691,7 @@ server <- function(input, output,session) {
         write.csv(pixel_data(), file, row.names = FALSE)
       }
     )
+
     # Download the data table
     output$download_metadata <- downloadHandler(
       filename = function() {
@@ -711,10 +702,9 @@ server <- function(input, output,session) {
         write.csv(df.metadata, file, row.names = FALSE)
       }
     )
+
     # Reactive value to store pixel data
     pixel_data <- reactiveVal(data.frame())
-
-    # ... your map rendering and marker adding code ...
 
     # Render the spectral plot
     output$spectral_plot <- renderPlot({
@@ -794,12 +784,6 @@ server <- function(input, output,session) {
 
   })
 
-  # In your server function
- # observeEvent(input$checkbox_spectra, {
-  #  if (input$checkbox_spectra) { # If the switch is activated
-   #   showNotification("Spectral information is activated. Check the spectral profiles tab.", type = "message")
-  #  }
-  #})
 
 
 }

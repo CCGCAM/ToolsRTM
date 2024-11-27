@@ -5,11 +5,11 @@
 #'            - `"PROSAIL"`: Launch the PROSAIL simulator.
 #'            - `"PROSAIL-BRDF"`: Launch the PROSAIL-BRF simulator.
 #'            - `"MARMIT"`: Launch the MARMIT simulator.
-#'            - `"SPART"`: Launch the SPART simulator. Need the SCOPEinR package
-#'            - `"SCOPE"`: Launch the SCOPE simulator. Need the SCOPEinR package
+#'            - `"SPART"`: Launch the SPART simulator. This option needs the SCOPEinR package
+#'            - `"SCOPE"`: Launch the SCOPE simulator. This option needs the SCOPEinR package
 #'            - `"getLUT"`: Launch the configuration LUT app. 
 #'            -`"RTMs"`: Launch the RTM simulator. 
-#'            -`"STAC"`: Launch the RTM simulator. 
+#'            -`"STAC"`: Launch the STAC simulator. 
 #'            -`"Inversion"`: Launch the Inversion module for retriving plant traits. 
 #'            - `"default"`: Launch the default simulator (general).
 #' @return Launches the Shiny app and verifies that all necessary packages are installed.
