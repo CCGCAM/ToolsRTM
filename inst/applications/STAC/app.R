@@ -22,7 +22,7 @@ lapply(required_packages, library, character.only = TRUE)
 
 ui <- navbarPage("Sentinel-2's Scenario ",theme = shinytheme("flatly"),
 
-                 tabPanel(title = "Advanced Earth Observation Course (GRS-32306)",
+                 tabPanel(title = "STAC application",
   # Sidebar layout with input and output definitions ----
   sidebarLayout(
     # Sidebar panel for inputs ----
