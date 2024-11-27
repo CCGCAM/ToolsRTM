@@ -1,4 +1,4 @@
-#' Get the simulator tools
+#' Get RT-Apps
 #'
 #' @param app A character string indicating which simulator to launch. 
 #'            Acceptable values are:

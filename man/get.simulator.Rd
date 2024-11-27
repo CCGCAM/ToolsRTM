@@ -2,7 +2,7 @@
 % Please edit documentation in R/get.simulator.R
 \name{get.simulator}
 \alias{get.simulator}
-\title{Get the simulator tools}
+\title{Get RT-Apps}
 \usage{
 get.simulator(app = "PROSAIL")
 }
@@ -12,11 +12,11 @@ Acceptable values are:
 - \code{"PROSAIL"}: Launch the PROSAIL simulator.
 - \code{"PROSAIL-BRDF"}: Launch the PROSAIL-BRF simulator.
 - \code{"MARMIT"}: Launch the MARMIT simulator.
-- \code{"SPART"}: Launch the SPART simulator. Need the SCOPEinR package
-- \code{"SCOPE"}: Launch the SCOPE simulator. Need the SCOPEinR package
+- \code{"SPART"}: Launch the SPART simulator. This option needs the SCOPEinR package
+- \code{"SCOPE"}: Launch the SCOPE simulator. This option needs the SCOPEinR package
 - \code{"getLUT"}: Launch the configuration LUT app.
 -\code{"RTMs"}: Launch the RTM simulator.
--\code{"STAC"}: Launch the RTM simulator.
+-\code{"STAC"}: Launch the STAC simulator.
 -\code{"Inversion"}: Launch the Inversion module for retriving plant traits.
 - \code{"default"}: Launch the default simulator (general).}
 }
@@ -24,7 +24,7 @@ Acceptable values are:
 Launches the Shiny app and verifies that all necessary packages are installed.
 }
 \description{
-Get the simulator tools
+Get RT-Apps
 }
 \examples{
 # First, ensure package dependencies are installed:
