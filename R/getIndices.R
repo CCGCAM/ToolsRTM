@@ -1,19 +1,44 @@
-
-#' GetIndices a function to estimate most commont spectral indices
+#' GetIndices: A Function to Estimate Common Spectral Indices
 #'
-#' @param data is a dataframe or a matrix with Reflectance columns
-#' @param pattern.rfl need a name pattern for each reflectance columns, by default use 'R.'
-#' @param header
-#' @param spectral.domain the spectral doamin use for estimating spectral indices. The avalaible options are:
-#' VNIR: any range between 400-850 (default); SWIR: any range between 800-1750; and VNIR-SWIR: any range between 400-1750
-#' @return  the original dataset with the spactral indices
+#' This function calculates common spectral vegetation indices from reflectance data,
+#' using user-specified spectral domains and a scaling factor if needed.
+#'
+#' @param data A dataframe or matrix containing reflectance values in named columns.
+#' @param pattern.rfl A character string indicating the prefix pattern for reflectance column names.
+#'   Default is `'R.'`, which assumes column names like `'R.400'`, `'R.670'`, etc.
+#' @param factor A numeric scaling factor applied to reflectance values (e.g., 1/10000 for scaling
+#'   reflectance from digital numbers). Default is `NULL`, meaning no scaling is applied (factor = 1).
+#' @param spectral.domain A character string specifying the spectral domain for index calculation.
+#'   Available options are:
+#'   - `"VNIR"` (default): Includes wavelengths between 400-850 nm.
+#'   - `"SWIR"`: Includes wavelengths between 800-1750 nm.
+#'   - `"VNIR-SWIR"`: Includes wavelengths between 400-1750 nm.
+#'   If `NULL`, it defaults to `"VNIR"`.
+#'
+#' @return A dataframe containing the original data along with computed spectral indices.
 #' @export
 #'
-#' @examples here adding examples ....
+#' @examples
+#' # Example 1: Compute spectral indices using default VNIR domain
+#' data_example <- data.frame(R.400 = runif(10, 0, 1), R.670 = runif(10, 0, 1), R.800 = runif(10, 0, 1))
+#' result <- getIndices(data_example)
 #'
+#' # Example 2: Compute indices using SWIR domain with a scaling factor of 1/10000
+#' data_example <- data.frame(R.850 = runif(10, 0, 1), R.1200 = runif(10, 0, 1), R.1600 = runif(10, 0, 1))
+#' result <- getIndices(data_example, spectral.domain = "SWIR", factor = 1/10000)
 #'
-getIndices <- function(data, pattern.rfl='R.', spectral.domain=NULL) {
+#' # Example 3: Compute indices for VNIR-SWIR domain with custom reflectance column pattern
+#' data_example <- data.frame(Reflectance_450 = runif(10, 0, 1), Reflectance_900 = runif(10, 0, 1))
+#' result <- getIndices(data_example, pattern.rfl = "Reflectance_", spectral.domain = "VNIR-SWIR")
+#'
 
+
+getIndices <- function(data, pattern.rfl='R.', factor = NULL, spectral.domain=NULL) {
+
+  # If factor is NULL, set it to 1 (no scaling)
+  if (is.null(factor)) {
+    factor <- 1
+  }
 
   # Ensure input data is a dataframe or matrix
   if (!is.data.frame(data) && !is.matrix(data)) {
@@ -51,9 +76,9 @@ getIndices <- function(data, pattern.rfl='R.', spectral.domain=NULL) {
   if (spectral.domain == "VNIR") {
     selected_cols <- reflectance_cols[wavelengths >= 400 & wavelengths <= 850]
   } else if (spectral.domain == "SWIR") {
-    selected_cols <- reflectance_cols[wavelengths >= 800 & wavelengths <= 1750]
+    selected_cols <- reflectance_cols[wavelengths >= 800 & wavelengths <= 2550]
   } else if (spectral.domain == "VNIR-SWIR") {
-    selected_cols <- reflectance_cols[wavelengths >= 400 & wavelengths <= 1750]
+    selected_cols <- reflectance_cols[wavelengths >= 400 & wavelengths <= 2550]
   }
 
   if (length(selected_cols) == 0) {
@@ -70,17 +95,17 @@ getIndices <- function(data, pattern.rfl='R.', spectral.domain=NULL) {
   indices.list = list()
 
   # create progress bar
-  total=dim(df)[1]
+  total=dim(data)[1]
   barProgress <- txtProgressBar(min = 0, max = total, style = 3)
 
-  for (i in c(1:dim(df)[1])){
-    values<-as.numeric(df[i,])
+  for (i in c(1:dim(data)[1])){
+    values <- as.numeric(data[i, ]) * factor
     r = signal::interp1(wavelengths, values, range2interpo, extrap = T)
     names(r) <- range2interpo
 
     indices = c()
 
-    if(s.domain %in% 'VNIR'){
+    if(spectral.domain %in% 'VNIR'){
 
       ##########################################
       ## Structurual Indices
@@ -498,18 +523,19 @@ getIndices <- function(data, pattern.rfl='R.', spectral.domain=NULL) {
 
       indices.list[[i]] = indices
 
-
     }
-
     setTxtProgressBar(barProgress, i)
-  }
 
-  df.indices <- data.frame(matrix(unlist(indices.list), nrow=length(indices.list), byrow=T))
-  colnames(df.indices)<-names(indices)
-  df.indices<-cbind(data,df.indices)
+  }
+  close(barProgress)
+  # Combine the original dataset with calculated indices
+  indices.df <- do.call(rbind, indices.list)
+  print(indices.df)
+  df.indices <- indices.df
+  #df.indices<-cbind(data,df.indices)
   ## remove indices wih no data
   df.indices = df.indices[, colSums(is.na(df.indices)) != nrow(df.indices)]
 
-  close(barProgress)
-  return(df.indices)
+
+  return(indices.df)
 }
