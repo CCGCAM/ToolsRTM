@@ -30,7 +30,7 @@ install.packages('pathWithFile/toolsrtm-main.tar.gz',repos = NULL,type = "source
 packageVersion("ToolsRTM")
 ```
 
-Note: The last version is 0.62
+Note: The last version is 0.62.5
 
 ### Installing the SCOPEinR Package
 
