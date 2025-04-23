@@ -18,16 +18,25 @@ For more information, please visit: MARMIT [GitLab](https://pss-gitlab.math.univ
 
 ### Getting started
 
-To install the ToolsRTM package, please follow these steps in R session:
+The ToolsRTM package offers utilities for radiative transfer workflows, including spectral resampling, band simulation, and visualization. Install the ToolsRTM package, please follow these steps in R session:
 
-1)  Download the ToolsRTM package as .tar.gz file
+```         
+## Install additional SCOPEinR package. 
+# Only install if not available
+if (!requireNamespace("ToolsRTM", quietly = TRUE)) {
+  install.packages("remotes")  # just in case remotes isn't there
+  remotes::install_gitlab("caminoccg/toolsrtm", upgrade = "never")
+}
+```
+
+Alternatively, install the ToolsRTM package from a downloaded **.tar.gz** file:
+
 
 ```         
 # install ToolsRTM
 install.packages('pathWithFile/toolsrtm-main.tar.gz',repos = NULL,type = "source")
 ```
-
-2.  Check the installed version:
+Check the installed version:
 
 ```         
 # Check the version of ToolsRTM
@@ -43,10 +52,11 @@ The **SCOPEinR** package is required for running the Soil Canopy Observation, Ph
 This R package enables to run the SCOPE model developed in MATLAB by Van der Tol at al. (2009), Yang et al. (2020)
 
 ```         
-## Install additional SCOPEinR package. 
+## Install additional SCOPEinR package using remote. 
+remotes::install_gitlab("caminoccg/toolsrtm", upgrade = "never")
+# Alternative
 install.packages('pathWithFile/scopeinr-main.tar.gz',repos = NULL,type = "source")
 ```
-
 ### Manuals
 
 The manuals are accessible through the [Shiny app](https://carlos-camino.shinyapps.io/0-toolsrtm-simulator/) or directly within the [ToolsRTM](https://carlos-camino.shinyapps.io/0-toolsrtm-simulator/_w_ef4421a7/Notebooks/R/ToolsRTM/ToolsRTM.html) and [SCOPEinR](https://carlos-camino.shinyapps.io/0-toolsrtm-simulator/_w_ef4421a7/Notebooks/R/SCOPEinR/SCOPEinR.html) packages. Vignettes are currently under development.
