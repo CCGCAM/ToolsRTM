@@ -10,11 +10,11 @@ This package specifically simulates the **MARMIT** (Multilayer rAdiative tRansfe
 
 The necessary datasets for running these models can be downloaded from the corresponding databases. Each of the eight database directories (Bablet-2016, Dupiau-2020, Humper-2015, Lesaignoux-2008, Liu-2002, Lobell-2002, Marcq-2012, and Philpot-2014) contains essential data for model validation and simulations.
 
+For more information, please visit: MARMIT [GitLab](https://pss-gitlab.math.univ-paris-diderot.fr/marmit/marmit)
+
 ![](inst/Figures/rtm_sims.png)
 
 **Fig. 1.** Simulations performed with ToolsRTM Package for several radiative transfer models .
-
-For more information, please visit: MARMIT [GitLab](https://pss-gitlab.math.univ-paris-diderot.fr/marmit/marmit)
 
 ### Getting started
 
@@ -31,11 +31,11 @@ if (!requireNamespace("ToolsRTM", quietly = TRUE)) {
 
 Alternatively, install the ToolsRTM package from a downloaded **.tar.gz** file:
 
-
 ```         
 # install ToolsRTM
 install.packages('pathWithFile/toolsrtm-main.tar.gz',repos = NULL,type = "source")
 ```
+
 Check the installed version:
 
 ```         
@@ -57,6 +57,7 @@ remotes::install_gitlab("caminoccg/toolsrtm", upgrade = "never")
 # Alternative
 install.packages('pathWithFile/scopeinr-main.tar.gz',repos = NULL,type = "source")
 ```
+
 ### Manuals
 
 The manuals are accessible through the [Shiny app](https://carlos-camino.shinyapps.io/0-toolsrtm-simulator/) or directly within the [ToolsRTM](https://carlos-camino.shinyapps.io/0-toolsrtm-simulator/_w_ef4421a7/Notebooks/R/ToolsRTM/ToolsRTM.html) and [SCOPEinR](https://carlos-camino.shinyapps.io/0-toolsrtm-simulator/_w_ef4421a7/Notebooks/R/SCOPEinR/SCOPEinR.html) packages. Vignettes are currently under development.
@@ -75,6 +76,10 @@ ToolsRTM::get.simulator(app='PROSAIL-BRDF')
 ToolsRTM::get.simulator(app='getLUT')
 ?get.simulator # to see more options
 ```
+
+![](inst/Figures/shiny.png)
+
+**Fig. 2.** Interactive reflectance simulator using PROSAIL model based on shiny app.
 
 ### Citation
 
