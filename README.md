@@ -10,6 +10,10 @@ This package specifically simulates the **MARMIT** (Multilayer rAdiative tRansfe
 
 The necessary datasets for running these models can be downloaded from the corresponding databases. Each of the eight database directories (Bablet-2016, Dupiau-2020, Humper-2015, Lesaignoux-2008, Liu-2002, Lobell-2002, Marcq-2012, and Philpot-2014) contains essential data for model validation and simulations.
 
+![](inst/Figures/rtm_sims.png)
+
+**Fig. 1.** Simulations performed with ToolsRTM Package for several radiative transfer models .
+
 For more information, please visit: MARMIT [GitLab](https://pss-gitlab.math.univ-paris-diderot.fr/marmit/marmit)
 
 ### Getting started
