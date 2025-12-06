@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>ToolsRTM · HYDRA-EO</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<style>
+  /* === SAME STYLE AS HYDRA-EO WEBSITE === */
+  body {
+    background: radial-gradient(circle at top, #0f172a, #020617 60%, #000);
+    color: #e5e7eb;
+    font-family: system-ui, sans-serif;
+    padding: 2rem;
+    line-height: 1.55;
+  }
+  .logo {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  .logo img {
+    width: 160px;
+    border-radius: 10px;
+    background: white;
+    padding: 5px;
+  }
+  h1 {
+    text-align: center;
+    color: #4af3ff;
+    font-size: 2rem;
+    margin-bottom: 0.3rem;
+  }
+  p.subtitle {
+    text-align: center;
+    color: #9ca3af;
+    margin-bottom: 2rem;
+  }
+  .card {
+    background: #0b1220;
+    padding: 1rem;
+    border-radius: 16px;
+    border: 1px solid #1f2937;
+    margin-bottom: 1rem;
+  }
+  pre {
+    background: #0f1a2b;
+    padding: 1rem;
+    border-radius: 12px;
+    overflow-x: auto;
+    color: #9ae6ff;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="logo">
+  <img src="assets/HyDRA-EO_logo.png" alt="logo">
+</div>
+
+<h1>ToolsRTM</h1>
+<p class="subtitle">Radiative Transfer Modelling for HYDRA-EO</p>
+
+<div class="card">
+  <h2>Basic PROSAIL Simulation</h2>
+  <pre><code>
+library(ToolsRTM)
+
+ToolsRTM::get.simulator(app='SCOPE')
+ToolsRTM::get.simulator(app='getLUT')
+ToolsRTM::get.simulator(app='PROSAIL-BRDF')
+
+sim <- ToolsRTM::get.simulator(app="PROSAIL")
+out <- sim(Cab=45, LAI=3.2)
+plot(out$wl, out$R, type='l')
+  </code></pre>
+</div>
+
+<div class="card">
+  <h2>Fluorescence (SCOPE) example</h2>
+  <pre><code>
+library(SCOPEinR)
+
+res <- run_scope(Tair = 298.15, psoil = 0.25)
+res$Tcanopy
+  </code></pre>
+</div>
+
+</body>
+</html>
