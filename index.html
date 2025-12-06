@@ -1,90 +1,228 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>ToolsRTM · HYDRA-EO</title>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8" />
+  <title>ToolsRTM · HYDRA-EO Project</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<style>
-  /* === SAME STYLE AS HYDRA-EO WEBSITE === */
-  body {
-    background: radial-gradient(circle at top, #0f172a, #020617 60%, #000);
-    color: #e5e7eb;
-    font-family: system-ui, sans-serif;
-    padding: 2rem;
-    line-height: 1.55;
-  }
-  .logo {
-    text-align: center;
-    margin-bottom: 1rem;
-  }
-  .logo img {
-    width: 160px;
-    border-radius: 10px;
-    background: white;
-    padding: 5px;
-  }
-  h1 {
-    text-align: center;
-    color: #4af3ff;
-    font-size: 2rem;
-    margin-bottom: 0.3rem;
-  }
-  p.subtitle {
-    text-align: center;
-    color: #9ca3af;
-    margin-bottom: 2rem;
-  }
-  .card {
-    background: #0b1220;
-    padding: 1rem;
-    border-radius: 16px;
-    border: 1px solid #1f2937;
-    margin-bottom: 1rem;
-  }
-  pre {
-    background: #0f1a2b;
-    padding: 1rem;
-    border-radius: 12px;
-    overflow-x: auto;
-    color: #9ae6ff;
-  }
-</style>
+  <!-- === HYDRA-EO WEBSITE STYLE === -->
+  <style>
+    :root {
+      --bg: #020617;
+      --bg-card: #0b1220;
+      --accent: #4af3ff;
+      --accent-gold: #f6c453;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --border-subtle: #1f2937;
+      --radius-xl: 18px;
+      --radius-pill: 999px;
+      --shadow-soft: 0 20px 40px rgba(0,0,0,0.45);
+      --maxw: 900px;
+    }
+
+    *{ margin:0; padding:0; box-sizing:border-box; }
+
+    body{
+      background: radial-gradient(circle at top, #0f172a 0%, #020617 60%, #000);
+      font-family: system-ui, sans-serif;
+      color: var(--text-main);
+      line-height: 1.55;
+      padding: 2rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    main{
+      max-width: var(--maxw);
+      width: 100%;
+      padding-bottom: 2.5rem;
+    }
+
+    /* HEADER */
+    header{
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .logo img{
+      width: 180px;
+      border-radius: 14px;
+      background: #ffffffdd;
+      padding: 0.4rem;
+      margin-bottom: 1rem;
+      box-shadow: var(--shadow-soft);
+    }
+
+    h1{
+      font-size: 2rem;
+      margin-bottom: 0.3rem;
+      color: var(--accent);
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+
+    .subtitle{
+      color: var(--text-muted);
+      font-size: 1rem;
+      max-width: 44rem;
+      margin: 0 auto 1.1rem;
+    }
+
+    .tagline{
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--accent-gold);
+    }
+
+    /* SECTION TITLES */
+    h2{
+      margin-top: 1.8rem;
+      margin-bottom: 0.6rem;
+      font-size: 1.15rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    p.section-intro{
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      text-align: justify;
+      text-justify: inter-word;
+    }
+
+    /* CARDS */
+    .card{
+      background: var(--bg-card);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border-subtle);
+      padding: 1.2rem 1.4rem;
+      margin-bottom: 1rem;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .pill{
+      display:inline-block;
+      padding: 0.25rem 0.7rem;
+      border-radius: var(--radius-pill);
+      border:1px solid rgba(148,163,184,0.6);
+      color:var(--text-muted);
+      font-size:0.7rem;
+      text-transform:uppercase;
+      letter-spacing:0.16em;
+      margin-bottom: 0.6rem;
+    }
+
+    pre{
+      background:#0f1a2b;
+      padding:1rem;
+      border-radius:12px;
+      border:1px solid var(--border-subtle);
+      overflow-x:auto;
+      margin-top:0.7rem;
+      color:#9ae6ff;
+      font-family: "Fira Code", monospace;
+      font-size:0.86rem;
+    }
+
+    a{
+      color:var(--accent);
+      text-decoration:none;
+      font-weight:500;
+    }
+    a:hover{ color:var(--accent-gold); }
+
+  </style>
 </head>
 
 <body>
+<main>
 
-<div class="logo">
-  <img src="assets/HyDRA-EO_logo.png" alt="logo">
-</div>
+  <!-- HEADER -->
+  <header>
+    <div class="logo">
+      <img src="assets/HyDRA-EO_logo.png" alt="HYDRA-EO logo">
+    </div>
 
-<h1>ToolsRTM</h1>
-<p class="subtitle">Radiative Transfer Modelling for HYDRA-EO</p>
+    <h1>ToolsRTM</h1>
 
-<div class="card">
-  <h2>Basic PROSAIL Simulation</h2>
-  <pre><code>
-library(ToolsRTM)
+    <p class="subtitle">
+      Radiative Transfer Modelling Suite used within the ESA HYDRA-EO Project for 
+      hyperspectral, thermal and fluorescence simulation, scaling and hybrid ML workflows.
+    </p>
+
+    <div class="tagline">HYDRA-EO · ESA EXPRO+ · Action 1-12684</div>
+  </header>
+
+
+  <!-- OVERVIEW -->
+  <h2>Overview</h2>
+  <p class="section-intro">
+    ToolsRTM provides a unified interface to multiple leaf-, canopy- and atmosphere-level 
+    radiative transfer models (PROSPECT, PROSAIL, FLUSPECT, 4SAIL, INFORM, MARMIT-1/2, SPART). 
+    The package enables simulation of reflectance, fluorescence and thermal emission, and 
+    supports ESA mission preparatory studies (Sentinel-2, PRISMA, EnMAP, CHIME, FLEX, LSTM).  
+    Below are the examples used in the HYDRA-EO web page.
+  </p>
+
+
+  <!-- EXAMPLE 1 -->
+  <div class="card">
+    <div class="pill">R · ToolsRTM</div>
+    <h3>List available simulators & run PROSAIL</h3>
+
+    <pre><code>library(ToolsRTM)
 
 ToolsRTM::get.simulator(app='SCOPE')
 ToolsRTM::get.simulator(app='getLUT')
 ToolsRTM::get.simulator(app='PROSAIL-BRDF')
 
-sim <- ToolsRTM::get.simulator(app="PROSAIL")
-out <- sim(Cab=45, LAI=3.2)
-plot(out$wl, out$R, type='l')
-  </code></pre>
-</div>
+sim &lt;- ToolsRTM::get.simulator(app="PROSAIL")
+out &lt;- sim(Cab = 45, LAI = 3.2)
 
-<div class="card">
-  <h2>Fluorescence (SCOPE) example</h2>
-  <pre><code>
-library(SCOPEinR)
+plot(out$wl, out$R, type = "l",
+     xlab = "Wavelength (nm)",
+     ylab = "Reflectance")
+</code></pre>
+  </div>
 
-res <- run_scope(Tair = 298.15, psoil = 0.25)
-res$Tcanopy
-  </code></pre>
-</div>
 
+  <!-- EXAMPLE 2 -->
+  <div class="card">
+    <div class="pill">Thermal & Fluorescence</div>
+    <h3>SCOPE-based canopy temperature & fluorescence</h3>
+
+    <pre><code>library(SCOPEinR)
+
+res &lt;- run_scope(Tair = 298.15,
+                 psoil = 0.25)
+
+res$Tcanopy     # canopy temperature (K)
+# res$fluorescence  # if available in output object
+</code></pre>
+  </div>
+
+
+  <!-- EXAMPLE 3: IMAGES -->
+  <div class="card">
+    <div class="pill">RTM Outputs</div>
+    <h3>Simulation results used in HYDRA-EO</h3>
+
+    <div style="text-align:center; margin-top:1rem;">
+      <img src="assets/1-rtm_sims.png" 
+           style="max-width:45%; border-radius:12px; margin-right:1rem;">
+      <img src="assets/2-fluorescence.png" 
+           style="max-width:45%; border-radius:12px;">
+    </div>
+  </div>
+
+
+  <!-- FOOTER -->
+  <footer style="margin-top:2rem; text-align:center; font-size:0.8rem; color:var(--text-muted);">
+    HYDRA-EO · ToolsRTM Module · ESA EXPRO+  
+  </footer>
+
+</main>
 </body>
 </html>
